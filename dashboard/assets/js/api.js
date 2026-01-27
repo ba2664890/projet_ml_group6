@@ -1,7 +1,5 @@
-// API Configuration - Auto-detect based on environment
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://127.0.0.1:8000'
-    : window.location.origin; // Use same origin in production
+// API Configuration and Communication Layer
+const API_BASE_URL = 'http://127.0.0.1:8000';
 
 class HousePriceAPI {
     constructor(baseURL = API_BASE_URL) {
@@ -88,9 +86,9 @@ class HousePriceAPI {
 }
 
 // Create global API instance
-const HouseAPI = new HousePriceAPI();
+const api = new HousePriceAPI();
 
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { HousePriceAPI };
+    module.exports = { HousePriceAPI, api };
 }
