@@ -2,15 +2,16 @@
 Module de prétraitement des données pour le projet House Prices.
 """
 
-import pandas as pd
-import numpy as np
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.preprocessing import StandardScaler, LabelEncoder, OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
-from typing import List, Tuple, Dict, Any, Optional
 import logging
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+import pandas as pd
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

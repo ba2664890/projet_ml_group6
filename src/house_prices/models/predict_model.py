@@ -2,12 +2,13 @@
 Module de prédiction pour le projet House Prices.
 """
 
-import joblib
-import pandas as pd
-import numpy as np
 import logging
 from pathlib import Path
-from typing import Any, Union, Dict
+from typing import Any, Dict, Union
+
+import joblib
+import numpy as np
+import pandas as pd
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

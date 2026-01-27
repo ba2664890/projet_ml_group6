@@ -2,14 +2,15 @@
 Tests unitaires pour les modèles de prédiction.
 """
 
-import pytest
-import numpy as np
-import pandas as pd
-from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error, r2_score
 import sys
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
 
 # Ajoute le chemin src au sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))

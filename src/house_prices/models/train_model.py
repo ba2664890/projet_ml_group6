@@ -2,17 +2,18 @@
 Module d'entraînement des modèles pour le projet House Prices.
 """
 
-import pandas as pd
-import numpy as np
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
-from sklearn.model_selection import train_test_split
-import joblib
 import logging
 from pathlib import Path
-from typing import Dict, Any, Tuple
+from typing import Any, Dict, Tuple
 
-from ..data.preprocessing import preprocess_data, get_feature_types, create_preprocessing_pipeline
+import joblib
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+
+from ..data.preprocessing import create_preprocessing_pipeline, get_feature_types, preprocess_data
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

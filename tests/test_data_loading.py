@@ -2,16 +2,17 @@
 Tests unitaires pour le module de chargement des données.
 """
 
-import pytest
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
 
 # Ajoute le chemin src au sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from house_prices.data.load_data import load_data, display_data_info, get_target_distribution
+from house_prices.data.load_data import display_data_info, get_target_distribution, load_data
 
 
 class TestDataLoading:

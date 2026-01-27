@@ -2,12 +2,13 @@
 Module de chargement des données pour le projet House Prices.
 """
 
-import pandas as pd
-import numpy as np
-from pathlib import Path
-from typing import Tuple, Dict, Any, Optional
-import yaml
 import logging
+from pathlib import Path
+from typing import Any, Dict, Optional, Tuple
+
+import numpy as np
+import pandas as pd
+import yaml
 
 # Configuration du logging
 logging.basicConfig(level=logging.INFO)
