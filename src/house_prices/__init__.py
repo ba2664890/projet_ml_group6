@@ -15,11 +15,11 @@ from .models.predict_model import predict, load_trained_model
 
 __all__ = [
     "load_data",
-    "load_config", 
+    "load_config",
     "preprocess_data",
     "create_preprocessing_pipeline",
     "train_model",
     "evaluate_model",
     "predict",
-    "load_trained_model"
+    "load_trained_model",
 ]
