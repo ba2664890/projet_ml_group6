@@ -1,0 +1,127 @@
+# Configuration du projet House Prices Prediction
+# Laplace Immo - Projet Data Science
+
+# Paramètres du projet
+project:
+  name: "House Prices Prediction"
+  version: "1.0.0"
+  description: "Prédiction des prix des maisons pour Laplace Immo"
+
+# Chemins des données
+data:
+  raw_data_path: "data/raw"
+  processed_data_path: "data/processed"
+  external_data_path: "data/external"
+  train_file: "train.csv"
+  test_file: "test.csv"
+
+# Paramètres du modèle
+model:
+  target_column: "SalePrice"
+  id_column: "Id"
+  random_state: 42
+  test_size: 0.2
+  
+  # Modèles à tester
+  models_to_test:
+    - "LinearRegression"
+    - "Ridge"
+    - "Lasso"
+    - "RandomForestRegressor"
+    - "GradientBoostingRegressor"
+    - "XGBRegressor"
+  
+  # Hyperparamètres par défaut
+  default_params:
+    RandomForestRegressor:
+      n_estimators: 100
+      max_depth: 10
+      random_state: 42
+    GradientBoostingRegressor:
+      n_estimators: 100
+      max_depth: 4
+      learning_rate: 0.1
+      random_state: 42
+
+# Paramètres de validation croisée
+cross_validation:
+  cv_folds: 5
+  scoring: "neg_mean_squared_error"
+
+# Métriques d'évaluation
+metrics:
+  - "rmse"
+  - "mae"
+  - "r2_score"
+
+# Features importantes (top 15)
+important_features:
+  - "OverallQual"
+  - "GrLivArea"
+  - "GarageCars"
+  - "TotalBsmtSF"
+  - "1stFlrSF"
+  - "FullBath"
+  - "TotRmsAbvGrd"
+  - "YearBuilt"
+  - "YearRemodAdd"
+  - "GarageYrBlt"
+  - "MasVnrArea"
+  - "Fireplaces"
+  - "BsmtFinSF1"
+  - "Neighborhood"
+  - "Exterior1st"
+
+# Ingénierie des features
+feature_engineering:
+  create_features:
+    - "HouseAge"
+    - "TotalSF"
+    - "OverallScore"
+    - "TotalBathrooms"
+  
+  HouseAge:
+    formula: "YrSold - YearBuilt"
+  
+  TotalSF:
+    formula: "GrLivArea + TotalBsmtSF"
+  
+  OverallScore:
+    formula: "OverallQual * OverallCond"
+  
+  TotalBathrooms:
+    formula: "FullBath + 0.5 * HalfBath + BsmtFullBath + 0.5 * BsmtHalfBath"
+
+# Traitement des valeurs manquantes
+missing_values:
+  numerical_strategy: "median"
+  categorical_strategy: "mode"
+  fill_value: "None"
+
+# Prétraitement
+preprocessing:
+  numerical:
+    - "SimpleImputer"
+    - "StandardScaler"
+  categorical:
+    - "SimpleImputer"
+    - "OneHotEncoder"
+
+# MLflow
+mlflow:
+  experiment_name: "House Prices Prediction - Laplace Immo"
+  tracking_uri: "http://localhost:5000"
+  registered_model_name: "house_prices_model"
+
+# API
+api:
+  host: "0.0.0.0"
+  port: 8000
+  reload: true
+  log_level: "info"
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/house_prices.log"

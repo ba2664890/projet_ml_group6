@@ -1,0 +1,285 @@
+<div
+    class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+    <!-- Progress Stepper -->
+    <div class="bg-slate-50 dark:bg-slate-900/50 px-8 py-4 border-b border-slate-200 dark:border-slate-700">
+        <div class="flex items-center justify-between">
+            <div class="step-item active flex items-center space-x-2" data-step="1">
+                <span
+                    class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">1</span>
+                <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Général</span>
+            </div>
+            <div class="h-px bg-slate-300 dark:bg-slate-700 flex-1 mx-4"></div>
+            <div class="step-item flex items-center space-x-2" data-step="2">
+                <span
+                    class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 flex items-center justify-center font-bold text-sm">2</span>
+                <span class="text-sm font-medium text-slate-500">Qualité & Surface</span>
+            </div>
+            <div class="h-px bg-slate-300 dark:bg-slate-700 flex-1 mx-4"></div>
+            <div class="step-item flex items-center space-x-2" data-step="3">
+                <span
+                    class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 flex items-center justify-center font-bold text-sm">3</span>
+                <span class="text-sm font-medium text-slate-500">Détails Techniques</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Content -->
+    <form id="house-prediction-form" class="p-8">
+        <!-- Step 1: General Info -->
+        <div id="form-step-1" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Quartier
+                        (Neighborhood)</label>
+                    <select name="Neighborhood" required
+                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 transition-all">
+                        <option value="CollgCr">College Creek</option>
+                        <option value="Veenker">Veenker</option>
+                        <option value="Crawfor">Crawford</option>
+                        <option value="NoRidge">Northridge</option>
+                        <option value="Mitchel">Mitchell</option>
+                        <option value="Somerst">Somerset</option>
+                        <option value="NWAmes">Northwest Ames</option>
+                        <option value="OldTown">Old Town</option>
+                        <option value="BrkSide">Brookside</option>
+                        <option value="Sawyer">Sawyer</option>
+                        <option value="NridgHt">Northridge Heights</option>
+                        <option value="NAmes">North Ames</option>
+                        <option value="SawyerW">Sawyer West</option>
+                        <option value="IDOTRR">IDOTRR</option>
+                        <option value="MeadowV">Meadow Village</option>
+                        <option value="Edwards">Edwards</option>
+                        <option value="Timber">Timberland</option>
+                        <option value="Gilbert">Gilbert</option>
+                        <option value="StoneBr">Stone Brook</option>
+                        <option value="ClearCr">Clear Creek</option>
+                        <option value="NPkVill">Northpark Villa</option>
+                        <option value="Blmngtn">Bloomington Heights</option>
+                        <option value="BrDale">Briardale</option>
+                        <option value="SWISU">South & West of ISU</option>
+                        <option value="Blueste">Bluestem</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Type de bâtiment
+                        (BldgType)</label>
+                    <select name="BldgType" required
+                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 transition-all">
+                        <option value="1Fam">Single-family Detached</option>
+                        <option value="2fmCon">Two-family Conversion</option>
+                        <option value="Duplex">Duplex</option>
+                        <option value="TwnhsE">Townhouse End Unit</option>
+                        <option value="Twnhs">Townhouse Inside Unit</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Année de
+                        construction (YearBuilt)</label>
+                    <input type="number" name="YearBuilt" min="1800" max="2026" value="2000" required
+                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Surface du terrain
+                        (LotArea)</label>
+                    <div class="relative">
+                        <input type="number" name="LotArea" value="10000" required
+                            class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 pr-12 focus:ring-2 focus:ring-blue-500 transition-all">
+                        <span class="absolute right-4 top-2 text-slate-500 text-sm">sqft</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Quality & Space (Hidden initially) -->
+        <div id="form-step-2" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Qualité Globale
+                        (OverallQual: 1-10)</label>
+                    <input type="range" name="OverallQual" min="1" max="10" value="6" step="1"
+                        class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                    <div class="flex justify-between text-xs text-slate-500 mt-2">
+                        <span>Pauvre</span>
+                        <span>Moyen</span>
+                        <span>Excellent</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Condition Globale
+                        (OverallCond: 1-10)</label>
+                    <input type="range" name="OverallCond" min="1" max="10" value="5" step="1"
+                        class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                    <div class="flex justify-between text-xs text-slate-500 mt-2">
+                        <span>Pauvre</span>
+                        <span>Moyen</span>
+                        <span>Excellent</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Surface Habitable
+                        (GrLivArea)</label>
+                    <div class="relative">
+                        <input type="number" name="GrLivArea" value="1500" required
+                            class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 pr-12 focus:ring-2 focus:ring-blue-500 transition-all">
+                        <span class="absolute right-4 top-2 text-slate-500 text-sm">sqft</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Surface S-Sol
+                        (TotalBsmtSF)</label>
+                    <div class="relative">
+                        <input type="number" name="TotalBsmtSF" value="800" required
+                            class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 pr-12 focus:ring-2 focus:ring-blue-500 transition-all">
+                        <span class="absolute right-4 top-2 text-slate-500 text-sm">sqft</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Qualité
+                        Cuisine</label>
+                    <select name="KitchenQual" required
+                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 transition-all">
+                        <option value="Ex">Excellent</option>
+                        <option value="Gd">Good</option>
+                        <option value="TA">Average/Typical</option>
+                        <option value="Fa">Fair</option>
+                        <option value="Po">Poor</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Pièces totales
+                        (TotRmsAbvGrd)</label>
+                    <input type="number" name="TotRmsAbvGrd" value="7" min="1" max="20" required
+                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 transition-all">
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Tech Details (Hidden initially) -->
+        <div id="form-step-3" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Climatisation
+                        Centrale</label>
+                    <select name="CentralAir" required
+                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 transition-all">
+                        <option value="Y">Oui</option>
+                        <option value="N">Non</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Garage (Capacité
+                        voitures)</label>
+                    <input type="number" name="GarageCars" value="2" min="0" max="10" required
+                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Surface
+                        Garage</label>
+                    <div class="relative">
+                        <input type="number" name="GarageArea" value="500" required
+                            class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 pr-12 focus:ring-2 focus:ring-blue-500 transition-all">
+                        <span class="absolute right-4 top-2 text-slate-500 text-sm">sqft</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Salles de bain
+                        (FullBath)</label>
+                    <input type="number" name="FullBath" value="2" min="0" max="10" required
+                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 transition-all">
+                </div>
+                <!-- Adding hidden defaults for the rest to comply with API -->
+                <input type="hidden" name="MSSubClass" value="60">
+                <input type="hidden" name="MSZoning" value="RL">
+                <input type="hidden" name="Street" value="Pave">
+                <input type="hidden" name="LotShape" value="Reg">
+                <input type="hidden" name="LandContour" value="Lvl">
+                <input type="hidden" name="Utilities" value="AllPub">
+                <input type="hidden" name="LotConfig" value="Inside">
+                <input type="hidden" name="LandSlope" value="Gtl">
+                <input type="hidden" name="Condition1" value="Norm">
+                <input type="hidden" name="Condition2" value="Norm">
+                <input type="hidden" name="HouseStyle" value="2Story">
+                <input type="hidden" name="YearRemodAdd" value="2003">
+                <input type="hidden" name="RoofStyle" value="Gable">
+                <input type="hidden" name="RoofMatl" value="CompShg">
+                <input type="hidden" name="Exterior1st" value="VinylSd">
+                <input type="hidden" name="Exterior2nd" value="VinylSd">
+                <input type="hidden" name="ExterQual" value="Gd">
+                <input type="hidden" name="ExterCond" value="TA">
+                <input type="hidden" name="Foundation" value="PConc">
+                <input type="hidden" name="Heating" value="GasA">
+                <input type="hidden" name="HeatingQC" value="Ex">
+                <input type="hidden" name="first_flr_sf" value="856">
+                <input type="hidden" name="second_flr_sf" value="854">
+                <input type="hidden" name="LowQualFinSF" value="0">
+                <input type="hidden" name="BedroomAbvGr" value="3">
+                <input type="hidden" name="HalfBath" value="1">
+                <input type="hidden" name="KitchenAbvGr" value="1">
+                <input type="hidden" name="Functional" value="Typ">
+                <input type="hidden" name="Fireplaces" value="0">
+                <input type="hidden" name="PavedDrive" value="Y">
+                <input type="hidden" name="WoodDeckSF" value="0">
+                <input type="hidden" name="OpenPorchSF" value="61">
+                <input type="hidden" name="EnclosedPorch" value="0">
+                <input type="hidden" name="three_season_porch" value="0">
+                <input type="hidden" name="ScreenPorch" value="0">
+                <input type="hidden" name="PoolArea" value="0">
+                <input type="hidden" name="MiscVal" value="0">
+                <input type="hidden" name="MoSold" value="2">
+                <input type="hidden" name="YrSold" value="2008">
+                <input type="hidden" name="SaleType" value="WD">
+                <input type="hidden" name="SaleCondition" value="Normal">
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="mt-12 flex justify-between items-center">
+            <button type="button" id="prev-step"
+                class="hidden px-6 py-2 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">Précédent</button>
+            <div class="flex-1"></div>
+            <button type="button" id="next-step"
+                class="px-8 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-500/25">Continuer</button>
+            <button type="submit" id="submit-prediction"
+                class="hidden px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-bold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-blue-500/25">Calculer
+                le prix</button>
+        </div>
+    </form>
+</div>
+
+<!-- Result Card (Hidden initially) -->
+<div id="prediction-result"
+    class="hidden mt-8 p-1 rounded-3xl bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 shadow-2xl overflow-hidden animate-fade-in">
+    <div class="bg-white dark:bg-slate-900 rounded-[calc(1.5rem-4px)] p-8 text-center">
+        <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-6">Estimation du Prix</h3>
+        <div class="text-5xl md:text-6xl font-black text-blue-600 mb-4 font-mono" id="predicted-price-value">$0</div>
+        <div class="flex items-center justify-center space-x-2 mb-8">
+            <span
+                class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full text-xs font-bold uppercase tracking-wider">Modèle:
+                Gradient Boosting</span>
+            <span
+                class="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-full text-xs font-bold uppercase tracking-wider">Confiance:
+                85%</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+            <button id="save-prediction"
+                class="flex items-center justify-center space-x-2 px-6 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all font-semibold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4">
+                    </path>
+                </svg>
+                <span>Sauvegarder</span>
+            </button>
+            <button id="share-prediction"
+                class="flex items-center justify-center space-x-2 px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 rounded-xl transition-all font-semibold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z">
+                    </path>
+                </svg>
+                <span>Partager</span>
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  # Application FastAPI
+  house-prices-api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models
+      - ./logs:/app/logs
+    environment:
+      - PYTHONPATH=/app/src
+      - MODEL_PATH=/app/models/house_prices_model.pkl
+    depends_on:
+      - mlflow
+    networks:
+      - house-prices-network
+
+  # MLflow Tracking Server
+  mlflow:
+    image: python:3.9-slim
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlflow/mlruns
+      - ./models:/mlflow/models
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=file:///mlflow/mlruns
+      - MLFLOW_DEFAULT_ARTIFACT_ROOT=file:///mlflow/mlruns
+      - MLFLOW_HOST=0.0.0.0
+      - MLFLOW_PORT=5000
+    command: >
+      sh -c "pip install mlflow && 
+             mlflow server 
+             --backend-store-uri $MLFLOW_BACKEND_STORE_URI 
+             --default-artifact-root $MLFLOW_DEFAULT_ARTIFACT_ROOT 
+             --host $MLFLOW_HOST 
+             --port $MLFLOW_PORT"
+    networks:
+      - house-prices-network
+
+  # Jupyter Notebook pour l'exploration
+  jupyter:
+    build: .
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/app/notebooks
+      - ./data:/app/data
+      - ./src:/app/src
+    environment:
+      - PYTHONPATH=/app/src
+    command: >
+      sh -c "pip install jupyter jupyterlab && 
+             jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root 
+             --NotebookApp.token='' --NotebookApp.password=''"
+    networks:
+      - house-prices-network
+
+  # Base de données PostgreSQL (optionnelle)
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: house_prices
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - house-prices-network
+
+  # Interface pgAdmin (optionnelle)
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+    networks:
+      - house-prices-network
+
+volumes:
+  postgres_data:
+
+networks:
+  house-prices-network:
+    driver: bridge

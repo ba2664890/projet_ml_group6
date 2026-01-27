@@ -1,0 +1,96 @@
+<div class="space-y-8 animate-fade-in">
+    <!-- Quick Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div
+            class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 card-hover">
+            <div class="flex items-center justify-between mb-4">
+                <div
+                    class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                        </path>
+                    </svg>
+                </div>
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Props</span>
+            </div>
+            <div class="text-3xl font-black text-slate-800 dark:text-white" id="stat-total-props">0</div>
+            <p class="text-sm text-slate-500 mt-2">Maisons dans le dataset</p>
+        </div>
+
+        <div
+            class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 card-hover">
+            <div class="flex items-center justify-between mb-4">
+                <div
+                    class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                        </path>
+                    </svg>
+                </div>
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Avg Price</span>
+            </div>
+            <div class="text-3xl font-black text-slate-800 dark:text-white" id="stat-avg-price">$0</div>
+            <p class="text-sm text-slate-500 mt-2">Prix de vente moyen</p>
+        </div>
+
+        <div
+            class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 card-hover">
+            <div class="flex items-center justify-between mb-4">
+                <div
+                    class="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center text-amber-600 dark:text-amber-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                </div>
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Max Price</span>
+            </div>
+            <div class="text-3xl font-black text-slate-800 dark:text-white" id="stat-max-price">$0</div>
+            <p class="text-sm text-slate-500 mt-2">Prix de vente maximum</p>
+        </div>
+
+        <div
+            class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 card-hover">
+            <div class="flex items-center justify-between mb-4">
+                <div
+                    class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center text-purple-600 dark:text-purple-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                </div>
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Median Price</span>
+            </div>
+            <div class="text-3xl font-black text-slate-800 dark:text-white" id="stat-median-price">$0</div>
+            <p class="text-sm text-slate-500 mt-2">Prix médian du marché</p>
+        </div>
+    </div>
+
+    <!-- Main Charts Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Distribution Histogram -->
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <h3 class="text-xl font-bold mb-6 flex items-center space-x-2">
+                <span class="w-2 h-6 bg-blue-600 rounded-full"></span>
+                <span>Distribution des Prix</span>
+            </h3>
+            <div class="h-80 w-full">
+                <canvas id="price-dist-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Neighborhood Bar Chart -->
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <h3 class="text-xl font-bold mb-6 flex items-center space-x-2">
+                <span class="w-2 h-6 bg-emerald-600 rounded-full"></span>
+                <span>Prix Moyens par Quartier</span>
+            </h3>
+            <div class="h-80 w-full">
+                <canvas id="neighborhood-chart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>

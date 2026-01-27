@@ -1,0 +1,79 @@
+<div class="space-y-8 animate-fade-in">
+    <!-- Model Performance Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div
+            class="bg-gradient-to-br from-blue-600 to-blue-700 p-8 rounded-3xl text-white shadow-lg shadow-blue-500/20">
+            <div class="text-blue-200 text-xs font-bold uppercase tracking-widest mb-4">Gradient Boosting</div>
+            <div class="text-5xl font-black mb-2">91.2%</div>
+            <div class="text-xl font-medium opacity-90">R² Score</div>
+            <div class="mt-8 pt-8 border-t border-white/10 flex items-center justify-between text-sm">
+                <span>Performance Globale</span>
+                <span class="bg-white/20 px-2 py-0.5 rounded-full text-xs font-bold">Excellent</span>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <div class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Précision Moyenne</div>
+            <div class="text-4xl font-black text-slate-800 dark:text-white mb-2">$26,033</div>
+            <div class="text-lg font-medium text-slate-500">RMSE (Root Mean Square Error)</div>
+            <div
+                class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between text-sm">
+                <span class="text-slate-400 italic">Moins c'est mieux</span>
+                <div class="flex items-center text-emerald-500">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M12.395 2.553a1 1 0 00-1.450 0l-7 7a1 1 0 00.380 1.662c.247.051.52.03.754-.069l1.073-.477V16a1 1 0 001 1h2a1 1 0 001-1V10.67l1.073.477a1.002 1.002 0 001.134-1.623l-7-7z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    <span>Optimisé</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <div class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Erreur Absolue</div>
+            <div class="text-4xl font-black text-slate-800 dark:text-white mb-2">$15,511</div>
+            <div class="text-lg font-medium text-slate-500">MAE (Mean Absolute Error)</div>
+            <div
+                class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between text-sm">
+                <span class="text-slate-400 italic">Écart moyen réel</span>
+                <div class="flex space-x-1">
+                    <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                    <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                    <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                    <div class="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Importance Chart -->
+    <div
+        class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-10">
+            <div>
+                <h3 class="text-2xl font-bold mb-1">Importance des Variables</h3>
+                <p class="text-slate-500">Quels sont les facteurs qui influencent le plus le prix ?</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex space-x-2">
+                <span class="px-4 py-2 bg-slate-100 dark:bg-slate-900 rounded-xl text-xs font-bold text-slate-500">Top
+                    10 Features</span>
+            </div>
+        </div>
+        <div class="h-[450px] w-full">
+            <canvas id="feature-importance-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- Technical Details Accordion -->
+    <div
+        class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+        <div class="p-8 border-b border-slate-100 dark:border-slate-700/50">
+            <h3 class="text-xl font-bold">Paramètres du Modèle</h3>
+        </div>
+        <div class="p-8 bg-slate-50 dark:bg-slate-900/50">
+            <pre class="text-sm font-mono text-blue-600 dark:text-blue-400 overflow-auto max-h-60"
+                id="model-params-display">Chargement des paramètres...</pre>
+        </div>
+    </div>
+</div>
