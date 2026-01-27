@@ -2,6 +2,9 @@
  * Overview View Module
  */
 
+// Initialize Views object if not exists
+if (!window.Views) window.Views = {};
+
 window.Views.overview = {
     template: () => `
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

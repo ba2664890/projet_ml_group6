@@ -2,6 +2,9 @@
  * Model View Module
  */
 
+// Initialize Views object if not exists
+if (!window.Views) window.Views = {};
+
 window.Views.model = {
     template: () => `
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">

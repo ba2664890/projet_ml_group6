@@ -2,6 +2,9 @@
  * Prediction View Module
  */
 
+// Initialize Views object if not exists
+if (!window.Views) window.Views = {};
+
 window.Views.predict = {
     template: () => `
         <div class="max-w-4xl mx-auto">

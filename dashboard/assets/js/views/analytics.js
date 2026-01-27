@@ -2,6 +2,9 @@
  * Analytics View Module
  */
 
+// Initialize Views object if not exists
+if (!window.Views) window.Views = {};
+
 window.Views.analytics = {
     template: () => `
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
