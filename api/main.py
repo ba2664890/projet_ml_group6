@@ -16,14 +16,27 @@ import pandas as pd
 from pathlib import Path
 import logging
 import sys
+import os
+from datetime import datetime
 
 # Ajout du chemin src pour importer house_prices
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 from house_prices.data.preprocessing import FeatureEngineering, get_feature_types
 
-# Configuration du logging
-logging.basicConfig(level=logging.INFO)
+# Configuration du logging structuré
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler('logs/api.log') if Path('logs').exists() else logging.NullHandler()
+    ]
+)
 logger = logging.getLogger(__name__)
+
+# Variables d'environnement
+ENV = os.getenv('ENV', 'development')
+ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', '*').split(',')
 
 # Initialisation de l'application FastAPI
 app = FastAPI(
@@ -34,14 +47,23 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Configuration CORS
+# Configuration CORS dynamique
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Middleware de logging des requêtes
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = datetime.now()
+    response = await call_next(request)
+    process_time = (datetime.now() - start_time).total_seconds()
+    logger.info(f"{request.method} {request.url.path} - {response.status_code} - {process_time:.3f}s")
+    return response
 
 # Montage des fichiers statiques du dashboard
 dashboard_path = Path(__file__).parent.parent / "dashboard"
