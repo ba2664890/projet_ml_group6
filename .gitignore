@@ -24,6 +24,7 @@ wheels/
 venv/
 env/
 ENV/
+ml_group6/
 .venv
 .env
 
