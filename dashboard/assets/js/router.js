@@ -127,9 +127,6 @@ class Router {
     }
 }
 
-// Global Views Object to be populated by specific JS files
-window.Views = {};
-
 // When everything is loaded, start the router
 document.addEventListener('DOMContentLoaded', () => {
     // We need to wait for view scripts to load
