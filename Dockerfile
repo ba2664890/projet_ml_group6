@@ -24,6 +24,7 @@ COPY src/ ./src/
 COPY api/ ./api/
 COPY models/ ./models/
 COPY data/ ./data/
+COPY dashboard/ ./dashboard/
 
 # Installation du package en mode développement
 RUN pip install -e .

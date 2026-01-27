@@ -110,9 +110,9 @@ data/external/*
 !data/processed/.gitkeep
 !data/external/.gitkeep
 
-# Models directory
 models/*
 !models/.gitkeep
+!models/house_prices_model.pkl
 
 # Keep reports structure but not generated files
 reports/*
