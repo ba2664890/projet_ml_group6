@@ -10,7 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Page Load Animations
 function initPageAnimations() {
-    // Animate hero section
+    // Note: Animations désactivées car le contenu est maintenant chargé dynamiquement par le router
+    // Les animations seront gérées par le router lors du chargement de chaque page
+
+    /* Animations désactivées - contenu dynamique
     gsap.from('#hero h1', {
         duration: 1,
         y: 50,
@@ -57,10 +60,14 @@ function initPageAnimations() {
         stagger: 0.15,
         ease: 'power3.out'
     });
+    */
 }
 
 // Scroll-triggered Animations
 function initScrollAnimations() {
+    // Note: Animations désactivées car le contenu est dynamique
+
+    /* Animations désactivées - contenu dynamique
     // Animate sections on scroll
     const sections = document.querySelectorAll('section');
 
@@ -92,6 +99,7 @@ function initScrollAnimations() {
         y: 100,
         opacity: 0.8
     });
+    */
 }
 
 // Hover Animations
