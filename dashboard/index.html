@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laplace Immo - House Price Prediction Dashboard</title>
+    <title>Laplace Immo | IA Prédiction Immobilière</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,7 +24,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <!-- Custom CSS -->
@@ -36,56 +36,87 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' }
                     }
                 }
             }
         }
     </script>
+    <style>
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark .glass-nav {
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .hero-gradient {
+            background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent), radial-gradient(circle at bottom left, rgba(29, 78, 216, 0.1), transparent);
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased overflow-x-hidden">
 
     <!-- Navigation -->
-    <nav id="navbar"
-        class="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-700">
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 glass-nav transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
-                <div class="flex items-center space-x-3">
+            <div class="flex items-center justify-between h-20">
+                <a href="#" class="flex items-center space-x-3 group">
                     <div
-                        class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        class="w-12 h-12 bg-brand-600 rounded-2xl flex items-center justify-center transform group-hover:rotate-6 transition-transform shadow-lg shadow-brand-500/30">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
                             </path>
                         </svg>
                     </div>
-                    <span
-                        class="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">Laplace
-                        Immo</span>
-                </div>
-
-                <!-- Navigation Links -->
-                <div class="hidden md:flex items-center space-x-8">
+                    <div>
+                        <span
+                            class="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-brand-600 to-brand-800 bg-clip-text text-transparent">Laplace
+                            Immo</span>
+                        <p class="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-400 leading-none">
+                            Intelligence Artificielle</p>
+                    </div>
+                </a>
+                <div class="hidden md:flex items-center space-x-2">
                     <a href="#overview"
-                        class="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Overview</a>
+                        class="px-5 py-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-brand-600 dark:hover:text-brand-400 transition-all font-semibold text-sm">Accueil</a>
+                    <a href="#about"
+                        class="px-5 py-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-brand-600 dark:hover:text-brand-400 transition-all font-semibold text-sm">Le
+                        Projet</a>
                     <a href="#predict"
-                        class="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Predict</a>
+                        class="px-5 py-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-brand-600 dark:hover:text-brand-400 transition-all font-semibold text-sm">Prédiction</a>
                     <a href="#analytics"
-                        class="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Analytics</a>
-                    <a href="#model"
-                        class="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Model</a>
-                    <a href="#map"
-                        class="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Map</a>
+                        class="px-5 py-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-brand-600 dark:hover:text-brand-400 transition-all font-semibold text-sm">Analyses</a>
                 </div>
-
-                <!-- Theme Toggle -->
                 <div class="flex items-center space-x-4">
                     <button id="theme-toggle"
-                        class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        class="p-3 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 hover:scale-110 transition-transform">
                         <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                         </svg>
@@ -96,148 +127,232 @@
                                 fill-rule="evenodd" clip-rule="evenodd"></path>
                         </svg>
                     </button>
+                    <a href="#predict"
+                        class="hidden lg:flex px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-2xl font-bold transition-all shadow-lg shadow-brand-500/20 active:scale-95 text-sm uppercase tracking-widest leading-none">Démarrer</a>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="pt-16">
-        <!-- Hero Section -->
+    <main class="relative">
         <section id="overview"
-            class="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white py-24">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center">
-                    <h1 class="text-5xl md:text-6xl font-bold mb-6">
-                        House Price Prediction
-                        <span class="block text-blue-200">Powered by AI</span>
-                    </h1>
-                    <p class="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
-                        Prédisez avec précision le prix des maisons à Ames, Iowa grâce à notre modèle de Machine
-                        Learning avancé
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            class="relative min-h-screen flex items-center pt-24 pb-20 overflow-hidden hero-gradient">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center relative z-10">
+                <div class="space-y-8">
+                    <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800/50 opacity-0"
+                        id="hero-tag">
+                        <span class="flex h-2 w-2 rounded-full bg-brand-600 animate-pulse"></span>
+                        <span class="text-xs font-bold uppercase tracking-widest leading-none">Technologie Prédictive
+                            V2.0</span>
+                    </div>
+                    <h1 class="text-6xl md:text-7xl font-extrabold font-display leading-[1.1] tracking-tight text-slate-900 dark:text-white opacity-0 transform translate-y-10"
+                        id="hero-title">L'immobilier est <span class="text-brand-600 italic">Big Data.</span></h1>
+                    <p class="text-xl md:text-2xl text-slate-600 dark:text-slate-400 max-w-xl font-medium leading-relaxed opacity-0 transform translate-y-10"
+                        id="hero-desc">Estimez vos biens à <span class="text-brand-600 font-bold italic">Ames,
+                            Iowa</span> avec notre moteur d'IA entraîné sur 1,460 transactions résidentielles.</p>
+                    <div class="flex flex-col sm:flex-row gap-5 opacity-0 transform translate-y-10" id="hero-btns">
                         <a href="#predict"
-                            class="inline-flex items-center px-8 py-4 bg-white text-blue-700 rounded-lg font-semibold hover:bg-blue-50 transition-all shadow-lg">
-                            Faire une prédiction
-                        </a>
-                        <a href="#analytics"
-                            class="inline-flex items-center px-8 py-4 bg-blue-500/20 text-white rounded-lg font-semibold hover:bg-blue-500/30 transition-all border border-white/20">
-                            Explorer les données
-                        </a>
+                            class="px-8 py-5 bg-brand-600 hover:bg-brand-700 text-white rounded-2xl font-extrabold text-lg transition-all shadow-xl shadow-brand-500/30 text-center">Prédire
+                            maintenant</a>
+                        <a href="#about"
+                            class="px-8 py-5 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-2xl font-extrabold text-lg transition-all shadow-lg border border-slate-200 dark:border-slate-700 text-center hover:shadow-brand-500/10">En
+                            savoir plus</a>
+                    </div>
+                    <div class="grid grid-cols-3 gap-6 pt-10 opacity-0" id="hero-stats">
+                        <div>
+                            <p class="text-3xl font-black text-brand-600 leading-tight">91.2%</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Précision R²</p>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-black text-slate-900 dark:text-white leading-tight">79</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Variables</p>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-black text-slate-900 dark:text-white leading-tight">8k+</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Transactions</p>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-                    <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                        <div class="text-3xl font-bold mb-2">91.2%</div>
-                        <div class="text-blue-100">Model Accuracy (R²)</div>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                        <div class="text-3xl font-bold mb-2">$26,033</div>
-                        <div class="text-blue-100">Average Error (RMSE)</div>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                        <div class="text-3xl font-bold mb-2">1,460</div>
-                        <div class="text-blue-100">Training Samples</div>
+                <div class="relative opacity-0 transform translate-x-10" id="hero-image-container">
+                    <div class="absolute -inset-10 bg-brand-600/10 blur-[100px]"></div>
+                    <div
+                        class="relative rounded-[3rem] overflow-hidden shadow-2xl border-2 border-white/20 dark:border-slate-800/50">
+                        <img src="assets/images/hero.png" alt="Maison de luxe"
+                            class="w-full h-auto object-cover hover:scale-105 transition-transform duration-1000">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Prediction Section -->
-        <section id="predict" class="py-20 bg-white dark:bg-slate-900">
+        <section id="about" class="py-32 bg-white dark:bg-slate-900">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl font-bold mb-4">Prédiction de Prix</h2>
-                    <p class="text-xl text-slate-600 dark:text-slate-400">Remplissez les informations pour obtenir une
-                        estimation</p>
-                </div>
-                <div id="prediction-form-container" class="max-w-4xl mx-auto">
-                    <div class="text-center text-slate-500 py-12">Chargement du formulaire...</div>
+                <div class="grid lg:grid-cols-2 gap-20 items-center">
+                    <div
+                        class="order-2 lg:order-1 relative rounded-[3rem] overflow-hidden shadow-2xl h-[500px] border-2 border-slate-100 dark:border-slate-800 animate-float">
+                        <img src="assets/images/ai.png" alt="Intelligence Artificielle"
+                            class="w-full h-full object-cover">
+                    </div>
+                    <div class="order-1 lg:order-2 space-y-8">
+                        <h2 class="text-sm font-black uppercase tracking-[0.4em] text-brand-600">Innovation & Données
+                        </h2>
+                        <h3
+                            class="text-4xl md:text-5xl font-black font-display text-slate-900 dark:text-white leading-tight">
+                            Le moteur de prédiction <span
+                                class="bg-gradient-to-r from-brand-600 to-brand-400 bg-clip-text text-transparent italic">le
+                                plus précis d'Ames.</span></h3>
+                        <p class="text-xl text-slate-500 dark:text-slate-400 leading-relaxed font-medium">Notre
+                            architecture de Machine Learning (Gradient Boosting Regressor) analyse chaque détail de
+                            votre propriété, du type de toiture à la qualité du sous-sol, pour une estimation
+                            immobilière chirurgicale.</p>
+                        <div class="grid grid-cols-2 gap-4 text-left">
+                            <div
+                                class="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-800 group hover:border-brand-300 transition-colors">
+                                <p class="text-2xl font-black text-brand-600 mb-1">01</p>
+                                <p
+                                    class="font-bold text-slate-900 dark:text-white uppercase tracking-widest text-[10px]">
+                                    Data Collection</p>
+                                <p class="text-sm text-slate-500">1460 biens analysés.</p>
+                            </div>
+                            <div
+                                class="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-800 group hover:border-brand-300 transition-colors">
+                                <p class="text-2xl font-black text-brand-600 mb-1">02</p>
+                                <p
+                                    class="font-bold text-slate-900 dark:text-white uppercase tracking-widest text-[10px]">
+                                    AI Processing</p>
+                                <p class="text-sm text-slate-500">FastAPI & Sklearn.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Analytics Section -->
-        <section id="analytics" class="py-20 bg-slate-50 dark:bg-slate-800">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl font-bold mb-4">Analytics & Visualisations</h2>
-                    <p class="text-xl text-slate-600 dark:text-slate-400">Explorez les données et tendances du marché
+        <section id="predict" class="py-32 bg-slate-50 dark:bg-slate-800/20 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <div class="max-w-3xl mx-auto mb-20 space-y-4 text-center">
+                    <h2 class="text-sm font-black uppercase tracking-[0.4em] text-brand-600 mx-auto">Estimation Express
+                    </h2>
+                    <p class="text-4xl md:text-5xl font-black font-display text-slate-900 dark:text-white">Activez le
+                        <span
+                            class="bg-gradient-to-r from-brand-600 to-brand-400 bg-clip-text text-transparent">Simulateur.</span>
                     </p>
                 </div>
-                <div id="charts-container">
-                    <div class="text-center text-slate-500 py-12">Chargement des graphiques...</div>
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-[3.5rem] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 p-8 md:p-12 relative">
+                    <div id="prediction-form-container" class="max-w-4xl mx-auto">
+                        <div class="flex flex-col items-center justify-center py-20 space-y-6">
+                            <div
+                                class="w-16 h-16 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin">
+                            </div>
+                            <p class="text-xl font-bold text-slate-400 animate-pulse uppercase tracking-[0.2em]">
+                                Chargement de l'API...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Model Performance Section -->
-        <section id="model" class="py-20 bg-white dark:bg-slate-900">
+        <section id="analytics" class="py-32 bg-white dark:bg-slate-900">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl font-bold mb-4">Performance du Modèle</h2>
-                    <p class="text-xl text-slate-600 dark:text-slate-400">Métriques et analyse de performance</p>
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
+                    <div class="space-y-4 max-w-2xl">
+                        <h2 class="text-sm font-black uppercase tracking-[0.4em] text-brand-600">Marché Local</h2>
+                        <p class="text-4xl md:text-5xl font-black font-display text-slate-900 dark:text-white">Tendances
+                            d'Ames en <span class="text-brand-600 italic">Temps Réel.</span></p>
+                    </div>
+                    <div class="flex space-x-4">
+                        <div
+                            class="p-6 bg-slate-50 dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 capitalize">Prix
+                                Moyen</p>
+                            <p class="text-3xl font-black text-brand-600">$180,921</p>
+                        </div>
+                    </div>
                 </div>
-                <div id="model-performance-container">
-                    <div class="text-center text-slate-500 py-12">Chargement des informations...</div>
+                <div id="charts-container" class="space-y-12 text-center py-20">
+                    <div
+                        class="inline-block w-12 h-12 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin">
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Map Section -->
-        <section id="map" class="py-20 bg-slate-50 dark:bg-slate-800">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl font-bold mb-4">Carte Interactive</h2>
-                    <p class="text-xl text-slate-600 dark:text-slate-400">Visualisez les prix par quartier</p>
+        <section id="map" class="py-32 bg-slate-50 dark:bg-slate-900">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-16">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-10">
+                    <div class="space-y-4 text-center md:text-left">
+                        <h2 class="text-sm font-black uppercase tracking-[0.4em] text-brand-600">Exploration Spatiale
+                        </h2>
+                        <p class="text-4xl md:text-5xl font-black font-display text-slate-900 dark:text-white">Carte
+                            Interactive <span class="text-brand-600 italic">Des Prix.</span></p>
+                        <p class="text-lg text-slate-500 dark:text-slate-400 font-medium">Découvrez les variations de
+                            prix d'un quartier à l'autre dans la ville d'Ames.</p>
+                    </div>
+                    <div>
+                        <button id="map-satellite-toggle"
+                            class="px-8 py-4 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-2xl font-black shadow-lg border border-slate-200 dark:border-slate-700 flex items-center group hover:bg-brand-50 transition-colors">
+                            <span class="mr-2">Vue Satellite</span>
+                            <svg class="w-5 h-5 text-brand-600 group-hover:scale-125 transition-transform"
+                                fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <div id="map-container"
-                    class="h-96 rounded-2xl overflow-hidden shadow-xl bg-slate-200 dark:bg-slate-700">
-                    <div class="h-full flex items-center justify-center text-slate-500">Chargement de la carte...</div>
+                    class="h-[600px] rounded-[4rem] overflow-hidden shadow-2xl bg-slate-200 dark:bg-slate-800 border-8 border-white dark:border-slate-700 relative scale-95 hover:scale-100 transition-transform duration-700">
+                    <div class="h-full flex items-center justify-center text-slate-500 font-black italic">Génération de
+                        la cartographie...</div>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-300 py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h3 class="text-white font-bold text-lg mb-4">Laplace Immo</h3>
-                    <p class="text-sm">Prédiction de prix immobiliers propulsée par l'Intelligence Artificielle</p>
-                </div>
-                <div>
-                    <h3 class="text-white font-bold text-lg mb-4">Liens Rapides</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#predict" class="hover:text-blue-400 transition-colors">Prédiction</a></li>
-                        <li><a href="#analytics" class="hover:text-blue-400 transition-colors">Analytics</a></li>
-                        <li><a href="#model" class="hover:text-blue-400 transition-colors">Modèle</a></li>
-                        <li><a href="/docs" class="hover:text-blue-400 transition-colors">API Documentation</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-white font-bold text-lg mb-4">Informations</h3>
-                    <p class="text-sm mb-2">Modèle: Gradient Boosting</p>
-                    <p class="text-sm mb-2">Précision: 91.2% (R²)</p>
-                    <p class="text-sm">Dataset: Ames, Iowa Housing</p>
-                </div>
+    <footer class="bg-brand-950 text-slate-400 py-32 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-12">
+            <div class="flex items-center justify-center space-x-3">
+                <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white"><svg
+                        class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                        </path>
+                    </svg></div><span class="text-2xl font-black text-white px-2">Laplace Immo</span>
             </div>
-            <div class="border-t border-slate-800 mt-8 pt-8 text-center text-sm">
-                <p>&copy; 2026 Laplace Immo. Tous droits réservés.</p>
+            <p class="max-w-2xl mx-auto text-lg leading-relaxed font-medium">L'IA au service de votre patrimoine.
+                Prédisez l'avenir immobilier avec une précision chirurgicale.</p>
+            <div class="flex justify-center space-x-8"><a href="#overview"
+                    class="hover:text-white transition-colors font-bold uppercase tracking-[0.2em] text-[10px]">Accueil</a><a
+                    href="#about"
+                    class="hover:text-white transition-colors font-bold uppercase tracking-[0.2em] text-[10px]">Projet</a><a
+                    href="#predict"
+                    class="hover:text-white transition-colors font-bold uppercase tracking-[0.2em] text-[10px]">Calcul</a><a
+                    href="#analytics"
+                    class="hover:text-white transition-colors font-bold uppercase tracking-[0.2em] text-[10px]">Données</a>
             </div>
+            <div class="border-t border-white/5 pt-12 text-[10px] font-black uppercase tracking-[0.4em] text-slate-600">
+                &copy; 2026 Laplace Immo Data Science. Ames, Iowa.</div>
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="assets/js/utils.js"></script>
     <script src="assets/js/api.js"></script>
     <script src="assets/js/animations.js"></script>
+    <script src="assets/js/map.js"></script>
     <script src="assets/js/charts.js"></script>
     <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.to('#hero-tag', { opacity: 1, duration: 1, delay: 0.2 });
+            gsap.to('#hero-title', { opacity: 1, y: 0, duration: 1, delay: 0.4, ease: "power4.out" });
+            gsap.to('#hero-desc', { opacity: 1, y: 0, duration: 1, delay: 0.6, ease: "power4.out" });
+            gsap.to('#hero-btns', { opacity: 1, y: 0, duration: 1, delay: 0.8, ease: "power4.out" });
+            gsap.to('#hero-stats', { opacity: 1, duration: 1, delay: 1 });
+            gsap.to('#hero-image-container', { opacity: 1, x: 0, duration: 1.2, delay: 0.5, ease: "power2.out" });
+        });
+    </script>
 </body>
 
 </html>

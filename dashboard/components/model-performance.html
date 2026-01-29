@@ -1,79 +1,102 @@
-<div class="space-y-8 animate-fade-in">
-    <!-- Model Performance Metrics -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="space-y-12 animate-fadeIn">
+    <!-- Model Performance Metrics (Premium High-End) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div
-            class="bg-gradient-to-br from-blue-600 to-blue-700 p-8 rounded-3xl text-white shadow-lg shadow-blue-500/20">
-            <div class="text-blue-200 text-xs font-bold uppercase tracking-widest mb-4">Gradient Boosting</div>
-            <div class="text-5xl font-black mb-2">91.2%</div>
-            <div class="text-xl font-medium opacity-90">R² Score</div>
-            <div class="mt-8 pt-8 border-t border-white/10 flex items-center justify-between text-sm">
-                <span>Performance Globale</span>
-                <span class="bg-white/20 px-2 py-0.5 rounded-full text-xs font-bold">Excellent</span>
+            class="relative group bg-brand-600 p-10 rounded-[3rem] text-white shadow-2xl shadow-brand-500/30 overflow-hidden transform hover:-translate-y-2 transition-all duration-500">
+            <div
+                class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform">
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-blue-200 mb-6">Précision Algorithmique</p>
+            <div class="text-7xl font-black mb-4 tracking-tighter">91<span class="text-3xl">.2%</span></div>
+            <p class="text-xl font-bold opacity-80 uppercase tracking-widest text-sm">Score R² Global</p>
+            <div class="mt-12 pt-8 border-t border-white/10 flex items-center justify-between">
+                <p class="text-[10px] font-black uppercase">Statut : Optimal</p>
+                <div class="w-2 h-2 rounded-full bg-white animate-ping"></div>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
-            <div class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Précision Moyenne</div>
-            <div class="text-4xl font-black text-slate-800 dark:text-white mb-2">$26,033</div>
-            <div class="text-lg font-medium text-slate-500">RMSE (Root Mean Square Error)</div>
-            <div
-                class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between text-sm">
-                <span class="text-slate-400 italic">Moins c'est mieux</span>
-                <div class="flex items-center text-emerald-500">
-                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M12.395 2.553a1 1 0 00-1.450 0l-7 7a1 1 0 00.380 1.662c.247.051.52.03.754-.069l1.073-.477V16a1 1 0 001 1h2a1 1 0 001-1V10.67l1.073.477a1.002 1.002 0 001.134-1.623l-7-7z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                    <span>Optimisé</span>
-                </div>
+        <div
+            class="p-10 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-xl group">
+            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-6 text-left">Marge d'Erreur
+                (RMSE)</p>
+            <div class="text-5xl font-black text-slate-900 dark:text-white mb-4">$26,033</div>
+            <p class="text-slate-500 font-medium leading-relaxed">Déviation standard des prédictions sur l'ensemble de
+                test.</p>
+            <div class="mt-12 flex space-x-2">
+                <div class="h-1 flex-1 bg-brand-600 rounded-full"></div>
+                <div class="h-1 flex-1 bg-brand-600 rounded-full"></div>
+                <div class="h-1 flex-1 bg-brand-600 rounded-full"></div>
+                <div class="h-1 flex-1 bg-brand-100 dark:bg-slate-800 rounded-full"></div>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
-            <div class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Erreur Absolue</div>
-            <div class="text-4xl font-black text-slate-800 dark:text-white mb-2">$15,511</div>
-            <div class="text-lg font-medium text-slate-500">MAE (Mean Absolute Error)</div>
-            <div
-                class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between text-sm">
-                <span class="text-slate-400 italic">Écart moyen réel</span>
-                <div class="flex space-x-1">
-                    <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                    <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                    <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                    <div class="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-700"></div>
-                </div>
+        <div
+            class="p-10 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-xl group">
+            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-6 text-left">Erreur Absolue
+                (MAE)</p>
+            <div class="text-5xl font-black text-slate-900 dark:text-white mb-4">$15,511</div>
+            <p class="text-slate-500 font-medium leading-relaxed">Écart moyen réel entre l'IA et le prix de vente final.
+            </p>
+            <div class="mt-12 flex space-x-2">
+                <div class="h-1 flex-1 bg-emerald-500 rounded-full"></div>
+                <div class="h-1 flex-1 bg-emerald-500 rounded-full"></div>
+                <div class="h-1 flex-1 bg-emerald-500 rounded-full"></div>
+                <div class="h-1 flex-1 bg-brand-100 dark:bg-slate-800 rounded-full"></div>
             </div>
         </div>
     </div>
 
-    <!-- Feature Importance Chart -->
+    <!-- Feature Importance Container -->
     <div
-        class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-        <div class="flex flex-col md:flex-row md:items-center justify-between mb-10">
-            <div>
-                <h3 class="text-2xl font-bold mb-1">Importance des Variables</h3>
-                <p class="text-slate-500">Quels sont les facteurs qui influencent le plus le prix ?</p>
+        class="bg-white dark:bg-slate-900 p-12 rounded-[4rem] border border-slate-100 dark:border-slate-800 shadow-2xl overflow-hidden relative group">
+        <div
+            class="absolute top-0 right-0 w-96 h-96 bg-brand-600/5 rounded-full -mr-48 -mt-48 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
+        </div>
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8 relative z-10">
+            <div class="space-y-4">
+                <h3 class="text-sm font-black uppercase tracking-[0.4em] text-brand-600 text-left">Poids Décisionnel
+                </h3>
+                <p class="text-4xl font-black font-display text-slate-900 dark:text-white">Facteurs <span
+                        class="bg-gradient-to-r from-brand-600 to-brand-400 bg-clip-text text-transparent italic">Dominants.</span>
+                </p>
             </div>
-            <div class="mt-4 md:mt-0 flex space-x-2">
-                <span class="px-4 py-2 bg-slate-100 dark:bg-slate-900 rounded-xl text-xs font-bold text-slate-500">Top
-                    10 Features</span>
+            <div
+                class="bg-slate-50 dark:bg-slate-800 px-6 py-3 rounded-2xl border border-slate-100 dark:border-slate-700">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Analyse de Variance</p>
             </div>
         </div>
-        <div class="h-[450px] w-full">
-            <canvas id="feature-importance-chart"></canvas>
-        </div>
+        <div class="h-[500px] w-full relative z-10"><canvas id="feature-importance-chart"></canvas></div>
     </div>
 
-    <!-- Technical Details Accordion -->
-    <div
-        class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
-        <div class="p-8 border-b border-slate-100 dark:border-slate-700/50">
-            <h3 class="text-xl font-bold">Paramètres du Modèle</h3>
+    <!-- Technical Specs -->
+    <div class="grid lg:grid-cols-2 gap-8">
+        <div
+            class="bg-slate-900 dark:bg-black p-10 rounded-[3rem] border border-slate-800 shadow-2xl relative overflow-hidden">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white"><svg
+                        class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg></div>
+                <h4 class="text-xl font-black text-white uppercase tracking-widest">Pipeline Metadata</h4>
+            </div>
+            <pre class="bg-white/5 p-8 rounded-3xl text-brand-400 text-xs font-mono overflow-auto max-h-80 leading-relaxed scrollbar-hide"
+                id="model-params-display">Initialisation des hyperparamètres...</pre>
         </div>
-        <div class="p-8 bg-slate-50 dark:bg-slate-900/50">
-            <pre class="text-sm font-mono text-blue-600 dark:text-blue-400 overflow-auto max-h-60"
-                id="model-params-display">Chargement des paramètres...</pre>
+        <div
+            class="bg-brand-600/10 p-10 rounded-[3rem] border border-brand-600/20 flex flex-col justify-center space-y-6">
+            <h4 class="text-2xl font-black text-slate-900 dark:text-white leading-tight uppercase tracking-tight">
+                Architecture du Système</h4>
+            <ul class="space-y-4">
+                <li class="flex items-center space-x-3"><span class="w-2 h-2 bg-brand-600 rounded-full"></span><span
+                        class="font-bold text-slate-600 dark:text-slate-400">Prétraitement Scikit-Learn
+                        (Pipelines)</span></li>
+                <li class="flex items-center space-x-3"><span class="w-2 h-2 bg-brand-600 rounded-full"></span><span
+                        class="font-bold text-slate-600 dark:text-slate-400">Optimisation d'Ensemble par
+                        Itération</span></li>
+                <li class="flex items-center space-x-3"><span class="w-2 h-2 bg-brand-600 rounded-full"></span><span
+                        class="font-bold text-slate-600 dark:text-slate-400">Validation Croisée Temporelle</span></li>
+            </ul>
         </div>
     </div>
 </div>
