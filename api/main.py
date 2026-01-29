@@ -11,6 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from typing import Dict, Any, Optional
 import joblib
+import json
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -204,16 +205,29 @@ def load_model():
 
 # Chemin des données
 DATA_PATH = Path(__file__).parent.parent / "data" / "raw" / "train.csv"
+STATS_PATH = Path(__file__).parent.parent / "data" / "processed" / "stats.json"
 _train_data_cache = None
+_stats_cache = None
+
+def get_stats_data():
+    """Charge les statistiques pré-calculées."""
+    global _stats_cache
+    if _stats_cache is None:
+        if STATS_PATH.exists():
+            with open(STATS_PATH, 'r') as f:
+                _stats_cache = json.load(f)
+        else:
+            logger.warning(f"Fichier de statistiques non trouvé: {STATS_PATH}")
+    return _stats_cache
 
 def get_train_data():
-    """Charge et cache les données d'entraînement."""
+    """Charge et cache les données d'entraînement (si disponibles)."""
     global _train_data_cache
     if _train_data_cache is None:
         if DATA_PATH.exists():
             _train_data_cache = pd.read_csv(DATA_PATH)
         else:
-            logger.warning(f"Fichier de données non trouvé: {DATA_PATH}")
+            logger.warning(f"Fichier de données brutes non trouvé: {DATA_PATH}")
     return _train_data_cache
 
 # Charger le modèle au démarrage
@@ -394,6 +408,12 @@ async def predict_batch(houses: list[HouseFeatures]):
 @app.get("/api/stats/overview")
 async def get_stats_overview():
     """Retourne des statistiques globales sur le dataset."""
+    # 1. Tenter via le cache JSON (rapide et marche sans CSV)
+    stats = get_stats_data()
+    if stats and "overview" in stats:
+        return stats["overview"]
+    
+    # 2. Sinon via le CSV
     df = get_train_data()
     if df is None:
         raise HTTPException(status_code=404, detail="Données non disponibles")
@@ -410,17 +430,29 @@ async def get_stats_overview():
 @app.get("/api/stats/neighborhoods")
 async def get_neighborhood_stats():
     """Retourne les prix moyens par quartier."""
+    # 1. Tenter via le cache JSON
+    stats = get_stats_data()
+    if stats and "neighborhoods" in stats:
+        return stats["neighborhoods"]
+        
+    # 2. Sinon via le CSV
     df = get_train_data()
     if df is None:
         raise HTTPException(status_code=404, detail="Données non disponibles")
     
-    nb_stats = df.groupby('Neighborhood')['SalePrice'].agg(['mean', 'median', 'count']).reset_index()
+    nb_stats = df.groupby('Neighborhood')['SalePrice'].agg(['mean', 'median', 'count', 'min', 'max']).reset_index()
     nb_stats = nb_stats.rename(columns={'mean': 'avg_price', 'median': 'median_price', 'count': 'property_count'})
     return nb_stats.to_dict(orient='records')
 
 @app.get("/api/stats/price-distribution")
 async def get_price_distribution(bins: int = 20):
     """Retourne la distribution des prix pour un histogramme."""
+    # 1. Tenter via le cache JSON
+    stats = get_stats_data()
+    if stats and "distribution" in stats:
+        return stats["distribution"]
+        
+    # 2. Sinon via le CSV
     df = get_train_data()
     if df is None:
         raise HTTPException(status_code=404, detail="Données non disponibles")

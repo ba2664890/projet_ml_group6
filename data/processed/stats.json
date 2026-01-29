@@ -1,0 +1,258 @@
+{
+    "overview": {
+        "total_properties": 1460,
+        "avg_price": 180921.19589041095,
+        "median_price": 163000.0,
+        "min_price": 34900.0,
+        "max_price": 755000.0,
+        "price_std": 79442.50288288662
+    },
+    "neighborhoods": [
+        {
+            "Neighborhood": "Blmngtn",
+            "avg_price": 194870.88235294117,
+            "median_price": 191000.0,
+            "property_count": 17,
+            "min_price": 159895.0,
+            "max_price": 264561.0
+        },
+        {
+            "Neighborhood": "Blueste",
+            "avg_price": 137500.0,
+            "median_price": 137500.0,
+            "property_count": 2,
+            "min_price": 124000.0,
+            "max_price": 151000.0
+        },
+        {
+            "Neighborhood": "BrDale",
+            "avg_price": 104493.75,
+            "median_price": 106000.0,
+            "property_count": 16,
+            "min_price": 83000.0,
+            "max_price": 125000.0
+        },
+        {
+            "Neighborhood": "BrkSide",
+            "avg_price": 124834.05172413793,
+            "median_price": 124300.0,
+            "property_count": 58,
+            "min_price": 39300.0,
+            "max_price": 223500.0
+        },
+        {
+            "Neighborhood": "ClearCr",
+            "avg_price": 212565.42857142858,
+            "median_price": 200250.0,
+            "property_count": 28,
+            "min_price": 130000.0,
+            "max_price": 328000.0
+        },
+        {
+            "Neighborhood": "CollgCr",
+            "avg_price": 197965.77333333335,
+            "median_price": 197200.0,
+            "property_count": 150,
+            "min_price": 110000.0,
+            "max_price": 424870.0
+        },
+        {
+            "Neighborhood": "Crawfor",
+            "avg_price": 210624.72549019608,
+            "median_price": 200624.0,
+            "property_count": 51,
+            "min_price": 90350.0,
+            "max_price": 392500.0
+        },
+        {
+            "Neighborhood": "Edwards",
+            "avg_price": 128219.7,
+            "median_price": 121750.0,
+            "property_count": 100,
+            "min_price": 58500.0,
+            "max_price": 320000.0
+        },
+        {
+            "Neighborhood": "Gilbert",
+            "avg_price": 192854.50632911394,
+            "median_price": 181000.0,
+            "property_count": 79,
+            "min_price": 141000.0,
+            "max_price": 377500.0
+        },
+        {
+            "Neighborhood": "IDOTRR",
+            "avg_price": 100123.78378378379,
+            "median_price": 103000.0,
+            "property_count": 37,
+            "min_price": 34900.0,
+            "max_price": 169500.0
+        },
+        {
+            "Neighborhood": "MeadowV",
+            "avg_price": 98576.4705882353,
+            "median_price": 88000.0,
+            "property_count": 17,
+            "min_price": 75000.0,
+            "max_price": 151400.0
+        },
+        {
+            "Neighborhood": "Mitchel",
+            "avg_price": 156270.1224489796,
+            "median_price": 153500.0,
+            "property_count": 49,
+            "min_price": 84500.0,
+            "max_price": 271000.0
+        },
+        {
+            "Neighborhood": "NAmes",
+            "avg_price": 145847.08,
+            "median_price": 140000.0,
+            "property_count": 225,
+            "min_price": 87500.0,
+            "max_price": 345000.0
+        },
+        {
+            "Neighborhood": "NPkVill",
+            "avg_price": 142694.44444444444,
+            "median_price": 146000.0,
+            "property_count": 9,
+            "min_price": 127500.0,
+            "max_price": 155000.0
+        },
+        {
+            "Neighborhood": "NWAmes",
+            "avg_price": 189050.0684931507,
+            "median_price": 182900.0,
+            "property_count": 73,
+            "min_price": 82500.0,
+            "max_price": 299800.0
+        },
+        {
+            "Neighborhood": "NoRidge",
+            "avg_price": 335295.31707317074,
+            "median_price": 301500.0,
+            "property_count": 41,
+            "min_price": 190000.0,
+            "max_price": 755000.0
+        },
+        {
+            "Neighborhood": "NridgHt",
+            "avg_price": 316270.6233766234,
+            "median_price": 315000.0,
+            "property_count": 77,
+            "min_price": 154000.0,
+            "max_price": 611657.0
+        },
+        {
+            "Neighborhood": "OldTown",
+            "avg_price": 128225.30088495575,
+            "median_price": 119000.0,
+            "property_count": 113,
+            "min_price": 37900.0,
+            "max_price": 475000.0
+        },
+        {
+            "Neighborhood": "SWISU",
+            "avg_price": 142591.36,
+            "median_price": 139500.0,
+            "property_count": 25,
+            "min_price": 60000.0,
+            "max_price": 200000.0
+        },
+        {
+            "Neighborhood": "Sawyer",
+            "avg_price": 136793.13513513515,
+            "median_price": 135000.0,
+            "property_count": 74,
+            "min_price": 62383.0,
+            "max_price": 190000.0
+        },
+        {
+            "Neighborhood": "SawyerW",
+            "avg_price": 186555.7966101695,
+            "median_price": 179900.0,
+            "property_count": 59,
+            "min_price": 76000.0,
+            "max_price": 320000.0
+        },
+        {
+            "Neighborhood": "Somerst",
+            "avg_price": 225379.83720930232,
+            "median_price": 225500.0,
+            "property_count": 86,
+            "min_price": 144152.0,
+            "max_price": 423000.0
+        },
+        {
+            "Neighborhood": "StoneBr",
+            "avg_price": 310499.0,
+            "median_price": 278000.0,
+            "property_count": 25,
+            "min_price": 170000.0,
+            "max_price": 556581.0
+        },
+        {
+            "Neighborhood": "Timber",
+            "avg_price": 242247.44736842104,
+            "median_price": 228475.0,
+            "property_count": 38,
+            "min_price": 137500.0,
+            "max_price": 378500.0
+        },
+        {
+            "Neighborhood": "Veenker",
+            "avg_price": 238772.72727272726,
+            "median_price": 218000.0,
+            "property_count": 11,
+            "min_price": 162500.0,
+            "max_price": 385000.0
+        }
+    ],
+    "distribution": {
+        "labels": [
+            "34k-70k",
+            "70k-106k",
+            "106k-142k",
+            "142k-178k",
+            "178k-214k",
+            "214k-250k",
+            "250k-286k",
+            "286k-322k",
+            "322k-358k",
+            "358k-394k",
+            "394k-430k",
+            "430k-466k",
+            "466k-502k",
+            "502k-538k",
+            "538k-574k",
+            "574k-610k",
+            "610k-646k",
+            "646k-682k",
+            "682k-718k",
+            "718k-755k"
+        ],
+        "values": [
+            22,
+            126,
+            380,
+            343,
+            229,
+            144,
+            86,
+            49,
+            28,
+            23,
+            12,
+            7,
+            3,
+            1,
+            2,
+            1,
+            2,
+            0,
+            0,
+            2
+        ]
+    }
+}
