@@ -1,198 +1,113 @@
 # Laplace Immo - Prédiction des Prix des Maisons
 
-## Contexte du Projet
+![CI/CD Pipeline](https://github.com/votre-username/projet_ml_group6/workflows/CI/CD%20Pipeline/badge.svg)
 
-Ce projet est réalisé pour **Laplace Immo**, un réseau national d'agences immobilières. L'objectif est de développer un algorithme de prédiction des prix des maisons résidentielles à Ames (Iowa, US) en utilisant 79 variables explicatives.
+## 📌 Contexte du Projet
 
-## 🎯 Objectifs
+Ce projet est réalisé pour **Laplace Immo**, un réseau national d'agences immobilières. L'objectif est de développer un algorithme de prédiction des prix des maisons résidentielles à Ames (Iowa, US) en utilisant une base de données de 79 variables descriptives.
 
-- **Analyser** les données immobilières avec 79 variables explicatives
-- **Développer** un modèle de prédiction performant du prix des maisons
-- **Implémenter** un système de tracking des expériences avec MLflow
-- **Déployer** une API pour des prédictions en temps réel
-- **Automatiser** les tests et le déploiement avec GitHub Actions
+L'algorithme permet aux agents immobiliers d'obtenir une estimation fiable du prix de vente basée sur les caractéristiques du bien.
 
-## 📁 Structure du Projet
+## 🚀 Fonctionnalités Clés
 
+- **Pipeline de Prédiction Unifié** : Intégration complète du prétraitement, du feature engineering et du modèle.
+- **Correction d'Asymétrie (Skewness)** : Transformation automatique `log(1+x)` pour les variables asymétriques.
+- **Feature Engineering Avancé** : Création de variables expertes (`HouseAge`, `TotalSF`, etc.).
+- **Transformation Log de la Cible** : Entraînement sur `log(SalePrice)` pour une meilleure distribution, avec inversion automatique pour les prédictions.
+- **Tracking MLflow** : Suivi des expériences, paramètres et métriques.
+- **API FastAPI** : Interface REST performante pour les prédictions en temps réel.
+- **CI/CD** : Tests automatisés et déploiement via GitHub Actions.
+
+## 🛠️ Architecture Technique
+
+### Structure du Projet
 ```
 house_prices_project/
-├── .github/
-│   └── workflows/
-│       └── ci.yml              # CI/CD avec GitHub Actions
-├── api/
-│   ├── main.py                 # Application FastAPI
-│   └── models/                 # Modèles sauvegardés
-├── data/
-│   ├── raw/                    # Données brutes
-│   ├── processed/              # Données prétraitées
-│   └── external/               # Données externes
-├── docs/                       # Documentation
-├── models/                     # Modèles entraînés
-├── notebooks/
-│   ├── house_price_01_analyse.ipynb      # Analyse exploratoire
-│   └── house_price_02_essais.ipynb       # Tests de modèles
-├── reports/                    # Rapports et visualisations
-├── scripts/                    # Scripts utilitaires
+├── .github/                # Workflows Actions (CI/CD)
+├── api/                    # Application FastAPI
+│   └── main.py
+├── data/                   # Données (raw, processed)
+├── models/                 # Modèles sérialisés (.pkl)
+├── notebooks/              # (Ignorés pour le déploiement)
 ├── src/
 │   └── house_prices/
-│       ├── __init__.py
-│       ├── data/               # Chargement et prétraitement
-│       ├── features/           # Ingénierie des features
-│       ├── models/             # Modèles ML
-│       └── visualization/      # Outils de visualisation
-├── tests/                      # Tests unitaires
-├── requirements.txt            # Dépendances Python
-├── setup.py                    # Configuration du package
-└── README.md                   # Ce fichier
+│       ├── data/           # Prétraitement & Feature Engineering
+│       ├── models/         # Entraînement & Prédiction
+├── tests/                  # Tests unitaires (pytest)
+├── grp_06_ml.py            # Script d'analyse (Legacy/Reference)
+├── requirements.txt        # Dépendances
+└── README.md               # Documentation
 ```
 
-## 🚀 Installation
+### Le Modèle : BayesianRidge
+Le modèle final retenu est un **Bayesian Ridge Regression**, choisi pour sa robustesse et sa capacité à gérer la régularisation automatiquement.
+- **RMSE** : ~0.12 (sur log price)
+- **Préprocesseurs** : 
+  - `MissingValuesHandler` : Imputation intelligente
+  - `AnomalyCorrector` : Correction des années aberrantes
+  - `SkewnessCorrector` : Log-transformation des variables asymétriques (skew > 0.75)
+  - `OrdinalEncoder` : Encodage des variables ordinales (Qualité, etc.)
 
-### Prérequis
+## 📦 Installation & Démarrage Rapide
 
-- Python 3.8+
-- pip
-- Git
-
-### Installation locale
-
-1. Clonez le repository :
+### 1. Cloner le projet
 ```bash
-git clone https://github.com/votre-username/house-prices-prediction.git
-cd house-prices-prediction
+git clone https://github.com/votre-username/projet_ml_group6.git
+cd projet_ml_group6
 ```
 
-2. Créez un environnement virtuel :
+### 2. Environnement Virtuel
 ```bash
 python -m venv venv
-source venv/bin/activate  # Sur Windows : venv\Scripts\activate
-```
-
-3. Installez les dépendances :
-```bash
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-4. Installez le package en mode développement :
-```bash
 pip install -e .
 ```
 
-## 📊 Utilisation
-
-### 1. Analyse Exploratoire
-
-Ouvrez le notebook `notebooks/house_price_01_analyse.ipynb` pour l'analyse exploratoire des données.
-
-### 2. Tests de Modèles
-
-Ouvrez le notebook `notebooks/house_price_02_essais.ipynb` pour les tests comparatifs des modèles.
-
-### 3. Tracking avec MLflow
-
-Lancez l'interface MLflow :
+### 3. Lancer l'API
 ```bash
-mlflow ui --host 0.0.0.0 --port 5000
+uvicorn api.main:app --reload
+```
+L'API sera accessible sur [http://localhost:8000](http://localhost:8000).
+Documentation interactive : [http://localhost:8000/docs](http://localhost:8000/docs)
+
+## ☁️ Déploiement (Render)
+
+Ce projet est configuré pour un déploiement facile sur **Render** (ou tout autre service PaaS compatible).
+
+1. Connectez votre dépôt GitHub à Render.
+2. Choisissez **Web Service**.
+3. Configurez les paramètres :
+   - **Runtime** : Python 3
+   - **Build Command** : `pip install -r requirements.txt && pip install -e .`
+   - **Start Command** : `uvicorn api.main:app --host 0.0.0.0 --port $PORT`
+4. Ajoutez la variable d'environnement (si nécessaire) :
+   - `PYTHON_VERSION`: `3.10.12`
+
+## 🧪 Tests et Qualité
+
+Pour lancer la suite de tests unitaires (couvrant le chargement de données, le prétraitement, et le modèle) :
+
+```bash
+pytest tests/ -v
 ```
 
-### 4. API FastAPI
+Les tests vérifient :
+- L'intégrité des transformations de données.
+- La gestion des valeurs manquantes et aberrantes.
+- La cohérence des prédictions (valeurs positives, bornes réalistes).
+- L'inversion correcte de la transformation Log sur les prédictions.
 
-Lancez l'API de prédiction :
+## 📊 MLflow
+
+Pour visualiser les expériences d'entraînement :
+
 ```bash
-uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
+mlflow ui
 ```
-
-L'API sera accessible à l'adresse : http://localhost:8000/docs
-
-### 5. Tests
-
-Exécutez les tests unitaires :
-```bash
-pytest tests/
-```
-
-## 🔧 Configuration GitHub Actions
-
-Le workflow CI/CD est configuré dans `.github/workflows/ci.yml`. Il exécute automatiquement :
-- Les tests unitaires
-- La vérification du style de code (flake8)
-- La construction de l'application
-- Le déploiement (si configuré)
-
-## 📈 Modèles Implémentés
-
-Les modèles suivants ont été testés :
-- **Régression Linéaire**
-- **Ridge Regression**
-- **Lasso Regression**
-- **Random Forest**
-- **Gradient Boosting**
-- **XGBoost**
-
-**Modèle final choisi** : [À déterminer après analyse]
-
-## 🎯 Métriques de Performance
-
-Les métriques utilisées pour l'évaluation :
-- **RMSE** (Root Mean Square Error)
-- **MAE** (Mean Absolute Error)
-- **R² Score**
-
-## 📋 Structure des Données
-
-- **Nombre de variables** : 79
-- **Variable cible** : `SalePrice` (prix de vente)
-- **Nombre d'observations** : 1460 (jeu d'entraînement)
-
-Les variables incluent :
-- Caractéristiques de la maison (surface, nombre de pièces, qualité...)
-- Informations de localisation
-- Caractéristiques du terrain
-- Date de construction et de rénovation
-- Équipements (garage, piscine, cheminée...)
-
-## 🧪 Tests
-
-Les tests unitaires sont implémentés avec pytest et couvrent :
-- Le chargement des données
-- Le prétraitement
-- Les transformations
-- Les prédictions du modèle
-
-Pour exécuter les tests :
-```bash
-pytest tests/ -v --cov=src
-```
-
-## 📝 Convention de Code
-
-Le projet respecte les conventions PEP 8. Utilisez flake8 pour vérifier le style :
-```bash
-flake8 src/ tests/
-```
-
-## 🤝 Contribution
-
-1. Fork le projet
-2. Créez une branche pour votre feature (`git checkout -b feature/AmazingFeature`)
-3. Committez vos changements (`git commit -m 'Add some AmazingFeature'`)
-4. Pushez vers la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrez une Pull Request
+Accédez au dashboard sur [http://localhost:5000](http://localhost:5000).
 
 ## 📄 Licence
 
-Ce projet est sous licence MIT.
-
-## 👥 Auteur
-
-[Votre nom] - Data Scientist chez Laplace Immo
-
-## 🙏 Remerciements
-
-- Laplace Immo pour ce projet
-- La communauté Kaggle pour les données
-- Les contributeurs open source des bibliothèques utilisées
-
----
-
-**Note** : Ce projet est en cours de développement. Des améliorations continues sont apportées.# projet_ml_group6
+Projet réalisé par l'équipe Data Science - Groupe 6.
+Sous licence MIT.
