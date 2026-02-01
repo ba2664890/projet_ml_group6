@@ -66,11 +66,17 @@
                 <div class="space-y-4">
                     <label class="flex items-center justify-between group">
                         <span
-                            class="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-brand-600 transition-colors">Quartier
-                            Historique</span>
+                            class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 group-hover:text-brand-600 transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                </path>
+                            </svg>
+                            Quartier Géo
+                        </span>
                         <span
-                            class="text-[8px] bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 px-2.5 py-1 rounded-full font-bold uppercase tracking-tighter">Impact
-                            Max</span>
+                            class="text-[9px] bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 px-3 py-1 rounded-full font-black uppercase tracking-tighter shadow-sm">Impact
+                            Fort</span>
                     </label>
                     <div class="relative group">
                         <div
@@ -107,256 +113,309 @@
                 </div>
 
                 <!-- Building Type -->
-                <div class="space-y-4">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Configuration
-                        Résidentielle</label>
-                    <div class="relative group">
-                        <div
-                            class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                                </path>
-                            </svg>
-                        </div>
-                        <select name="BldgType" required
-                            class="w-full bg-slate-50 dark:bg-slate-800/40 border-2 border-slate-100 dark:border-slate-700/50 rounded-2xl pl-14 pr-6 py-5 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 appearance-none font-bold text-slate-900 dark:text-white transition-all">
-                            <option value="1Fam">Maison Individuelle</option>
-                            <option value="TwnhsE">Townhouse (Extremité)</option>
-                            <option value="Duplex">Duplex</option>
-                            <option value="Twnhs">Townhouse (Intérieur)</option>
-                            <option value="2fmCon">Conversion 2 Familles</option>
-                        </select>
-                        <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><svg
-                                class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                    d="M19 9l-7 7-7-7"></path>
-                            </svg></div>
+                <label
+                    class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                        </path>
+                    </svg>
+                    Configuration Résidentielle
+                </label>
+                <div class="relative group">
+                    <div
+                        class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                            </path>
+                        </svg>
                     </div>
+                    <select name="BldgType" required
+                        class="w-full bg-slate-50 dark:bg-slate-800/40 border-2 border-slate-100 dark:border-slate-700/50 rounded-2xl pl-14 pr-6 py-5 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 appearance-none font-bold text-slate-900 dark:text-white transition-all">
+                        <option value="1Fam">Maison Individuelle</option>
+                        <option value="TwnhsE">Townhouse (Extremité)</option>
+                        <option value="Duplex">Duplex</option>
+                        <option value="Twnhs">Townhouse (Intérieur)</option>
+                        <option value="2fmCon">Conversion 2 Familles</option>
+                    </select>
+                    <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><svg
+                            class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg></div>
                 </div>
+            </div>
 
-                <!-- Year Built -->
-                <div class="space-y-4">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Année
-                        d'Achèvement</label>
-                    <div class="relative group">
-                        <div
-                            class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                        </div>
-                        <input type="number" name="YearBuilt" min="1800" max="2026" value="2005" required
-                            class="w-full bg-slate-50 dark:bg-slate-800/40 border-2 border-slate-100 dark:border-slate-700/50 rounded-2xl pl-14 pr-6 py-5 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 font-bold text-slate-900 dark:text-white outline-none transition-all">
+            <!-- Year Built -->
+            <div class="space-y-4">
+                <label
+                    class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    Année de Construction
+                </label>
+                <div class="relative group">
+                    <div
+                        class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
                     </div>
+                    <input type="number" name="YearBuilt" min="1800" max="2026" value="2005" required
+                        class="w-full bg-slate-50 dark:bg-slate-800/40 border-2 border-slate-100 dark:border-slate-700/50 rounded-2xl pl-14 pr-6 py-5 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 font-bold text-slate-900 dark:text-white outline-none transition-all">
                 </div>
+            </div>
 
-                <!-- Lot Area -->
-                <div class="space-y-4">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Surface
-                        Terrain</label>
-                    <div class="relative group">
-                        <div
-                            class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4">
-                                </path>
-                            </svg>
-                        </div>
-                        <input type="number" name="LotArea" value="8500" required
-                            class="w-full bg-slate-50 dark:bg-slate-800/40 border-2 border-slate-100 dark:border-slate-700/50 rounded-2xl pl-14 pr-16 py-5 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 font-bold text-slate-900 dark:text-white outline-none transition-all">
-                        <span
-                            class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-[10px] uppercase italic">ft²</span>
+            <!-- Lot Area -->
+            <div class="space-y-4">
+                <label
+                    class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4">
+                        </path>
+                    </svg>
+                    Surface du Terrain
+                </label>
+                <div class="relative group">
+                    <div
+                        class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4">
+                            </path>
+                        </svg>
                     </div>
+                    <input type="number" name="LotArea" value="8500" required
+                        class="w-full bg-slate-50 dark:bg-slate-800/40 border-2 border-slate-100 dark:border-slate-700/50 rounded-2xl pl-14 pr-16 py-5 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 font-bold text-slate-900 dark:text-white outline-none transition-all">
+                    <span
+                        class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-[10px] uppercase italic">ft²</span>
+                </div>
+            </div>
+        </div>
+</div>
+
+<!-- Step 2: Quality & Interior (Hidden) -->
+<div id="form-step-2" class="hidden space-y-10 animate-fadeIn">
+    <!-- Overall Quality Slider Specialist Layout -->
+    <div
+        class="bg-white dark:bg-slate-800/50 p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-700/50 shadow-sm space-y-8">
+        <div class="flex items-center justify-between">
+            <div class="space-y-1">
+                <h5 class="text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white">Qualité
+                    Globale de Construction</h5>
+                <p class="text-[10px] text-slate-400 font-medium tracking-wide">Évaluez la structure et les
+                    finitions de 1 à 10</p>
+            </div>
+            <div class="flex flex-col items-end">
+                <span class="text-3xl font-black text-brand-600" id="val-OverallQual">7<span
+                        class="text-slate-300 text-lg">/10</span></span>
+            </div>
+        </div>
+
+        <div class="px-2">
+            <input type="range" name="OverallQual" min="1" max="10" value="7"
+                class="w-full h-2.5 bg-slate-100 dark:bg-slate-700 rounded-full appearance-none cursor-pointer accent-brand-600 focus:ring-2 focus:ring-brand-500/20">
+            <div class="flex justify-between mt-6 px-1">
+                <div class="flex flex-col items-center">
+                    <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Standard</span>
+                    <div class="w-1 h-1 bg-slate-300 rounded-full"></div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Moyen</span>
+                    <div class="w-1 h-1 bg-slate-300 rounded-full"></div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-[8px] font-black text-brand-600 uppercase tracking-widest mb-1">Premium</span>
+                    <div class="w-1 h-4 bg-brand-600/30 rounded-full"></div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Luxe</span>
+                    <div class="w-1 h-1 bg-slate-300 rounded-full"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Living Area -->
+        <div class="space-y-4">
+            <label class="flex items-center justify-between">
+                <span
+                    class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                        </path>
+                    </svg>
+                    Surface Habitable (GrLivArea)
+                </span>
+                <span
+                    class="text-[9px] bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-green-300 px-3 py-1 rounded-full font-black uppercase tracking-tighter shadow-sm">Déterminant</span>
+            </label>
+            <div class="relative group">
+                <div
+                    class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                        </path>
+                    </svg>
+                </div>
+                <input type="number" name="GrLivArea" value="1800" required
+                    class="w-full bg-slate-50 dark:bg-slate-800/40 border-2 border-slate-100 dark:border-slate-700/50 rounded-2xl pl-14 pr-16 py-5 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 font-bold text-slate-900 dark:text-white outline-none transition-all">
+                <span
+                    class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-[10px] uppercase italic">ft²</span>
+            </div>
+        </div>
+
+        <!-- Kitchen Quality -->
+        <div class="space-y-4">
+            <label
+                class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                    </path>
+                </svg>
+                Équipement Cuisine
+            </label>
+            <div class="relative group">
+                <div
+                    class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                </div>
+                <select name="KitchenQual"
+                    class="w-full bg-slate-50 dark:bg-slate-800/40 border-2 border-slate-100 dark:border-slate-700/50 rounded-2xl pl-14 pr-6 py-5 focus:border-brand-500 appearance-none font-bold text-slate-900 dark:text-white transition-all">
+                    <option value="Ex">Excellent (Chef de Luxe)</option>
+                    <option value="Gd" selected>Haut de gamme</option>
+                    <option value="TA">Qualité Standard</option>
+                    <option value="Fa">Usage Modeste</option>
+                </select>
+                <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><svg
+                        class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
+                    </svg></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Step 3: Features & Comfort (Hidden) -->
+<div id="form-step-3" class="hidden space-y-10 animate-fadeInPlus">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Garage -->
+        <div
+            class="flex items-center space-x-6 p-10 bg-white dark:bg-slate-800/40 rounded-[2.5rem] border border-slate-100 dark:border-slate-700/50 hover:border-brand-500/30 transition-all group">
+            <div
+                class="w-16 h-16 bg-brand-50 dark:bg-brand-900/30 rounded-2xl flex items-center justify-center text-brand-600 group-hover:scale-110 transition-transform duration-500">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4">
+                    </path>
+                </svg>
+            </div>
+            <div class="flex-1 space-y-2">
+                <p class="text-[9px] font-black uppercase tracking-widest text-slate-400">Capacité Garage</p>
+                <div class="flex items-center space-x-4">
+                    <input type="number" name="GarageCars" value="2"
+                        class="w-16 bg-transparent border-none text-3xl font-black text-slate-900 dark:text-white focus:ring-0 p-0">
+                    <span class="text-slate-300 font-bold italic text-xs uppercase">Auto(s)</span>
                 </div>
             </div>
         </div>
 
-        <!-- Step 2: Quality & Interior (Hidden) -->
-        <div id="form-step-2" class="hidden space-y-10 animate-fadeIn">
-            <!-- Overall Quality Slider Specialist Layout -->
+        <!-- Bathrooms -->
+        <div
+            class="flex items-center space-x-6 p-10 bg-white dark:bg-slate-800/40 rounded-[2.5rem] border border-slate-100 dark:border-slate-700/50 hover:border-brand-500/30 transition-all group">
             <div
-                class="bg-white dark:bg-slate-800/50 p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-700/50 shadow-sm space-y-8">
-                <div class="flex items-center justify-between">
-                    <div class="space-y-1">
-                        <h5 class="text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white">Qualité
-                            Globale de Construction</h5>
-                        <p class="text-[10px] text-slate-400 font-medium tracking-wide">Évaluez la structure et les
-                            finitions de 1 à 10</p>
-                    </div>
-                    <div class="flex flex-col items-end">
-                        <span class="text-3xl font-black text-brand-600" id="val-OverallQual">7<span
-                                class="text-slate-300 text-lg">/10</span></span>
-                    </div>
-                </div>
-
-                <div class="px-2">
-                    <input type="range" name="OverallQual" min="1" max="10" value="7"
-                        class="w-full h-2.5 bg-slate-100 dark:bg-slate-700 rounded-full appearance-none cursor-pointer accent-brand-600 focus:ring-2 focus:ring-brand-500/20">
-                    <div class="flex justify-between mt-6 px-1">
-                        <div class="flex flex-col items-center">
-                            <span
-                                class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Standard</span>
-                            <div class="w-1 h-1 bg-slate-300 rounded-full"></div>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <span
-                                class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Moyen</span>
-                            <div class="w-1 h-1 bg-slate-300 rounded-full"></div>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <span
-                                class="text-[8px] font-black text-brand-600 uppercase tracking-widest mb-1">Premium</span>
-                            <div class="w-1 h-4 bg-brand-600/30 rounded-full"></div>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <span
-                                class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Luxe</span>
-                            <div class="w-1 h-1 bg-slate-300 rounded-full"></div>
-                        </div>
-                    </div>
-                </div>
+                class="w-16 h-16 bg-brand-50 dark:bg-brand-900/30 rounded-2xl flex items-center justify-center text-brand-600 group-hover:scale-110 transition-transform duration-500">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9">
+                    </path>
+                </svg>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Living Area -->
-                <div class="space-y-4">
-                    <label class="flex items-center justify-between">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">Surface Habitable
-                            Totale</span>
-                        <span
-                            class="text-[8px] bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-2.5 py-1 rounded-full font-bold uppercase tracking-tighter">Crucial</span>
-                    </label>
-                    <div class="relative group">
-                        <div
-                            class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
-                                </path>
-                            </svg>
-                        </div>
-                        <input type="number" name="GrLivArea" value="1800" required
-                            class="w-full bg-slate-50 dark:bg-slate-800/40 border-2 border-slate-100 dark:border-slate-700/50 rounded-2xl pl-14 pr-16 py-5 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 font-bold text-slate-900 dark:text-white outline-none transition-all">
-                        <span
-                            class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-[10px] uppercase italic">ft²</span>
-                    </div>
-                </div>
-
-                <!-- Kitchen Quality -->
-                <div class="space-y-4">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Équipement
-                        Cuisine</label>
-                    <div class="relative group">
-                        <div
-                            class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
-                                </path>
-                            </svg>
-                        </div>
-                        <select name="KitchenQual"
-                            class="w-full bg-slate-50 dark:bg-slate-800/40 border-2 border-slate-100 dark:border-slate-700/50 rounded-2xl pl-14 pr-6 py-5 focus:border-brand-500 appearance-none font-bold text-slate-900 dark:text-white transition-all">
-                            <option value="Ex">Excellent (Chef de Luxe)</option>
-                            <option value="Gd" selected>Haut de gamme</option>
-                            <option value="TA">Qualité Standard</option>
-                            <option value="Fa">Usage Modeste</option>
-                        </select>
-                        <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"><svg
-                                class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                    d="M19 9l-7 7-7-7"></path>
-                            </svg></div>
-                    </div>
+            <div class="flex-1 space-y-2">
+                <p class="text-[9px] font-black uppercase tracking-widest text-slate-400">Salles de Bain</p>
+                <div class="flex items-center space-x-4">
+                    <input type="number" name="FullBath" value="2"
+                        class="w-16 bg-transparent border-none text-3xl font-black text-slate-900 dark:text-white focus:ring-0 p-0">
+                    <span class="text-slate-300 font-bold italic text-xs uppercase">Complète(s)</span>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Step 3: Features & Comfort (Hidden) -->
-        <div id="form-step-3" class="hidden space-y-10 animate-fadeInPlus">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Garage -->
+    <!-- Advanced Calibration (Collapsible) -->
+    <div class="mt-8">
+        <button type="button" id="toggle-advanced-fields"
+            class="w-full flex items-center justify-between p-6 bg-slate-50 dark:bg-slate-800/40 rounded-3xl border border-slate-100 dark:border-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all group">
+            <div class="flex items-center space-x-4">
                 <div
-                    class="flex items-center space-x-6 p-10 bg-white dark:bg-slate-800/40 rounded-[2.5rem] border border-slate-100 dark:border-slate-700/50 hover:border-brand-500/30 transition-all group">
-                    <div
-                        class="w-16 h-16 bg-brand-50 dark:bg-brand-900/30 rounded-2xl flex items-center justify-center text-brand-600 group-hover:scale-110 transition-transform duration-500">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4">
-                            </path>
-                        </svg>
-                    </div>
-                    <div class="flex-1 space-y-2">
-                        <p class="text-[9px] font-black uppercase tracking-widest text-slate-400">Capacité Garage</p>
-                        <div class="flex items-center space-x-4">
-                            <input type="number" name="GarageCars" value="2"
-                                class="w-16 bg-transparent border-none text-3xl font-black text-slate-900 dark:text-white focus:ring-0 p-0">
-                            <span class="text-slate-300 font-bold italic text-xs uppercase">Auto(s)</span>
-                        </div>
-                    </div>
+                    class="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center text-indigo-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
                 </div>
+                <div class="text-left">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white">
+                        Détails Techniques & Calibration</p>
+                    <p class="text-[9px] text-slate-400 font-medium">Réglages automatiques pour une précision
+                        maximale</p>
+                </div>
+            </div>
+            <svg id="advanced-toggle-icon"
+                class="w-5 h-5 text-slate-400 transform transition-transform group-hover:text-brand-600" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
+            </svg>
+        </button>
 
-                <!-- Bathrooms -->
-                <div
-                    class="flex items-center space-x-6 p-10 bg-white dark:bg-slate-800/40 rounded-[2.5rem] border border-slate-100 dark:border-slate-700/50 hover:border-brand-500/30 transition-all group">
-                    <div
-                        class="w-16 h-16 bg-brand-50 dark:bg-brand-900/30 rounded-2xl flex items-center justify-center text-brand-600 group-hover:scale-110 transition-transform duration-500">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9">
-                            </path>
-                        </svg>
-                    </div>
-                    <div class="flex-1 space-y-2">
-                        <p class="text-[9px] font-black uppercase tracking-widest text-slate-400">Salles de Bain</p>
-                        <div class="flex items-center space-x-4">
-                            <input type="number" name="FullBath" value="2"
-                                class="w-16 bg-transparent border-none text-3xl font-black text-slate-900 dark:text-white focus:ring-0 p-0">
-                            <span class="text-slate-300 font-bold italic text-xs uppercase">Complète(s)</span>
-                        </div>
-                    </div>
+        <div id="advanced-fields-container"
+            class="hidden mt-6 p-8 bg-white dark:bg-slate-900/40 rounded-[2.5rem] border border-slate-100 dark:border-slate-800/50 space-y-8 animate-fadeIn">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6">
+                <div class="flex flex-col space-y-2">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">Condition
+                        Globale</span>
+                    <input type="number" name="OverallCond" value="5"
+                        class="w-full bg-slate-50 dark:bg-slate-800/40 border-2 border-slate-100 dark:border-slate-700/50 rounded-xl px-4 py-3 font-bold text-sm text-slate-700 dark:text-slate-300 focus:border-brand-500 outline-none">
+                </div>
+                <div class="flex flex-col space-y-2">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">Surface S-Sol
+                        (ft²)</span>
+                    <input type="number" name="TotalBsmtSF" value="1000"
+                        class="w-full bg-slate-50 dark:bg-slate-800/40 border-2 border-slate-100 dark:border-slate-700/50 rounded-xl px-4 py-3 font-bold text-sm text-slate-700 dark:text-slate-300 focus:border-brand-500 outline-none">
+                </div>
+                <div class="flex flex-col space-y-2">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">Chambres</span>
+                    <input type="number" name="BedroomAbvGr" value="3"
+                        class="w-full bg-slate-50 dark:bg-slate-800/40 border-2 border-slate-100 dark:border-slate-700/50 rounded-xl px-4 py-3 font-bold text-sm text-slate-700 dark:text-slate-300 focus:border-brand-500 outline-none">
+                </div>
+                <div class="flex flex-col space-y-2">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">Surface Garage
+                        (ft²)</span>
+                    <input type="number" name="GarageArea" value="500"
+                        class="w-full bg-slate-50 dark:bg-slate-800/40 border-2 border-slate-100 dark:border-slate-700/50 rounded-xl px-4 py-3 font-bold text-sm text-slate-700 dark:text-slate-300 focus:border-brand-500 outline-none">
                 </div>
             </div>
 
-            <!-- Invisible Defaults & Calibration (Pydantic safety check) -->
-            <div
-                class="bg-indigo-50 dark:bg-slate-800/20 rounded-3xl p-8 border border-indigo-100 dark:border-slate-800">
-                <p class="text-[9px] font-black uppercase tracking-[0.2em] text-indigo-400 mb-2">Paramètres de
-                    Calibration IA</p>
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4">
-                    <div class="flex flex-col">
-                        <span
-                            class="text-[8px] font-bold text-slate-400 hover:text-indigo-400 transition-colors">Condition
-                            Globale</span>
-                        <input type="number" name="OverallCond" value="5"
-                            class="bg-transparent border-none p-0 text-xs font-black text-slate-600 dark:text-slate-400 w-12 focus:ring-0">
-                    </div>
-                    <div class="flex flex-col">
-                        <span
-                            class="text-[8px] font-bold text-slate-400 hover:text-indigo-400 transition-colors">Surface
-                            S-Sol</span>
-                        <input type="number" name="TotalBsmtSF" value="1000"
-                            class="bg-transparent border-none p-0 text-xs font-black text-slate-600 dark:text-slate-400 w-12 focus:ring-0">
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-[8px] font-bold text-slate-400 hover:text-indigo-400 transition-colors">Nb
-                            Chambres</span>
-                        <input type="number" name="BedroomAbvGr" value="3"
-                            class="bg-transparent border-none p-0 text-xs font-black text-slate-600 dark:text-slate-400 w-12 focus:ring-0">
-                    </div>
-                    <div class="flex flex-col">
-                        <span
-                            class="text-[8px] font-bold text-slate-400 hover:text-indigo-400 transition-colors">Capacité
-                            Garage</span>
-                        <input type="number" name="GarageArea" value="500"
-                            class="bg-transparent border-none p-0 text-xs font-black text-slate-600 dark:text-slate-400 w-12 focus:ring-0">
-                    </div>
-                </div>
-                <!-- Other Hidden fields remain hidden (not necessary for user to see but good for payload consistency) -->
+            <!-- Hidden but essential for payload consistency -->
+            <div class="opacity-0 h-0 overflow-hidden">
                 <input type="hidden" name="CentralAir" value="Y"><input type="hidden" name="TotRmsAbvGrd"
                     value="7"><input type="hidden" name="MSSubClass" value="60"><input type="hidden" name="MSZoning"
                     value="RL"><input type="hidden" name="Street" value="Pave"><input type="hidden" name="LotShape"
@@ -382,57 +441,57 @@
                     value="WD"><input type="hidden" name="SaleCondition" value="Normal">
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- Navigation Buttons Specialist Bar -->
-        <div
-            class="fixed bottom-0 left-0 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-3xl border-t border-slate-100 dark:border-slate-800 p-6 z-50 flex justify-center shadow-[0_-20px_50px_rgba(0,0,0,0.05)]">
-            <div class="w-full max-w-4xl flex items-center justify-between">
-                <div class="flex items-center space-x-6">
-                    <button type="button" id="prev-step"
-                        class="hidden flex items-center space-x-3 px-8 py-4 border-2 border-slate-100 dark:border-slate-700 text-slate-900 dark:text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-50 transition-all">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7">
-                            </path>
-                        </svg>
-                        <span>Précédent</span>
-                    </button>
-                    <button type="button" id="form-reset-btn"
-                        class="flex items-center space-x-3 px-6 py-4 text-slate-400 dark:text-slate-500 hover:text-red-500 transition-all font-black uppercase tracking-widest text-[10px]">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                            </path>
-                        </svg>
-                        <span>Reset</span>
-                    </button>
-                </div>
+<!-- Navigation Buttons (Non-fixed for better visibility) -->
+<div
+    class="mt-20 pt-10 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-8">
+    <div class="flex items-center space-x-6 w-full md:w-auto justify-between md:justify-start">
+        <button type="button" id="prev-step"
+            class="hidden flex items-center space-x-3 px-8 py-4 border-2 border-slate-100 dark:border-slate-700 text-slate-900 dark:text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7">
+                </path>
+            </svg>
+            <span>Précédent</span>
+        </button>
+        <button type="button" id="form-reset-btn"
+            class="flex items-center space-x-3 px-6 py-4 text-slate-400 dark:text-slate-500 hover:text-red-500 transition-all font-black uppercase tracking-widest text-[10px]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                </path>
+            </svg>
+            <span>Reset</span>
+        </button>
+    </div>
 
-                <div class="flex items-center space-x-4">
-                    <button type="button" id="auto-fill-btn"
-                        class="group flex items-center space-x-3 px-6 py-4 bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-brand-100 transition-all border border-brand-100/50 dark:border-brand-800/50">
-                        <span
-                            class="w-2 h-2 rounded-full bg-brand-500 group-hover:scale-125 transition-transform"></span>
-                        <span>Auto-Fill</span>
-                    </button>
-                    <button type="button" id="next-step"
-                        class="flex items-center space-x-4 px-12 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-2xl shadow-indigo-500/10">
-                        <span>Suivant</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    <button type="submit" id="submit-prediction"
-                        class="hidden flex items-center space-x-4 px-16 py-5 bg-gradient-to-r from-brand-600 to-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-xl shadow-brand-500/40">
-                        <span>Lancer l'IA Estimation</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-    </form>
+    <div class="flex items-center space-x-4 w-full md:w-auto justify-center md:justify-end">
+        <button type="button" id="auto-fill-btn"
+            class="group flex items-center space-x-3 px-6 py-4 bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-brand-100 dark:hover:bg-brand-900/40 transition-all border border-brand-100/50 dark:border-brand-800/50">
+            <span class="w-2 h-2 rounded-full bg-brand-500 group-hover:scale-125 transition-transform"></span>
+            <span>Auto-Fill</span>
+        </button>
+        <button type="button" id="next-step"
+            class="flex items-center space-x-4 px-12 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-2xl shadow-indigo-500/10">
+            <span>Suivant</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7-7">
+                </path>
+            </svg>
+        </button>
+        <button type="submit" id="submit-prediction"
+            class="hidden flex items-center space-x-4 px-16 py-5 bg-gradient-to-r from-brand-600 to-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-xl shadow-brand-500/40">
+            <span>Lancer l'IA Estimation</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 10V3L4 14h7v7l9-11h-7z">
+                </path>
+            </svg>
+        </button>
+    </div>
+</div>
+</form>
 </div>
 
 <!-- Result Card (Premium Ultra) -->

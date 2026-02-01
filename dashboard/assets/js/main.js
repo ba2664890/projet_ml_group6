@@ -197,6 +197,12 @@ function setupFormHandlers() {
 
         currentStep = newStep;
 
+        // Scroll to top of form for clarity
+        const formContainer = document.getElementById('prediction-form-container');
+        if (formContainer) {
+            formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
         gsap.from(`#form-step-${newStep}`, {
             duration: 0.5,
             y: 20,
@@ -226,6 +232,35 @@ function setupFormHandlers() {
             form.reset();
             updateStep(1);
             showSuccess('Formulaire réinitialisé.');
+        });
+    }
+
+    // Toggle Advanced Fields Logic
+    const toggleAdvancedBtn = document.getElementById('toggle-advanced-fields');
+    const advancedContainer = document.getElementById('advanced-fields-container');
+    const toggleIcon = document.getElementById('advanced-toggle-icon');
+
+    if (toggleAdvancedBtn && advancedContainer) {
+        toggleAdvancedBtn.addEventListener('click', () => {
+            const isHidden = advancedContainer.classList.contains('hidden');
+            if (isHidden) {
+                advancedContainer.classList.remove('hidden');
+                gsap.from(advancedContainer, { height: 0, opacity: 0, duration: 0.5, ease: 'power2.out' });
+                if (toggleIcon) toggleIcon.style.transform = 'rotate(180deg)';
+            } else {
+                gsap.to(advancedContainer, {
+                    height: 0,
+                    opacity: 0,
+                    duration: 0.3,
+                    ease: 'power2.in',
+                    onComplete: () => {
+                        advancedContainer.classList.add('hidden');
+                        advancedContainer.style.height = 'auto'; // Reset for next open
+                        advancedContainer.style.opacity = '1';
+                    }
+                });
+                if (toggleIcon) toggleIcon.style.transform = 'rotate(0deg)';
+            }
         });
     }
 
