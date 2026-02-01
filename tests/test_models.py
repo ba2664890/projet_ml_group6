@@ -131,8 +131,10 @@ class TestModelSaveLoad:
             assert all(predictions > 0)
 
 
-class TestBayesianRidge:
-    """Tests spécifiques pour BayesianRidge."""
+from sklearn.linear_model import HuberRegressor
+
+class TestHuberRegressor:
+    """Tests spécifiques pour HuberRegressor."""
 
     @pytest.fixture
     def real_data(self):
@@ -147,19 +149,19 @@ class TestBayesianRidge:
         except FileNotFoundError:
             pytest.skip("Données réelles non disponibles")
 
-    def test_bayesian_ridge_parameters(self, real_data):
-        """Test que BayesianRidge est configuré avec les bons paramètres."""
+    def test_huber_regressor_parameters(self, real_data):
+        """Test que HuberRegressor est configuré avec les bons paramètres."""
         X, y = real_data
 
-        params = {"alpha_1": 1e-06, "alpha_2": 1e-06, "lambda_1": 1e-06, "lambda_2": 1e-06}
+        params = {"epsilon": 1.35, "alpha": 10.0}
 
         pipeline, _ = train_model(X, y, params=params)
 
-        # Vérifier que le modèle est bien un BayesianRidge
+        # Vérifier que le modèle est bien un HuberRegressor
         model = pipeline.named_steps["model"]
-        assert isinstance(model, BayesianRidge)
-        assert model.alpha_1 == 1e-06
-        assert model.alpha_2 == 1e-06
+        assert isinstance(model, HuberRegressor)
+        assert model.epsilon == 1.35
+        assert model.alpha == 10.0
 
 
 class TestModelPerformance:
