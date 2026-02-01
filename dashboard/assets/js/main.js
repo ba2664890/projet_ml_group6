@@ -149,6 +149,9 @@ function setupFormHandlers() {
     let currentStep = 1;
     const totalSteps = 3;
 
+    const nextBtn = document.getElementById('next-step');
+    const prevBtn = document.getElementById('prev-step');
+    const submitBtn = document.getElementById('submit-prediction');
     const progressBar = document.getElementById('form-progress-bar');
     const progressText = document.getElementById('progress-text');
     const resetBtn = document.getElementById('form-reset-btn');
