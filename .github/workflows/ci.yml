@@ -148,6 +148,8 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run MLflow experiment
+      env:
+        PYTHONPATH: ${{ github.workspace }}/src
       run: |
         # Lancer un experiment MLflow avec le vrai script (utilise les données réelles data/raw/train.csv)
         # Assurez-vous que data/raw/train.csv est disponible (commité ou téléchargé)
