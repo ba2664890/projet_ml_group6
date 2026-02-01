@@ -28,9 +28,25 @@ from scipy.stats import skew, boxcox_normmax
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 from statsmodels.api import add_constant
 from scipy.special import boxcox1p
+import logging
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import ElasticNetCV
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.compose import make_column_selector as selector
+import random
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, ExtraTreesRegressor, AdaBoostRegressor
+from sklearn.linear_model import Ridge, Lasso, ElasticNet, BayesianRidge, HuberRegressor
+from sklearn.svm import SVR
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.model_selection import RandomizedSearchCV, cross_val_score, GridSearchCV, train_test_split
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+import time
+
 import warnings
 warnings.filterwarnings('ignore')
-from sklearn.metrics import mean_squared_error, r2_score
 
 
 # Configuration
@@ -350,6 +366,85 @@ if high_corr_pairs:
 else:
     print("  Aucune paire avec corrélation > 0.8 dans le top 12")
 
+"""###**Correlation entre les variables numériques**"""
+
+X_numeric = df_numericals.copy()
+
+# Remplacer les valeurs inf par NA, et supprimer
+X_numeric.replace([np.inf, -np.inf], np.nan, inplace=True)
+X_numeric.dropna(inplace=True)
+
+# Suppimer les colonnes sans variance
+constant_columns = [col for col in X_numeric.columns if X_numeric[col].nunique() == 1]
+X_numeric.drop(columns=constant_columns, inplace=True)
+
+# Ajout d'une constante dans le dataframe
+X_numeric_const = add_constant(X_numeric)
+
+# Calcul du VIF
+vif_data = pd.DataFrame()
+vif_data["feature"] = X_numeric_const.columns
+vif_data["VIF"] = [variance_inflation_factor(X_numeric_const.values, i)
+                   for i in range(X_numeric_const.shape[1])]
+
+# Affichage des top 10
+vif_data.sort_values(by="VIF", ascending=False, inplace=True)
+print("Top 10 variables with highest VIF scores:")
+display(vif_data[vif_data['feature'] != 'const'].head(10))
+
+"""Le calcul précédent du VIF a abouti à des valeurs infinies, indiquant une multicolinéarité parfaite. Ceci est probablement dû au fait que certaines variables sont des sommes directes ou des combinaisons linéaires d'autres variables (par exemple, `TotalBsmtSF`, `GrLivArea`). Pour y remédier, nous supprimerons ces variables linéairement dépendantes (en particulier `TotalBsmtSF `, `GrLivArea`, `1stFlrSF`, `2ndFlrSF`, `BsmtFinSF1`, `BsmtFinSF2`, `BsmtUnfSF`, `LowQualFinSF`) du DataFrame numérique avant de recalculer les VIF."""
+
+X_numeric_cleaned = df_numericals.copy()
+
+# Suprimer les variables causant des VIF inf
+X_numeric_cleaned.drop(columns=[
+    'TotalBsmtSF', 'GrLivArea', '1stFlrSF', '2ndFlrSF',
+    'BsmtFinSF1', 'BsmtFinSF2', 'BsmtUnfSF', 'LowQualFinSF'
+], errors='ignore', inplace=True)
+
+X_numeric_cleaned.replace([np.inf, -np.inf], np.nan, inplace=True)
+X_numeric_cleaned.dropna(inplace=True)
+
+constant_columns_cleaned = [col for col in X_numeric_cleaned.columns if X_numeric_cleaned[col].nunique() == 1]
+X_numeric_cleaned.drop(columns=constant_columns_cleaned, inplace=True)
+
+X_numeric_const_cleaned = add_constant(X_numeric_cleaned)
+
+# Calcul du VIF
+vif_data_cleaned = pd.DataFrame()
+vif_data_cleaned["feature"] = X_numeric_const_cleaned.columns
+vif_data_cleaned["VIF"] = [variance_inflation_factor(X_numeric_const_cleaned.values, i)
+                   for i in range(X_numeric_const_cleaned.shape[1])]
+
+vif_data_cleaned.sort_values(by="VIF", ascending=False, inplace=True)
+print("Top 10 des variables avec les VIF les plus élevés:")
+display(vif_data_cleaned[vif_data_cleaned['feature'] != 'const'].head(10))
+
+# Calcul de la matrice de correlation
+correlation_matrix = X_numeric_cleaned.corr()
+
+# Affichage du heatmap
+plt.figure(figsize=(20, 18))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
+plt.title('Matrice de correlation des variables numériques', fontsize=20)
+plt.show()
+
+# Identification des pairs les plus correlées (correlation absolue > 0.8)
+highly_correlated_pairs = []
+for i in range(len(correlation_matrix.columns)):
+    for j in range(i + 1, len(correlation_matrix.columns)):
+        if abs(correlation_matrix.iloc[i, j]) > 0.8:
+            highly_correlated_pairs.append({
+                'var 1': correlation_matrix.columns[i],
+                'var 2': correlation_matrix.columns[j],
+                'Correlation': correlation_matrix.iloc[i, j]
+            })
+
+highly_correlated_df = pd.DataFrame(highly_correlated_pairs)
+
+print("\nPairs les plus correlées (correlation absolue > 0.8):")
+display(highly_correlated_df)
+
 """###**1.4. Analyse des variables catégorielles ordinales**
 
 *Interprétation de la partie*
@@ -493,102 +588,6 @@ plt.show()
 print(f" Volume de ventes par année:")
 print(yearly_stats[['count', 'mean', 'median']].round(0))
 
-"""###**1.7. Etude de la multicolinéarité**
-
-*Interprétation de la partie*
-
-####**1.7.1. Entre variables numériques**
-"""
-
-X_numeric = df_numericals.copy()
-
-# Remplacer les valeurs inf par NA, et supprimer
-X_numeric.replace([np.inf, -np.inf], np.nan, inplace=True)
-X_numeric.dropna(inplace=True)
-
-# Suppimer les colonnes sans variance
-constant_columns = [col for col in X_numeric.columns if X_numeric[col].nunique() == 1]
-X_numeric.drop(columns=constant_columns, inplace=True)
-
-# Ajout d'une constante dans le dataframe
-X_numeric_const = add_constant(X_numeric)
-
-# Calcul du VIF
-vif_data = pd.DataFrame()
-vif_data["feature"] = X_numeric_const.columns
-vif_data["VIF"] = [variance_inflation_factor(X_numeric_const.values, i)
-                   for i in range(X_numeric_const.shape[1])]
-
-# Affichage des top 10
-vif_data.sort_values(by="VIF", ascending=False, inplace=True)
-print("Top 10 variables with highest VIF scores:")
-display(vif_data[vif_data['feature'] != 'const'].head(10))
-
-"""Le calcul précédent du VIF a abouti à des valeurs infinies, indiquant une multicolinéarité parfaite. Ceci est probablement dû au fait que certaines variables sont des sommes directes ou des combinaisons linéaires d'autres variables (par exemple, `TotalBsmtSF`, `GrLivArea`). Pour y remédier, nous supprimerons ces variables linéairement dépendantes (en particulier `TotalBsmtSF `, `GrLivArea`, `1stFlrSF`, `2ndFlrSF`, `BsmtFinSF1`, `BsmtFinSF2`, `BsmtUnfSF`, `LowQualFinSF`) du DataFrame numérique avant de recalculer les VIF."""
-
-X_numeric_cleaned = df_numericals.copy()
-
-# Suprimer les variables causant des VIF inf
-X_numeric_cleaned.drop(columns=[
-    'TotalBsmtSF', 'GrLivArea', '1stFlrSF', '2ndFlrSF',
-    'BsmtFinSF1', 'BsmtFinSF2', 'BsmtUnfSF', 'LowQualFinSF'
-], errors='ignore', inplace=True)
-
-X_numeric_cleaned.replace([np.inf, -np.inf], np.nan, inplace=True)
-X_numeric_cleaned.dropna(inplace=True)
-
-constant_columns_cleaned = [col for col in X_numeric_cleaned.columns if X_numeric_cleaned[col].nunique() == 1]
-X_numeric_cleaned.drop(columns=constant_columns_cleaned, inplace=True)
-
-X_numeric_const_cleaned = add_constant(X_numeric_cleaned)
-
-# Calcul du VIF
-vif_data_cleaned = pd.DataFrame()
-vif_data_cleaned["feature"] = X_numeric_const_cleaned.columns
-vif_data_cleaned["VIF"] = [variance_inflation_factor(X_numeric_const_cleaned.values, i)
-                   for i in range(X_numeric_const_cleaned.shape[1])]
-
-vif_data_cleaned.sort_values(by="VIF", ascending=False, inplace=True)
-print("Top 10 des variables avec les VIF les plus élevés:")
-display(vif_data_cleaned[vif_data_cleaned['feature'] != 'const'].head(10))
-
-# Calcul de la matrice de correlation
-correlation_matrix = X_numeric_cleaned.corr()
-
-# Affichage du heatmap
-plt.figure(figsize=(20, 18))
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
-plt.title('Matrice de correlation des variables numériques', fontsize=20)
-plt.show()
-
-# Identification des pairs les plus correlées (correlation absolue > 0.8)
-highly_correlated_pairs = []
-for i in range(len(correlation_matrix.columns)):
-    for j in range(i + 1, len(correlation_matrix.columns)):
-        if abs(correlation_matrix.iloc[i, j]) > 0.8:
-            highly_correlated_pairs.append({
-                'var 1': correlation_matrix.columns[i],
-                'var 2': correlation_matrix.columns[j],
-                'Correlation': correlation_matrix.iloc[i, j]
-            })
-
-highly_correlated_df = pd.DataFrame(highly_correlated_pairs)
-
-print("\nPairs les plus correlées (correlation absolue > 0.8):")
-display(highly_correlated_df)
-
-"""####**1.7.2. Entre variables numériques et variables catégorielles**"""
-
-
-
-"""####**1.7.3. Entre variables catégorielles**"""
-
-# Categories de la variable Neighboorhood
-neighboorhood_df = df_train['Neighborhood'].value_counts(normalize=True, dropna=False).reset_index()
-# neighboorhood_df['percent'] = neighboorhood_df['count'] / neighboorhood_df['count'].sum() * 100
-neighboorhood_df.sort_values(by='proportion', ascending=False, inplace=True)
-neighboorhood_df
-
 """##**2. Prétraitement**
 
 *Description de la partie et résumé des différentes étapes et principales transformations effectuées*
@@ -603,8 +602,6 @@ df_train.head(3)
 
 df = df_train
 df.head(3)
-
-from sklearn.model_selection import train_test_split
 
 X = df.drop('SalePrice', axis=1)
 y = df['SalePrice']
@@ -645,9 +642,6 @@ print(f"  • Variables imputation par groupe: {len(group_impute)}")
 print(f"  • Variables imputation par mode: {len(mode_features)}")
 
 """####**Classe pour la traitement des valeurs manquantes**"""
-
-import logging
-from sklearn.base import BaseEstimator, TransformerMixin
 
 class MissingValuesHandler(BaseEstimator, TransformerMixin):
   def __init__(self, none_features, zero_features, group_impute, mode_features, strategy_lotfrontage="median", neighborhoods_threshold = 0.02):
@@ -775,17 +769,6 @@ class MissingValuesHandler(BaseEstimator, TransformerMixin):
 
 """### **2.3 Correction des anomalies et incohérences**"""
 
-def correct_anomaly(X):
-  invalid_garage_year = (X['GarageYrBlt'] > X['YearBuilt']).sum()
-  if invalid_garage_year > 0:
-      X['GarageYrBlt'] = np.where(
-          X['GarageYrBlt'] > X['YearBuilt'],
-          X['YearBuilt'],
-          X['GarageYrBlt']
-      )
-      print(f"  ✓ {invalid_garage_year} valeurs corrigées (GarageYrBlt > YearBuilt)")
-  return X
-
 class AnomalyCorrector(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
@@ -797,66 +780,7 @@ class AnomalyCorrector(BaseEstimator, TransformerMixin):
         mask = X['GarageYrBlt'] > X['YearBuilt']
         X.loc[mask, 'GarageYrBlt'] = X.loc[mask, 'YearBuilt']
 
-        # Remplacer
-        #X.replace([np.inf, -np.inf], np.nan, inplace=True)
-
         return X
-
-# print("\n" + "=" * 80)
-# print("2.3 CORRECTION DES ANOMALIES ET INCOHÉRENCES")
-# print("=" * 80)
-
-# anomalies_detected = []
-
-# # 1. GarageYrBlt > YearBuilt
-# print(f" 1. Vérification GarageYrBlt > YearBuilt:")
-# invalid_garage_year = (all_data['GarageYrBlt'] > all_data['YearBuilt']).sum()
-# if invalid_garage_year > 0:
-#     all_data['GarageYrBlt'] = np.where(
-#         all_data['GarageYrBlt'] > all_data['YearBuilt'],
-#         all_data['YearBuilt'],
-#         all_data['GarageYrBlt']
-#     )
-#     print(f"  ✓ {invalid_garage_year} valeurs corrigées (GarageYrBlt > YearBuilt)")
-#     anomalies_detected.append(f"GarageYrBlt > YearBuilt: {invalid_garage_year} cas")
-
-# # 2. MasVnrArea > 0 mais MasVnrType = 'None' //****** // Il n'y en a pas
-# print(f" Vérification MasVnrArea > 0 avec MasVnrType = 'None':")
-# inconsistent_masvnr = ((all_data['MasVnrArea'] > 0) & (all_data['MasVnrType'] == 'None')).sum()
-# if inconsistent_masvnr > 0:
-#     all_data.loc[(all_data['MasVnrArea'] > 0) & (all_data['MasVnrType'] == 'None'), 'MasVnrType'] = 'BrkFace'
-#     print(f"  ✓ {inconsistent_masvnr} valeurs corrigées (MasVnrType 'None' → 'BrkFace')")
-#     anomalies_detected.append(f"MasVnrArea>0 & Type=None: {inconsistent_masvnr} cas")
-
-# # 3. GarageArea > 0 mais GarageCars = 0 (ou inverse) /************/ Il n'y en a pas
-# print(f" Vérification incohérences GarageArea/GarageCars:")
-# garage_inconsistency = ((all_data['GarageArea'] > 0) & (all_data['GarageCars'] == 0)).sum()
-# if garage_inconsistency > 0:
-#     # Imputer 1 voiture si surface > 0 mais 0 voiture
-#     all_data.loc[(all_data['GarageArea'] > 0) & (all_data['GarageCars'] == 0), 'GarageCars'] = 1
-#     print(f"  ✓ {garage_inconsistency} valeurs corrigées (GarageCars 0 → 1)")
-#     anomalies_detected.append(f"GarageArea>0 & Cars=0: {garage_inconsistency} cas")
-
-# # 4. Vérification des surfaces négatives (ne devrait pas exister) /** Il n'y en a pas ***/
-# print(f" Vérification surfaces négatives:")
-# surface_cols = ['GrLivArea', 'TotalBsmtSF', '1stFlrSF', '2ndFlrSF', 'GarageArea']
-# negative_surfaces = 0
-# for col in surface_cols:
-#     neg_count = (all_data[col] < 0).sum()
-#     if neg_count > 0:
-#         negative_surfaces += neg_count
-#         print(f"  {col}: {neg_count} valeurs négatives détectées")
-
-# if negative_surfaces == 0:
-#     print(f"  ✓ Aucune surface négative détectée")
-
-# print(f"\n{'='*60}")
-# print("RÉSUMÉ DES CORRECTIONS:")
-# for anomaly in anomalies_detected:
-#     print(f"  • {anomaly}")
-# if not anomalies_detected:
-#     print(f"  • Aucune anomalie majeure détectée")
-# print(f"{'='*60}")
 
 """### **2.4 Création de nouvelles features**"""
 
@@ -917,125 +841,6 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
 
         return X
 
-def features_creation(X):
-  features_to_delete = []
-  # 1. FEATURES DE SURFACE TOTALE
-  print(f"\n   1. Features de surface:")
-  X['TotalSF'] = X['TotalBsmtSF'] + X['1stFlrSF'] + X['2ndFlrSF']
-  X['TotalSF_AboveGround'] = X['1stFlrSF'] + X['2ndFlrSF']
-  X['Has2ndFloor'] = (X['2ndFlrSF'] > 0).astype(int)
-  X['HasBasement'] = (X['TotalBsmtSF'] > 0).astype(int)
-  features_to_delete.extend(['1stFlrSF', '2ndFlrSF', 'TotalBsmtSF'])
-
-  print(f"     ✓ TotalSF (surface totale)")
-  print(f"     ✓ TotalSF_AboveGround (surface hors-sol)")
-  print(f"     ✓ Has2ndFloor (binaire)")
-  print(f"     ✓ HasBasement (binaire)")
-
-  # 2. FEATURES DE SALLES DE BAIN
-  # print(f" Features de salles de bain:")
-  # X['TotalBath'] = (X['FullBath'] + 0.5 * X['HalfBath'] +
-  #                         X['BsmtFullBath'] + 0.5 * X['BsmtHalfBath'])
-  # X['TotalFullBath'] = X['FullBath'] + X['BsmtFullBath']
-  # X['TotalHalfBath'] = X['HalfBath'] + X['BsmtHalfBath']
-
-  # print(f"     ✓ TotalBath (équivalent full bath)")
-  # print(f"     ✓ TotalFullBath, TotalHalfBath")
-
-  # 3. FEATURES DE PORCHES ET EXTÉRIEUR
-  print(f" Features d'extérieur:")
-  X['TotalPorchSF'] = (X['OpenPorchSF'] + X['3SsnPorch'] +
-                              X['EnclosedPorch'] + X['ScreenPorch'] +
-                              X['WoodDeckSF'])
-  X['HasPorch'] = (X['TotalPorchSF'] > 0).astype(int)
-  X['HasDeck'] = (X['WoodDeckSF'] > 0).astype(int)
-  X['HasPool'] = (X['PoolArea'] > 0).astype(int)
-  features_to_delete.extend(['OpenPorchSF', '3SsnPorch', 'EnclosedPorch'])
-
-  print(f"     ✓ TotalPorchSF (surface porches totale)")
-  print(f"     ✓ HasPorch, HasDeck, HasPool (binaires)")
-
-  # 4. FEATURES TEMPORELLES
-  print(f" Features temporelles:")
-  X['HouseAge'] = X['YrSold'] - X['YearBuilt']
-  X['RemodAge'] = X['YrSold'] - X['YearRemodAdd']
-  X['IsNew'] = (X['YrSold'] == X['YearBuilt']).astype(int)
-  X['HasBeenRemod'] = (X['YearRemodAdd'] > X['YearBuilt']).astype(int)
-  X['HouseAgeBin'] = pd.cut(
-            X['HouseAge'],
-            bins=[0, 5, 20, 50, 100, 200],
-            labels=['New', 'Recent', 'Moderate', 'Old', 'VeryOld'],
-            include_lowest=True
-        )
-  features_to_delete.extend(['YearBuilt', 'YearRemodAdd', 'YrSold'])
-
-  print(f"     ✓ HouseAge (âge de la maison)")
-  print(f"     ✓ RemodAge (âge depuis rénovation)")
-  print(f"     ✓ IsNew, HasBeenRemod (binaires)")
-  print(f"     ✓ HouseAgeBin (catégoriel)")
-
-  # 5. FEATURES DE QUALITÉ PONDÉRÉE
-  # print(f" Features de qualité:")
-  # X['QualCond'] = X['OverallQual'] * X['OverallCond']
-  # X['QualSF'] = X['OverallQual'] * X['TotalSF']
-  # X['QualLivArea'] = X['OverallQual'] * X['GrLivArea']
-
-  # print(f"     ✓ QualCond (Qualité × Condition)")
-  # print(f"     ✓ QualSF (Qualité × Surface totale)")
-  # print(f"     ✓ QualLivArea (Qualité × Surface habitable)")
-
-  # 6. FEATURES DE GARAGE
-  print(f" Features de garage:")
-  X['HasGarage'] = (X['GarageArea'] > 0).astype(int)
-  X['GarageAge'] = X['YrSold'] - X['GarageYrBlt']
-  X['GarageAge'] = X['GarageAge'].clip(lower=0)  # Pas d'âge négatif
-  features_to_delete.extend(['GarageYrBlt'])
-
-  print(f"     ✓ HasGarage (binaire)")
-  print(f"     ✓ GarageAge (âge du garage)")
-
-  # 7. FEATURES DE LOT
-  # print(f" Features de terrain:")
-  # X['LotFrontageRatio'] = X['LotFrontage'] / np.sqrt(X['LotArea'])
-  # X['LotShapeReg'] = (X['LotShape'] == 'Reg').astype(int)
-
-  # print(f"     ✓ LotFrontageRatio (ratio frontage/surface)")
-  # print(f"     ✓ LotShapeReg (binaire)")
-
-  # 8. FEA Features de cheminée:")
-  X['HasFireplace'] = (X['Fireplaces'] > 0).astype(int)
-  X['FireplaceScore'] = X['Fireplaces'] * X['FireplaceQu'].map(
-      {'None': 0, 'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5}
-  ).fillna(0)
-  features_to_delete.extend(['Fireplaces'])
-
-  print(f"     ✓ HasFireplace (binaire)")
-  print(f"     ✓ FireplaceScore (nombre × qualité)")
-
-  print(f"\n{'='*60}")
-  print(f"RÉSUMÉ DU FEATURE ENGINEERING:")
-  print(f"  • Variables initiales: {X.shape[1] - 25}")
-  print(f"  • Nouvelles features créées: 25")
-  print(f"  • Total features après: {X.shape[1]}")
-  print(f"{'='*60}")
-
-  # Afficher les nouvelles features
-  new_features = ['TotalSF', 'TotalSF_AboveGround', 'Has2ndFloor', 'HasBasement',
-                  'TotalBath', 'TotalFullBath', 'TotalHalfBath', 'TotalPorchSF',
-                  'HasPorch', 'HasDeck', 'HasPool', 'HouseAge', 'RemodAge',
-                  'IsNew', 'HasBeenRemod', 'HouseAgeBin', 'QualCond', 'QualSF',
-                  'QualLivArea', 'HasGarage', 'GarageAge', 'LotFrontageRatio',
-                  'LotShapeReg', 'HasFireplace', 'FireplaceScore']
-
-  print(f" Liste des nouvelles features:")
-  for i, feat in enumerate(new_features, 1):
-      print(f"  {i:2d}. {feat}")
-
-  # Supprimer les features substituées
-  X = X.drop(features_to_delete, axis=1)
-
-  return X
-
 """### **2.5 Transformations des variables ordinales**"""
 
 class OrdinalEncoderCustom(BaseEstimator, TransformerMixin):
@@ -1089,363 +894,7 @@ class OrdinalEncoderCustom(BaseEstimator, TransformerMixin):
                 X[col] = X[col].map(bsmt_fin_type_mapping)
                 print(f"  ✓ {col}: mapping finition sous-sol appliqué")
 
-        # A supprimer
-        obj_cols = X.select_dtypes(include='object').columns
-        print("Colonnes encore en object :", obj_cols)
-
-        # A supprimer
-        for col in X.columns:
-          if X[col].dtype == 'object':
-              if (X[col] == 'None').any():
-                  print(f"⚠️ 'None' encore présent dans {col}")
-
         return X
-
-# Qualité générale
-qual_cols = ['ExterQual', 'ExterCond', 'BsmtQual', 'BsmtCond',
-             'HeatingQC', 'KitchenQual', 'FireplaceQu', 'GarageQual',
-             'GarageCond', 'PoolQC']
-
-def encode_ordinals(X, qual_cols = qual_cols):
-
-  # Définition des mappings
-  quality_mapping = {'None': 0, 'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5}
-  exposure_mapping = {'None': 0, 'No': 1, 'Mn': 2, 'Av': 3, 'Gd': 4}
-  finish_mapping = {'None': 0, 'Unf': 1, 'RFn': 2, 'Fin': 3}
-  functional_mapping = {'Sal': 0, 'Sev': 1, 'Maj2': 2, 'Maj1': 3,
-                        'Mod': 4, 'Min2': 5, 'Min1': 6, 'Typ': 7}
-  slope_mapping = {'Sev': 0, 'Mod': 1, 'Gtl': 2}
-  shape_mapping = {'IR3': 0, 'IR2': 1, 'IR1': 2, 'Reg': 3}
-  contour_mapping = {'Low': 0, 'HLS': 1, 'Bnk': 2, 'Lvl': 3}
-
-  print(f" Application des mappings ordinaux:")
-
-  for col in qual_cols:
-      if col in X.columns:
-          X[col] = X[col].map(quality_mapping)
-          print(f"  ✓ {col}: mapping qualité appliqué")
-
-  # Exposition sous-sol
-  if 'BsmtExposure' in X.columns:
-      X['BsmtExposure'] = X['BsmtExposure'].map(exposure_mapping)
-      print(f"  ✓ BsmtExposure: mapping exposition appliqué")
-
-  # Finition garage
-  if 'GarageFinish' in X.columns:
-      X['GarageFinish'] = X['GarageFinish'].map(finish_mapping)
-      print(f"  ✓ GarageFinish: mapping finition appliqué")
-
-  # Fonctionnalité
-  if 'Functional' in X.columns:
-      X['Functional'] = X['Functional'].map(functional_mapping)
-      print(f"  ✓ Functional: mapping fonctionnalité appliqué")
-
-  # Pente du terrain
-  if 'LandSlope' in X.columns:
-      X['LandSlope'] = X['LandSlope'].map(slope_mapping)
-      print(f"  ✓ LandSlope: mapping pente appliqué")
-
-  # Forme du terrain
-  if 'LotShape' in X.columns:
-      X['LotShape'] = X['LotShape'].map(shape_mapping)
-      print(f"  ✓ LotShape: mapping forme appliqué")
-
-  # Contour du terrain
-  if 'LandContour' in X.columns:
-      X['LandContour'] = X['LandContour'].map(contour_mapping)
-      print(f"  ✓ LandContour: mapping contour appliqué")
-
-  # Vérification des conversions
-  print(f"\n{'='*60}")
-  print("VÉRIFICATION DES CONVERSIONS:")
-  ordinal_converted = qual_cols + ['BsmtExposure', 'GarageFinish', 'Functional',
-                                    'LandSlope', 'LotShape', 'LandContour']
-  for col in ordinal_converted:
-      if col in X.columns:
-          unique_vals = sorted(X[col].dropna().unique())
-          print(f"  • {col}: {unique_vals}")
-  print(f"{'='*60}")
-
-  return X
-
-"""### **2.6 Encodage des variables catégorielles nominales** (plus utilisé actuellement)"""
-
-print("\n" + "=" * 80)
-print("2.6 ENCODAGE DES VARIABLES CATÉGORIELLES NOMINALES")
-print("=" * 80)
-
-# Identifier les variables catégorielles restantes
-categorical_features = all_data.select_dtypes(include=['object']).columns.tolist()
-print(f" Variables catégorielles à encoder: {len(categorical_features)}")
-print(f"   {categorical_features}")
-
-# Analyse de la cardinalité
-print(f" Cardinalité des variables catégorielles:")
-cardinality = pd.DataFrame({
-    'Variable': categorical_features,
-    'Modalités': [all_data[c].nunique() for c in categorical_features],
-    'Exemples': [str(all_data[c].unique()[:3].tolist()) for c in categorical_features]
-}).sort_values('Modalités', ascending=False)
-
-display(cardinality)
-
-# Séparation selon la cardinalité
-high_cardinality = cardinality[cardinality['Modalités'] > 10]['Variable'].tolist()
-low_cardinality = cardinality[cardinality['Modalités'] <= 10]['Variable'].tolist()
-
-print(f"\n  • Haute cardinalité (> 10): {len(high_cardinality)} variables")
-print(f"    {high_cardinality}")
-print(f"\n  • Basse cardinalité (≤ 10): {len(low_cardinality)} variables")
-print(f"    {low_cardinality}")
-
-# One-Hot Encoding pour basse cardinalité
-print(f" One-Hot Encoding pour variables à basse cardinalité...")
-all_data = pd.get_dummies(all_data, columns=low_cardinality, drop_first=True)
-print(f"   {len(low_cardinality)} variables encodées")
-print(f"  Dimensions après OHE: {all_data.shape}")
-
-# Target Encoding / Frequency Encoding pour haute cardinalité
-print(f" Encoding pour haute cardinalité (Neighborhood, Exterior...)")
-
-# Pour Neighborhood: utiliser la moyenne de SalePrice du train
-if 'Neighborhood' in all_data.columns:
-    # Calculer sur le train uniquement
-    neighborhood_target_mean = y_train.groupby(all_data.iloc[:ntrain]['Neighborhood']).mean()
-    all_data['Neighborhood_TargetEnc'] = all_data['Neighborhood'].map(neighborhood_target_mean)
-
-    # Frequency encoding comme backup
-    neighborhood_freq = all_data['Neighborhood'].value_counts(normalize=True)
-    all_data['Neighborhood_FreqEnc'] = all_data['Neighborhood'].map(neighborhood_freq)
-
-    all_data = all_data.drop('Neighborhood', axis=1)
-    print(f"  ✓ Neighborhood: Target Encoding + Frequency Encoding")
-
-# Pour Exterior1st/2nd: regrouper les rares
-for col in ['Exterior1st', 'Exterior2nd']:
-    if col in all_data.columns:
-        # Garder les 10 plus fréquents, regrouper le reste
-        top_10 = all_data[col].value_counts().head(10).index
-        all_data[col] = all_data[col].apply(lambda x: x if x in top_10 else 'Other')
-
-        # One-hot après regroupement
-        all_data = pd.get_dummies(all_data, columns=[col], prefix=[col])
-        print(f"  ✓ {col}: regroupement des rares + OHE")
-
-print(f"\n{'='*60}")
-print(f"DIMENSIONS FINALES APRÈS ENCODAGE:")
-print(f"  • Variables: {all_data.shape[1]}")
-print(f"  • Observations: {all_data.shape[0]}")
-print(f"{'='*60}")
-
-"""### **2.7 Transformation des variables numériques (skewness)** (plus utilisé actuellement)"""
-
-print("\n" + "=" * 80)
-print("2.7 TRANSFORMATION DES VARIABLES NUMÉRIQUES (SKEWNESS)")
-print("=" * 80)
-
-# Identifier les variables numériques fortement asymétriques
-numeric_features = all_data.select_dtypes(include=[np.number]).columns.tolist()
-
-skewness_before = []
-for col in numeric_features:
-    if all_data[col].min() >= 0 and all_data[col].nunique() > 10:  # Éviter les binaires
-        skew_val = skew(all_data[col].dropna())
-        if abs(skew_val) > 0.75:
-            skewness_before.append({'Variable': col, 'Skewness': skew_val})
-
-skew_df = pd.DataFrame(skewness_before).sort_values('Skewness', key=abs, ascending=False)
-print(f" Variables fortement asymétriques (|skew| > 0.75): {len(skew_df)}")
-display(skew_df.head(15))
-
-# Visualisation avant transformation
-fig, axes = plt.subplots(3, 4, figsize=(20, 15))
-axes = axes.flatten()
-
-top_skewed = skew_df.head(6)['Variable'].tolist()
-
-for idx, var in enumerate(top_skewed):
-    if idx >= 6:
-        break
-
-    # Avant transformation
-    ax_before = axes[idx * 2]
-    sns.histplot(all_data[var], kde=True, ax=ax_before, color='coral', bins=30)
-    ax_before.set_title(f'{var}\nSkew: {skew(all_data[var]):.2f}',
-                       fontsize=10, fontweight='bold')
-
-    # Après transformation log
-    ax_after = axes[idx * 2 + 1]
-    # Ajouter 1 pour éviter log(0)
-    log_var = np.log1p(all_data[var])
-    sns.histplot(log_var, kde=True, ax=ax_after, color='darkgreen', bins=30)
-    ax_after.set_title(f'log({var} + 1)\nSkew: {skew(log_var):.2f}',
-                      fontsize=10, fontweight='bold')
-
-plt.tight_layout()
-plt.show()
-
-# Application de la transformation log
-print(f"\n🔧 Application de la transformation log1p...")
-skewed_features = skew_df['Variable'].tolist()
-
-for feature in skewed_features:
-    # Vérifier qu'il n'y a pas de valeurs négatives
-    if all_data[feature].min() >= 0:
-        all_data[feature] = np.log1p(all_data[feature])
-        print(f"  ✓ {feature}: log1p appliqué")
-
-# Vérification après transformation
-print(f"\n{'='*60}")
-print("VÉRIFICATION APRÈS TRANSFORMATION:")
-skewness_after = []
-for var in top_skewed[:5]:
-    new_skew = skew(all_data[var].dropna())
-    print(f"  • {var}: {skew_df[skew_df['Variable']==var]['Skewness'].values[0]:.2f} → {new_skew:.2f}")
-print(f"{'='*60}")
-
-"""### **2.8 Standardisation** (plus utilisé)"""
-
-def custom_standardisation(X, X_train):
-  # Séparer les features à scaler (exclure les binaires et déjà normalisées)
-  features_to_scale = []
-  binary_features = []
-
-  for col in X.columns:
-      if pd.api.types.is_numeric_dtype(X[col]): # Ensure the column is numeric
-          unique_vals = X[col].nunique()
-          if unique_vals == 2 and set(X[col].dropna().unique()).issubset({0, 1}):
-              binary_features.append(col)
-          elif col not in ['MSSubClass']:
-              features_to_scale.append(col)
-
-  print(f" Classification des features:")
-  print(f"  • Features à scaler (RobustScaler): {len(features_to_scale)}")
-  print(f"  • Features binaires (pas de scaling): {len(binary_features)}")
-
-  # Application du RobustScaler (moins sensible aux outliers)
-  print(f" Application du RobustScaler...")
-  scaler = RobustScaler()
-
-  # Fit sur train, transform sur tout
-  X_scaled = X.copy()
-  X_scaled[features_to_scale] = scaler.fit_transform(X[features_to_scale])
-
-  print(f"  ✓ Scaling terminé")
-
-  # Vérification
-  print(f"\n{'='*60}")
-  print("STATISTIQUES APRÈS SCALING (échantillon):")
-  sample_cols = features_to_scale[:5]
-  stats_after = X_scaled[sample_cols].describe().round(3)
-  print(stats_after)
-  print(f"{'='*60}")
-
-  # # Visualisation de la distribution avant/après scaling
-  # fig, axes = plt.subplots(2, 3, figsize=(18, 10))
-
-  # sample_features = ['GrLivArea', 'TotalSF', 'LotArea']
-
-  # for idx, feat in enumerate(sample_features):
-  #     if feat in all_data.columns:
-  #         # Avant scaling
-  #         ax1 = axes[0, idx]
-  #         sns.histplot(all_data[feat], kde=True, ax=ax1, color='steelblue', bins=30)
-  #         ax1.set_title(f'{feat} - Avant scaling\nMean: {all_data[feat].mean():.1f}, Std: {all_data[feat].std():.1f}',
-  #                     fontsize=10)
-
-  #         # Après scaling
-  #         ax2 = axes[1, idx]
-  #         sns.histplot(all_data_scaled[feat], kde=True, ax=ax2, color='darkgreen', bins=30)
-  #         ax2.set_title(f'{feat} - Après RobustScaler\nMean: {all_data_scaled[feat].mean():.2f}, Std: {all_data_scaled[feat].std():.2f}',
-  #                     fontsize=10)
-
-  # axes[0, 2].remove() if len(sample_features) < 3 else None
-  # axes[1, 2].remove() if len(sample_features) < 3 else None
-
-  # plt.tight_layout()
-  # plt.show()
-
-  return X_scaled, scaler
-
-"""### **2.9 Sélection de features** (plus utilisé)"""
-
-print("\n" + "=" * 80)
-print("2.9 SÉLECTION DE FEATURES (ANALYSE DE L'IMPORTANCE)")
-print("=" * 80)
-
-# Utiliser uniquement les données d'entraînement pour l'analyse
-X_train_processed = all_data_scaled.iloc[:ntrain].copy()
-
-# --- FIX: One-hot encode HouseAgeBin column if it exists and is non-numeric ---
-if 'HouseAgeBin' in X_train_processed.columns:
-    if X_train_processed['HouseAgeBin'].dtype == 'object' or pd.api.types.is_categorical_dtype(X_train_processed['HouseAgeBin']):
-        print(f"  ✓ One-hot encoding 'HouseAgeBin' column...")
-        X_train_processed = pd.get_dummies(X_train_processed, columns=['HouseAgeBin'], drop_first=True)
-# --------------------------------------------------------------------------------
-
-# Final check to ensure all columns are numeric
-non_numeric_cols = X_train_processed.select_dtypes(exclude=np.number).columns
-if len(non_numeric_cols) > 0:
-    print(f" Warning: Non-numeric columns found before MI calculation: {non_numeric_cols.tolist()}")
-    # Attempt to convert to numeric, forcing errors for inspection if conversion fails
-    for col in non_numeric_cols:
-        try:
-            X_train_processed[col] = pd.to_numeric(X_train_processed[col])
-            print(f"   Converted non-numeric column '{col}' to numeric.")
-        except ValueError:
-            print(f"  Error: Could not convert column '{col}' to numeric. Dropping it.")
-            X_train_processed = X_train_processed.drop(columns=col)
-
-# Calcul de l'information mutuelle
-print(f" Calcul de l'information mutuelle avec SalePrice...")
-mi_scores = mutual_info_regression(X_train_processed, y_train, random_state=42)
-mi_df = pd.DataFrame({
-    'Feature': X_train_processed.columns,
-    'MI_Score': mi_scores
-}).sort_values('MI_Score', ascending=False)
-
-print(f" Top 20 features par information mutuelle:")
-display(mi_df.head(20).style.background_gradient(cmap='Greens', subset=['MI_Score']))
-
-# Visualisation
-fig, axes = plt.subplots(1, 2, figsize=(18, 8))
-
-# Top features MI
-ax1 = axes[0]
-top_mi = mi_df.head(15)
-colors = plt.cm.RdYlGn(np.linspace(0.3, 0.9, len(top_mi)))
-bars = ax1.barh(top_mi['Feature'], top_mi['MI_Score'], color=colors)
-ax1.set_xlabel('Information Mutuelle')
-ax1.set_title('Top 15 - Importance par Information Mutuelle', fontsize=12, fontweight='bold')
-ax1.invert_yaxis()
-
-# Distribution des scores MI
-ax2 = axes[1]
-ax2.hist(mi_df['MI_Score'], bins=30, color='steelblue', edgecolor='black', alpha=0.7)
-ax2.axvline(mi_df['MI_Score'].mean(), color='red', linestyle='--',
-           label=f'Moyenne: {mi_df["MI_Score"].mean():.3f}')
-ax2.axvline(mi_df['MI_Score'].median(), color='green', linestyle='--',
-           label=f'Médiane: {mi_df["MI_Score"].median():.3f}')
-ax2.set_xlabel('Score d\'Information Mutuelle')
-ax2.set_ylabel('Nombre de features')
-ax2.set_title('Distribution des scores d\'importance', fontsize=12, fontweight='bold')
-ax2.legend()
-
-plt.tight_layout()
-plt.savefig('2_05_feature_importance.png', dpi=150, bbox_inches='tight')
-plt.show()
-
-# Features à faible importance (candidats à la suppression)
-low_importance_threshold = 0.001
-low_importance_features = mi_df[mi_df['MI_Score'] < low_importance_threshold]['Feature'].tolist()
-
-print(f"\n{'='*60}")
-print(f"FEATURES À FAIBLE IMPORTANCE (< {low_importance_threshold}):")
-print(f"  • Nombre: {len(low_importance_features)}")
-print(f"  • Liste: {low_importance_features[:10]}...")
-print(f" Ces features peuvent être supprimées pour réduire la dimensionnalité")
-print(f"    (conservées pour l'instant)")
-print(f"{'='*60}")
 
 """### **Débogage avant à la fin du prétraitement**"""
 
@@ -1471,6 +920,10 @@ class DebugTransformer(BaseEstimator, TransformerMixin):
 
 """##**3. Modélisation**"""
 
+random.seed(42)
+
+"""###**3.1 Application du pipeline de prétraitement et fonction d'évaluation des modèles**"""
+
 new_numeric_features = numeric_features
 # Colonnes supprimées
 drop_cols = [
@@ -1481,12 +934,6 @@ drop_cols = [
 ]
 # Actualiser la liste des features numeriques
 new_numeric_features = list(set(new_numeric_features) - set(drop_cols))
-
-from sklearn.pipeline import Pipeline
-from sklearn.linear_model import ElasticNetCV
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.compose import make_column_selector as selector
 
 # Prétraitement
 pipe = Pipeline([
@@ -1511,37 +958,6 @@ pipe.fit(X_train, y_train)
 
 X_train_transformed = pipe.transform(X_train)
 X_test_transformed = pipe.transform(X_test)
-
-
-
-model = ElasticNetCV(cv=5, random_state=42)
-model.fit(X_train_transformed, y_train)
-
-y_train_pred = model.predict(X_train_transformed)
-y_test_pred = model.predict(X_test_transformed)
-
-# Evaluation sur le train
-mse_train = mean_squared_error(y_train, y_train_pred)
-r2 = r2_score(y_train, y_train_pred)
-
-# Evaluation sur le test
-mse_test = mean_squared_error(y_test, y_test_pred)
-r2_test = r2_score(y_test, y_test_pred)
-
-# Affichage
-print(f"MSE train: {mse_train:.2f}")
-print(f"R2 train: {r2:.2f}")
-print(f"MSE test: {mse_test:.2f}")
-print(f"R2 test: {r2_test:.2f}")
-
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, ExtraTreesRegressor, AdaBoostRegressor
-from sklearn.linear_model import Ridge, Lasso, ElasticNet, BayesianRidge, HuberRegressor
-from sklearn.svm import SVR
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.model_selection import RandomizedSearchCV, cross_val_score, GridSearchCV
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-import time
 
 # Transformation log pour la cible
 y_train_log = np.log1p(y_train)
@@ -1594,13 +1010,7 @@ def evaluate_model(model, X_train, X_test, y_train, y_test, model_name, use_log=
 
 print("Imports et fonction prêts!")
 
-# ============================================================
-# 3. MODÉLISATION - Phase 1: Baseline Models (sans tuning)
-# ============================================================
-
-print("="*70)
-print("PHASE 3: MODÉLISATION - Modèles Baseline")
-print("="*70)
+"""###**3.2 Phase 1 : Baseline des models**"""
 
 baseline_models = {
     'Ridge': Ridge(alpha=1.0),
@@ -1639,9 +1049,6 @@ print("RÉSULTATS BASELINE (triés par Test RMSE)")
 print("="*70)
 print(baseline_df[['Model', 'Test_RMSE', 'Test_R2', 'Time_sec']].to_string(index=False))
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-
 class ModelVisualizer:
     def __init__(self, baseline_df, optimized_df):
         self.baseline_df = baseline_df.copy()
@@ -1651,7 +1058,7 @@ class ModelVisualizer:
         self.baseline_df = self.baseline_df.set_index('Model')
         self.optimized_df = self.optimized_df.set_index('Model')
 
-        # ***FIX: Remove '_Optimized' suffix from optimized_df index for comparison***
+        # FIX: Retirer le suffixe '_Optimized' de l'index du dataframe optimized_df pour des besoins de comparaison
         self.optimized_df.index = self.optimized_df.index.str.replace('_Optimized', '', regex=False)
 
     def plot_baseline_vs_optimized_rmse(self):
@@ -1708,8 +1115,7 @@ class ModelVisualizer:
         plt.show()
 
     def summary_table(self):
-        # Ensure the optimized_df index matches baseline_df for joining
-        # The renaming is now done in __init__
+        # S'assurer de la correspondance entre les index pour jointure
         summary = self.baseline_df[['Test_RMSE', 'Test_R2']].join(
             self.optimized_df[['Test_RMSE', 'Test_R2']],
             lsuffix='_Baseline',
@@ -1724,8 +1130,6 @@ class ModelVisualizer:
         return summary.sort_values('Test_RMSE_Optimized')
 
 """##**4. Optimisation des hyperparamètres**"""
-
-from sklearn.model_selection import RandomizedSearchCV
 
 class ModelOptimizer:
     def __init__(
@@ -1803,39 +1207,11 @@ class ModelOptimizer:
 
         return self.results
 
-param_grid_br = {
-    'alpha_1': [1e-6, 1e-5, 1e-4, 1e-3, 1e-2],
-    'alpha_2': [1e-6, 1e-5, 1e-4, 1e-3, 1e-2],
-    'lambda_1': [1e-6, 1e-5, 1e-4, 1e-3, 1e-2],
-    'lambda_2': [1e-6, 1e-5, 1e-4, 1e-3, 1e-2]
-}
-
-br_optimizer = ModelOptimizer(
-    model=BayesianRidge(),
-    param_grid=param_grid_br,
-    model_name="BayesianRidge"
-)
-
-best_br = br_optimizer.optimize(
-    X_train_transformed,
-    y_train_log
-)
-
-results_br = br_optimizer.evaluate(
-    X_train_transformed,
-    X_test_transformed,
-    y_train_log,
-    y_test_log,
-    use_log=True
-)
-
-optimized_results.append(results_br)
-best_models['BayesianRidge'] = best_br
-
 TOP_K = 4          # nombre de meilleurs modèles à optimiser
 N_ITER = 50        # itérations RandomizedSearch
-CV = 5
+CV = 5             # Nombre de folds par itération
 
+# Paramètres d'optimisation pour chacun des modèles
 param_grids = {
     'Ridge': {'alpha': np.logspace(-3, 3, 50)},
 
@@ -1896,6 +1272,7 @@ param_grids = {
     }
 }
 
+# Sélection des TOP_K meilleurs modèles en baseline, pour optimisation
 top_models = (
     baseline_df
     .sort_values('Test_RMSE')
@@ -1910,18 +1287,18 @@ optimized_results = []
 best_models = {}
 
 print("\n" + "="*70)
-print("PHASE 4 : OPTIMISATION AUTOMATIQUE DES MEILLEURS MODÈLES")
+print(f"PHASE 4 : OPTIMISATION DES {TOP_K} MEILLEURS MODÈLES EN  BASELINE")
 print("="*70)
 
 for model_name in top_models:
 
     # Sécurité : modèle et grille doivent exister
     if model_name not in baseline_models or model_name not in param_grids:
-        print(f"⏭️  {model_name} ignoré (pas de grille définie)")
+        print(f"!!! {model_name} ignoré (pas de grille définie )")
         continue
 
     print("\n" + "-"*60)
-    print(f"Optimisation automatique de {model_name}")
+    print(f"Optimisation de {model_name}")
     print("-"*60)
 
     try:
@@ -1950,7 +1327,7 @@ for model_name in top_models:
         best_models[model_name] = best_model
 
     except Exception as e:
-        print(f"❌ Échec optimisation {model_name} : {e}")
+        print(f"!!! Échec optimisation {model_name} : {e}")
 
 optimized_df = pd.DataFrame(optimized_results).sort_values('Test_RMSE')
 
@@ -1969,22 +1346,70 @@ visualizer = ModelVisualizer(
     optimized_df=optimized_df
 )
 
-# 1️⃣ Comparaison baseline vs optimisé
+# Comparaison baseline vs optimisé
 visualizer.plot_baseline_vs_optimized_rmse()
 
-# 2️⃣ Gain de performance
+# Gain de performance
 visualizer.plot_rmse_gain()
 
-# 3️⃣ Classement final
+# Classement final
 visualizer.plot_final_ranking()
 
-# 4️⃣ Tableau récapitulatif
+# Tableau récapitulatif
 summary_df = visualizer.summary_table()
 print(summary_df.to_string())
 
-"""##**5. Evaluation du modèle final**
+"""##**5. Evaluation du modèle final**"""
 
-##**6. Sauvegarde du modèle et conclusion**
+best_model_name_optimized = optimized_df.loc[optimized_df['Test_RMSE'].idxmin(), 'Model']
+best_model_name_base = best_model_name_optimized.replace('_Optimized', '')
 
-***Fin du notebook !!!***
-"""
+best_model = best_models[best_model_name_base]
+
+print(f"Meilleur modèle optimisé: {best_model_name_base}")
+print(f"Model: {best_model}")
+
+y_pred_log_best_model = best_model.predict(X_test_transformed)
+y_pred_best_model = np.expm1(y_pred_log_best_model)
+
+print(f"5 valeurs prédites du prix : {y_pred_best_model[:5].round(2).tolist()}")
+print(f"5 valeurs actuelles correspondantes : {y_test[:5].values.tolist()}")
+
+plt.figure(figsize=(10, 8))
+plt.scatter(y_test, y_pred_best_model, alpha=0.5)
+
+# Ligne pour si prédiction parfaite
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+
+plt.xlabel('Actual SalePrice')
+plt.ylabel('Predicted SalePrice')
+plt.title('Actual vs. Predicted SalePrice for Best Model')
+plt.grid(True)
+plt.show()
+
+residuals = y_test - y_pred_best_model
+
+plt.figure(figsize=(10, 8))
+plt.scatter(y_pred_best_model, residuals, alpha=0.5)
+plt.axhline(y=0, color='r', linestyle='--', lw=2)
+plt.xlabel('Predicted SalePrice')
+plt.ylabel('Residuals')
+plt.title('Residual Plot: Predicted vs. Residuals')
+plt.grid(True)
+plt.show()
+
+plt.figure(figsize=(10, 6))
+sns.histplot(residuals, kde=True)
+plt.xlabel('Residuals')
+plt.ylabel('Frequency')
+plt.title('Distribution of Residuals')
+plt.grid(True)
+plt.show()
+
+"""##**6. Sauvegarde du modèle et conclusion**"""
+
+import joblib
+# Sauvegarde du modèle
+joblib.dump(best_model, 'best_model.pkl')
+
+"""***Fin du notebook !!!***"""
