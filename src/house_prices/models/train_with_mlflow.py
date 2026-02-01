@@ -1,119 +1,144 @@
 """
-Script d'entraînement avec tracking MLflow pour le projet House Prices.
+Script d'entraînement avec tracking MLflow pour comparer plusieurs modèles.
 """
 
 import logging
+import json
 from pathlib import Path
+from typing import Dict, Any, List
 
 import mlflow
 import mlflow.sklearn
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import BayesianRidge
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, ExtraTreesRegressor
 
 from ..data.load_data import load_data
-from .train_model import evaluate_model, train_model
+from ..data.preprocessing import create_full_pipeline
+from .train_model import evaluate_model
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def train_with_mlflow(
-    experiment_name: str = "House Prices - BayesianRidge",
-    run_name: str = None,
-    params: dict = None,
+def train_and_log_model(
+    model_name: str,
+    model_instance: Any,
+    X_train: pd.DataFrame,
+    y_train: pd.Series,
+    X_test: pd.DataFrame,
+    y_test: pd.Series,
+    run_params: Dict[str, Any] = None
 ):
     """
-    Entraîne le modèle avec tracking MLflow.
-
-    Args:
-        experiment_name: Nom de l'expérience MLflow
-        run_name: Nom du run (optionnel)
-        params: Paramètres du modèle BayesianRidge
+    Entraîne un modèle spécifique et le log dans MLflow.
     """
-    # Configuration MLflow
-    mlflow.set_experiment(experiment_name)
-
-    # Chargement des données
-    logger.info("Chargement des données...")
-    train_df, _ = load_data("data/raw")
-
-    # Suppression de l'ID si présent
-    if "Id" in train_df.columns:
-        train_df = train_df.drop(columns=["Id"])
-
-    # Séparation X et y
-    X = train_df.drop(columns=["SalePrice"])
-    y = train_df["SalePrice"]
-
-    # Split train/test
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    logger.info(f"Train set: {X_train.shape}, Test set: {X_test.shape}")
-
-    # Démarrer le run MLflow
-    with mlflow.start_run(run_name=run_name):
-        logger.info("Démarrage du run MLflow...")
-
-        # Paramètres par défaut
-        default_params = {"alpha_1": 1e-06, "alpha_2": 1e-06, "lambda_1": 1e-06, "lambda_2": 1e-06}
-        if params:
-            default_params.update(params)
-
-        # Log des paramètres
-        mlflow.log_param("model_type", "BayesianRidge")
-        mlflow.log_param("use_log_transform", True)
-        mlflow.log_param("test_size", 0.2)
-        mlflow.log_param("random_state", 42)
-        for key, value in default_params.items():
-            mlflow.log_param(key, value)
-
+    with mlflow.start_run(run_name=f"Train_{model_name}", nested=True):
+        logger.info(f"--- Entraînement du modèle : {model_name} ---")
+        
+        # Log des hyperparamètres
+        mlflow.log_param("model_name", model_name)
+        if run_params:
+            for k, v in run_params.items():
+                mlflow.log_param(k, v)
+        
+        # Création du pipeline
+        preprocessing = create_full_pipeline()
+        pipeline = Pipeline([
+            ("preprocessing", preprocessing),
+            ("model", model_instance)
+        ])
+        
+        # Transformation log de la cible
+        y_train_log = np.log1p(y_train)
+        
         # Entraînement
-        logger.info("Entraînement du modèle...")
-        pipeline, _ = train_model(X_train, y_train, params=default_params)
-
-        # Évaluation
-        logger.info("Évaluation du modèle...")
+        pipeline.fit(X_train, y_train_log)
+        
+        # Évaluation (avec inversion du log gérée par evaluate_model si use_log=True)
         metrics = evaluate_model(pipeline, X_test, y_test, use_log=True)
-
+        
         # Log des métriques
         mlflow.log_metric("rmse", metrics["rmse"])
         mlflow.log_metric("mae", metrics["mae"])
-        mlflow.log_metric("r2_score", metrics["r2"])
-
-        logger.info(f"RMSE: ${metrics['rmse']:,.2f}")
-        logger.info(f"MAE: ${metrics['mae']:,.2f}")
-        logger.info(f"R²: {metrics['r2']:.4f}")
-
-        # Créer un exemple d'input pour la signature
+        mlflow.log_metric("r2", metrics["r2"])
+        
+        # Sauvegarde du modèle
         input_example = X_train.head(1)
-
-        # Log du modèle avec signature
-        logger.info("Sauvegarde du modèle dans MLflow...")
         mlflow.sklearn.log_model(
-            pipeline, "model", input_example=input_example, registered_model_name="house_prices_bayesian_ridge"
+            pipeline, 
+            "model", 
+            input_example=input_example,
+            registered_model_name=f"house_prices_{model_name.lower()}"
         )
+        
+        logger.info(f"Modèle {model_name} loggé avec succès. RMSE: {metrics['rmse']:.2f}")
+        return metrics
 
-        # Log des artifacts supplémentaires
-        # Sauvegarder les feature names
-        feature_names_path = "mlruns/feature_names.txt"
-        Path("mlruns").mkdir(exist_ok=True)
-        with open(feature_names_path, "w") as f:
-            f.write("\n".join(X_train.columns.tolist()))
-        mlflow.log_artifact(feature_names_path)
+def run_comparison(experiment_name: str = "Compare Models"):
+    """
+    Lance la comparaison de 4 modèles (définis par l'utilisateur).
+    """
+    mlflow.set_experiment(experiment_name)
+    
+    # Chargement des données
+    logger.info("Chargement des données...")
+    train_df, _ = load_data("data/raw")
+    if "Id" in train_df.columns:
+        train_df = train_df.drop(columns=["Id"])
+        
+    X = train_df.drop(columns=["SalePrice"])
+    y = train_df["SalePrice"]
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    # Définition des modèles à comparer (basé sur le snippet utilisateur)
+    models_to_test = [
+        (
+            "BayesianRidge", 
+            BayesianRidge(alpha_1=1e-6, alpha_2=1e-6, lambda_1=1e-6, lambda_2=1e-6),
+            {"alpha_1": 1e-6}
+        ),
+        (
+            "ExtraTrees", 
+            ExtraTreesRegressor(n_estimators=100, max_depth=20, random_state=42),
+            {"n_estimators": 100}
+        ),
+        (
+            "GradientBoosting", 
+            GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42), 
+            {"learning_rate": 0.1}
+        ),
+        (
+            "RandomForest", 
+            RandomForestRegressor(n_estimators=100, max_depth=10, random_state=42),
+            {"n_estimators": 100}
+        )
+    ]
+    
+    # Lancement de l'expérience parente
+    with mlflow.start_run(run_name="User_Recommended_Models_Comparison") as parent_run:
+        mlflow.log_param("parent_run", True)
+        logger.info(f"Début de la comparaison. Parent Run ID: {parent_run.info.run_id}")
+        
+        results = []
+        for name, model, params in models_to_test:
+            metrics = train_and_log_model(name, model, X_train, y_train, X_test, y_test, params)
+            results.append({"model": name, **metrics})
+            
+    # Afficher le résumé
+    results_df = pd.DataFrame(results).sort_values(by="rmse")
+    print("\n=== CLASSEMENT DES MODÈLES (RMSE) ===")
+    print(results_df)
 
-        logger.info(f"Run MLflow terminé. Run ID: {mlflow.active_run().info.run_id}")
-
-        return pipeline, metrics
-
+    # Sauvegarder les résultats pour l'API
+    output_path = Path("data/processed/model_comparison.json")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    results_df.to_json(output_path, orient="records", indent=4)
+    logger.info(f"Comparaison des modèles sauvegardée dans {output_path}")
 
 if __name__ == "__main__":
-    # Entraînement avec MLflow
-    pipeline, metrics = train_with_mlflow(experiment_name="House Prices - BayesianRidge Production", run_name="baseline_model")
-
-    print("\n" + "=" * 50)
-    print("RÉSULTATS FINAUX")
-    print("=" * 50)
-    print(f"RMSE: ${metrics['rmse']:,.2f}")
-    print(f"MAE: ${metrics['mae']:,.2f}")
-    print(f"R²: {metrics['r2']:.4f}")
-    print("=" * 50)
+    run_comparison("House Prices - User Models Comparison")

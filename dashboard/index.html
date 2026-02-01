@@ -100,6 +100,8 @@
                         class="px-5 py-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-brand-600 dark:hover:text-brand-400 transition-all font-semibold text-sm">Prédiction</a>
                     <a href="#analytics"
                         class="px-5 py-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-brand-600 dark:hover:text-brand-400 transition-all font-semibold text-sm">Analyses</a>
+                    <a href="#performance"
+                        class="px-5 py-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-brand-600 dark:hover:text-brand-400 transition-all font-semibold text-sm">Performance</a>
                 </div>
                 <div class="flex items-center space-x-4">
                     <button id="theme-toggle"
@@ -241,6 +243,7 @@
         </section>
 
         <section id="analytics" class="py-32 bg-white dark:bg-slate-900">
+            <!-- ... analytics content ... -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
                     <div class="space-y-4 max-w-2xl">
@@ -258,6 +261,22 @@
                     </div>
                 </div>
                 <div id="charts-container" class="space-y-12 text-center py-20">
+                    <div
+                        class="inline-block w-12 h-12 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="performance" class="py-32 bg-slate-50 dark:bg-slate-800/20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-3xl mb-20 space-y-4">
+                    <h2 class="text-sm font-black uppercase tracking-[0.4em] text-brand-600 text-left">Intelligence
+                        Machine</h2>
+                    <p class="text-4xl md:text-5xl font-black font-display text-slate-900 dark:text-white text-left">
+                        Performance & <span class="text-brand-600 italic">Comparaison.</span></p>
+                </div>
+                <div id="model-performance-container" class="text-center py-20">
                     <div
                         class="inline-block w-12 h-12 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin">
                     </div>

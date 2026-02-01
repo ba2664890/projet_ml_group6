@@ -7,7 +7,8 @@
                 class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform">
             </div>
             <p class="text-[10px] font-black uppercase tracking-[0.3em] text-blue-200 mb-6">Précision Algorithmique</p>
-            <div class="text-7xl font-black mb-4 tracking-tighter">91<span class="text-3xl">.2%</span></div>
+            <div class="text-7xl font-black mb-4 tracking-tighter" id="metric-r2-display">91<span
+                    class="text-3xl">.2%</span></div>
             <p class="text-xl font-bold opacity-80 uppercase tracking-widest text-sm">Score R² Global</p>
             <div class="mt-12 pt-8 border-t border-white/10 flex items-center justify-between">
                 <p class="text-[10px] font-black uppercase">Statut : Optimal</p>
@@ -19,7 +20,7 @@
             class="p-10 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-xl group">
             <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-6 text-left">Marge d'Erreur
                 (RMSE)</p>
-            <div class="text-5xl font-black text-slate-900 dark:text-white mb-4">$26,033</div>
+            <div class="text-5xl font-black text-slate-900 dark:text-white mb-4" id="metric-rmse-display">$26,033</div>
             <p class="text-slate-500 font-medium leading-relaxed">Déviation standard des prédictions sur l'ensemble de
                 test.</p>
             <div class="mt-12 flex space-x-2">
@@ -34,7 +35,7 @@
             class="p-10 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-xl group">
             <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-6 text-left">Erreur Absolue
                 (MAE)</p>
-            <div class="text-5xl font-black text-slate-900 dark:text-white mb-4">$15,511</div>
+            <div class="text-5xl font-black text-slate-900 dark:text-white mb-4" id="metric-mae-display">$15,511</div>
             <p class="text-slate-500 font-medium leading-relaxed">Écart moyen réel entre l'IA et le prix de vente final.
             </p>
             <div class="mt-12 flex space-x-2">
@@ -97,6 +98,46 @@
                 <li class="flex items-center space-x-3"><span class="w-2 h-2 bg-brand-600 rounded-full"></span><span
                         class="font-bold text-slate-600 dark:text-slate-400">Validation Croisée Temporelle</span></li>
             </ul>
+        </div>
+    </div>
+
+    <!-- Model Comparison Table (NEW) -->
+    <div
+        class="bg-white dark:bg-slate-900 p-12 rounded-[4rem] border border-slate-100 dark:border-slate-800 shadow-2xl relative group overflow-hidden">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8 relative z-10">
+            <div class="space-y-4">
+                <h3 class="text-sm font-black uppercase tracking-[0.4em] text-brand-600 text-left">Benchmark
+                </h3>
+                <p class="text-4xl font-black font-display text-slate-900 dark:text-white">Comparaison des <span
+                        class="bg-gradient-to-r from-brand-600 to-brand-400 bg-clip-text text-transparent italic">Modèles.</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto relative z-10">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-slate-100 dark:border-slate-800">
+                        <th class="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Algorithme
+                        </th>
+                        <th
+                            class="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center text-nowrap">
+                            RMSE</th>
+                        <th
+                            class="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center text-nowrap">
+                            R²</th>
+                        <th
+                            class="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center text-nowrap">
+                            MAE</th>
+                        <th
+                            class="py-6 px-4 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right text-nowrap">
+                            Statut</th>
+                    </tr>
+                </thead>
+                <tbody id="model-comparison-body">
+                    <!-- Dynamic Rows -->
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

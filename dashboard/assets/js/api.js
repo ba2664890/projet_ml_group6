@@ -85,6 +85,10 @@ class HousePriceAPI {
     async getPriceDistribution(bins = 20) {
         return await this.request(`/api/stats/price-distribution?bins=${bins}`);
     }
+
+    async getModelComparison() {
+        return await this.request('/model/comparison');
+    }
 }
 
 // Create global API instance

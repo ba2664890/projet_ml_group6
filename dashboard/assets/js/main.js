@@ -289,10 +289,59 @@ async function loadAnalyticsData() {
 async function loadModelPerformanceData() {
     try {
         const info = await api.getModelInfo();
-        if (info.feature_importance) {
-            const mockFeatureNames = ['OverallQual', 'GrLivArea', '1stFlrSF', 'TotalBsmtSF', 'GarageCars', 'LotArea', 'YearBuilt', 'YearRemodAdd', 'FullBath', 'OverallCond'];
-            createFeatureImportanceChart('feature-importance-chart', mockFeatureNames, info.feature_importance);
+        const comparison = await api.getModelComparison();
+
+        // Update main metrics from top model (ranked by RMSE)
+        if (comparison && comparison.length > 0) {
+            const topModel = comparison[0];
+
+            const r2Display = document.getElementById('metric-r2-display');
+            if (r2Display) {
+                const r2Val = (topModel.r2 * 100).toFixed(1);
+                const [intPart, decPart] = r2Val.split('.');
+                r2Display.innerHTML = `${intPart}<span class="text-3xl">.${decPart}%</span>`;
+            }
+
+            const rmseDisplay = document.getElementById('metric-rmse-display');
+            if (rmseDisplay) rmseDisplay.textContent = formatCurrency(topModel.rmse);
+
+            const maeDisplay = document.getElementById('metric-mae-display');
+            if (maeDisplay) maeDisplay.textContent = formatCurrency(topModel.mae);
         }
+
+        // Feature Importance (if available)
+        if (info.feature_importance) {
+            const features = Object.entries(info.feature_importance)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+            createFeatureImportanceChart('feature-importance-chart', features.map(f => f[0]), features.map(f => f[1]));
+        }
+
+        // Comparison Table Rendering
+        const tableBody = document.getElementById('model-comparison-body');
+        if (tableBody && comparison) {
+            tableBody.innerHTML = comparison.map((item, index) => {
+                const isWinner = index === 0;
+                return `
+                <tr class="border-b border-slate-50 dark:border-slate-800/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+                    <td class="py-6 px-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-8 h-8 rounded-lg ${isWinner ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'} flex items-center justify-center font-bold text-xs">${index + 1}</span>
+                            <span class="font-bold text-slate-700 dark:text-slate-300">${item.model}</span>
+                        </div>
+                    </td>
+                    <td class="py-6 px-4 text-center font-mono text-xs font-bold text-slate-600 dark:text-slate-400">$${Math.round(item.rmse).toLocaleString()}</td>
+                    <td class="py-6 px-4 text-center">
+                        <span class="px-3 py-1 rounded-full ${isWinner ? 'bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'} text-[10px] font-black">${(item.r2 * 100).toFixed(1)}%</span>
+                    </td>
+                    <td class="py-6 px-4 text-center font-mono text-xs text-slate-500">$${Math.round(item.mae).toLocaleString()}</td>
+                    <td class="py-6 px-4 text-right">
+                        ${isWinner ? '<span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-600 text-[10px] font-black uppercase tracking-widest">Actif</span>' : '<span class="text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest">Candidat</span>'}
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
         const paramsDisplay = document.getElementById('model-params-display');
         if (paramsDisplay) paramsDisplay.textContent = JSON.stringify(info.parameters, null, 4);
     } catch (error) {
