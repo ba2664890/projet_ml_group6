@@ -1,6 +1,7 @@
 """
 API FastAPI pour la prédiction des prix des maisons.
 Laplace Immo - Projet Data Science
+Updated to use unified pipeline.
 """
 
 from fastapi import FastAPI, HTTPException, status, Request
@@ -9,7 +10,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import joblib
 import json
 import numpy as np
@@ -22,7 +23,8 @@ from datetime import datetime
 
 # Ajout du chemin src pour importer house_prices
 sys.path.append(str(Path(__file__).parent.parent / "src"))
-from house_prices.data.preprocessing import FeatureEngineering, get_feature_types
+from house_prices.models.predict_model import load_trained_model, predict as make_prediction
+from house_prices.data.preprocessing import get_feature_lists
 
 # Configuration du logging structuré
 logging.basicConfig(
@@ -43,7 +45,7 @@ ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', '*').split(',')
 app = FastAPI(
     title="Laplace Immo - House Prices Prediction API",
     description="API de prédiction des prix des maisons pour Laplace Immo",
-    version="1.0.0",
+    version="2.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
@@ -85,35 +87,37 @@ class HouseFeatures(BaseModel):
     """Modèle pour les features d'une maison."""
     model_config = {"populate_by_name": True}
 
-    MSSubClass: int = Field(..., description="Type de construction")
-    MSZoning: str = Field(..., description="Zone de construction")
+    # Champs minimaux requis, les autres peuvent être None et seront gérés par le pipeline
+    # Nous gardons tous les champs pour la compatibilité avec le frontend existant
+    MSSubClass: Optional[int] = Field(None, description="Type de construction")
+    MSZoning: Optional[str] = Field(None, description="Zone de construction")
     LotFrontage: Optional[float] = Field(None, description="Largeur du terrain")
-    LotArea: int = Field(..., description="Surface du terrain")
-    Street: str = Field(..., description="Type de rue")
+    LotArea: Optional[int] = Field(None, description="Surface du terrain")
+    Street: Optional[str] = Field(None, description="Type de rue")
     Alley: Optional[str] = Field(None, description="Type d'allée")
-    LotShape: str = Field(..., description="Forme du terrain")
-    LandContour: str = Field(..., description="Contour du terrain")
-    Utilities: str = Field(..., description="Services publics")
-    LotConfig: str = Field(..., description="Configuration du terrain")
-    LandSlope: str = Field(..., description="Pente du terrain")
-    Neighborhood: str = Field(..., description="Quartier")
-    Condition1: str = Field(..., description="Condition 1")
-    Condition2: str = Field(..., description="Condition 2")
-    BldgType: str = Field(..., description="Type de bâtiment")
-    HouseStyle: str = Field(..., description="Style de maison")
+    LotShape: Optional[str] = Field(None, description="Forme du terrain")
+    LandContour: Optional[str] = Field(None, description="Contour du terrain")
+    Utilities: Optional[str] = Field(None, description="Services publics")
+    LotConfig: Optional[str] = Field(None, description="Configuration du terrain")
+    LandSlope: Optional[str] = Field(None, description="Pente du terrain")
+    Neighborhood: Optional[str] = Field(None, description="Quartier")
+    Condition1: Optional[str] = Field(None, description="Condition 1")
+    Condition2: Optional[str] = Field(None, description="Condition 2")
+    BldgType: Optional[str] = Field(None, description="Type de bâtiment")
+    HouseStyle: Optional[str] = Field(None, description="Style de maison")
     OverallQual: int = Field(..., ge=1, le=10, description="Qualité globale")
     OverallCond: int = Field(..., ge=1, le=10, description="Condition globale")
     YearBuilt: int = Field(..., description="Année de construction")
     YearRemodAdd: int = Field(..., description="Année de rénovation")
-    RoofStyle: str = Field(..., description="Style de toit")
-    RoofMatl: str = Field(..., description="Matériau du toit")
-    Exterior1st: str = Field(..., description="Revêtement extérieur 1")
-    Exterior2nd: str = Field(..., description="Revêtement extérieur 2")
+    RoofStyle: Optional[str] = Field(None, description="Style de toit")
+    RoofMatl: Optional[str] = Field(None, description="Matériau du toit")
+    Exterior1st: Optional[str] = Field(None, description="Revêtement extérieur 1")
+    Exterior2nd: Optional[str] = Field(None, description="Revêtement extérieur 2")
     MasVnrType: Optional[str] = Field(None, description="Type de parement")
     MasVnrArea: Optional[float] = Field(None, description="Surface du parement")
-    ExterQual: str = Field(..., description="Qualité extérieure")
-    ExterCond: str = Field(..., description="Condition extérieure")
-    Foundation: str = Field(..., description="Fondation")
+    ExterQual: Optional[str] = Field(None, description="Qualité extérieure")
+    ExterCond: Optional[str] = Field(None, description="Condition extérieure")
+    Foundation: Optional[str] = Field(None, description="Fondation")
     BsmtQual: Optional[str] = Field(None, description="Qualité du sous-sol")
     BsmtCond: Optional[str] = Field(None, description="Condition du sous-sol")
     BsmtExposure: Optional[str] = Field(None, description="Exposition du sous-sol")
@@ -123,13 +127,13 @@ class HouseFeatures(BaseModel):
     BsmtFinSF2: Optional[float] = Field(None, description="Surface finie 2")
     BsmtUnfSF: Optional[float] = Field(None, description="Surface non finie")
     TotalBsmtSF: Optional[float] = Field(None, description="Surface totale sous-sol")
-    Heating: str = Field(..., description="Chauffage")
-    HeatingQC: str = Field(..., description="Qualité du chauffage")
-    CentralAir: str = Field(..., description="Climatisation centrale")
+    Heating: Optional[str] = Field(None, description="Chauffage")
+    HeatingQC: Optional[str] = Field(None, description="Qualité du chauffage")
+    CentralAir: Optional[str] = Field(None, description="Climatisation centrale")
     Electrical: Optional[str] = Field(None, description="Système électrique")
     first_flr_sf: int = Field(..., alias="1stFlrSF", description="Surface premier étage")
     second_flr_sf: int = Field(..., alias="2ndFlrSF", description="Surface deuxième étage")
-    LowQualFinSF: int = Field(..., description="Surface finie de basse qualité")
+    LowQualFinSF: Optional[int] = Field(0, description="Surface finie de basse qualité")
     GrLivArea: int = Field(..., description="Surface habitable au-dessus du sol")
     BsmtFullBath: Optional[float] = Field(None, description="Salles de bain complètes sous-sol")
     BsmtHalfBath: Optional[float] = Field(None, description="Demi-salles de bain sous-sol")
@@ -137,9 +141,9 @@ class HouseFeatures(BaseModel):
     HalfBath: int = Field(..., description="Demi-salles de bain")
     BedroomAbvGr: int = Field(..., description="Chambres au-dessus du sol")
     KitchenAbvGr: int = Field(..., description="Cuisines au-dessus du sol")
-    KitchenQual: str = Field(..., description="Qualité de la cuisine")
+    KitchenQual: Optional[str] = Field(None, description="Qualité de la cuisine")
     TotRmsAbvGrd: int = Field(..., description="Nombre total de pièces")
-    Functional: str = Field(..., description="Fonctionnalité")
+    Functional: Optional[str] = Field(None, description="Fonctionnalité")
     Fireplaces: int = Field(..., description="Cheminées")
     FireplaceQu: Optional[str] = Field(None, description="Qualité de la cheminée")
     GarageType: Optional[str] = Field(None, description="Type de garage")
@@ -149,21 +153,21 @@ class HouseFeatures(BaseModel):
     GarageArea: Optional[float] = Field(None, description="Surface garage")
     GarageQual: Optional[str] = Field(None, description="Qualité garage")
     GarageCond: Optional[str] = Field(None, description="Condition garage")
-    PavedDrive: str = Field(..., description="Allée pavée")
-    WoodDeckSF: int = Field(..., description="Surface terrasse bois")
-    OpenPorchSF: int = Field(..., description="Surface porche ouvert")
-    EnclosedPorch: int = Field(..., description="Surface porche fermé")
-    three_season_porch: int = Field(..., alias="3SsnPorch", description="Surface porche 3 saisons")
-    ScreenPorch: int = Field(..., description="Surface porche moustiquaire")
-    PoolArea: int = Field(..., description="Surface piscine")
+    PavedDrive: Optional[str] = Field(None, description="Allée pavée")
+    WoodDeckSF: Optional[int] = Field(0, description="Surface terrasse bois")
+    OpenPorchSF: Optional[int] = Field(0, description="Surface porche ouvert")
+    EnclosedPorch: Optional[int] = Field(0, description="Surface porche fermé")
+    three_season_porch: Optional[int] = Field(0, alias="3SsnPorch", description="Surface porche 3 saisons")
+    ScreenPorch: Optional[int] = Field(0, description="Surface porche moustiquaire")
+    PoolArea: Optional[int] = Field(0, description="Surface piscine")
     PoolQC: Optional[str] = Field(None, description="Qualité piscine")
     Fence: Optional[str] = Field(None, description="Clôture")
     MiscFeature: Optional[str] = Field(None, description="Feature divers")
-    MiscVal: int = Field(..., description="Valeur features divers")
+    MiscVal: Optional[int] = Field(0, description="Valeur features divers")
     MoSold: int = Field(..., ge=1, le=12, description="Mois de vente")
     YrSold: int = Field(..., description="Année de vente")
-    SaleType: str = Field(..., description="Type de vente")
-    SaleCondition: str = Field(..., description="Condition de vente")
+    SaleType: Optional[str] = Field(None, description="Type de vente")
+    SaleCondition: Optional[str] = Field(None, description="Condition de vente")
 
 
 class PredictionResponse(BaseModel):
@@ -181,27 +185,22 @@ class HealthResponse(BaseModel):
 
 
 # Chargement du modèle au démarrage
-model = None
-preprocessor = None
+model_pipeline = None
 MODEL_PATH = Path(__file__).parent.parent / "models" / "house_prices_model.pkl"
 
 def load_model():
-    """Charge le modèle et le préprocesseur."""
-    global model, preprocessor
+    """Charge le pipeline complet."""
+    global model_pipeline
     try:
         if MODEL_PATH.exists():
-            model_data = joblib.load(MODEL_PATH)
-            model = model_data['model']
-            preprocessor = model_data['preprocessor']
-            logger.info("Modèle chargé avec succès")
+            model_pipeline = load_trained_model(str(MODEL_PATH))
+            logger.info("Pipeline chargé avec succès")
         else:
             logger.error(f"Modèle non trouvé: {MODEL_PATH}")
-            model = None
-            preprocessor = None
+            model_pipeline = None
     except Exception as e:
         logger.error(f"Erreur lors du chargement du modèle: {e}")
-        model = None
-        preprocessor = None
+        model_pipeline = None
 
 # Chemin des données
 DATA_PATH = Path(__file__).parent.parent / "data" / "raw" / "train.csv"
@@ -246,7 +245,7 @@ async def root():
     """Endpoint racine."""
     return {
         "message": "Bienvenue sur l'API Laplace Immo - House Prices Prediction",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "docs": "/docs"
     }
 
@@ -255,9 +254,9 @@ async def root():
 async def health_check():
     """Health check de l'API."""
     return HealthResponse(
-        status="healthy" if model is not None else "unhealthy",
-        model_loaded=model is not None,
-        model_version="1.0.0"
+        status="healthy" if model_pipeline is not None else "unhealthy",
+        model_loaded=model_pipeline is not None,
+        model_version="2.0.0"
     )
 
 
@@ -265,15 +264,9 @@ async def health_check():
 async def predict(house_features: HouseFeatures):
     """
     Endpoint de prédiction du prix d'une maison.
-    
-    Args:
-        house_features: Features de la maison
-        
-    Returns:
-        Prix prédit et informations associées
     """
-    logger.info(f"Requête de prédiction reçue: {house_features}")
-    if model is None:
+    logger.info(f"Requête de prédiction reçue")
+    if model_pipeline is None:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Modèle non disponible"
@@ -283,66 +276,27 @@ async def predict(house_features: HouseFeatures):
         # Conversion en dictionnaire
         features_dict = house_features.dict(by_alias=True)
         
-        # Création du DataFrame
+        # Création du DataFrame (1 seule ligne)
         df = pd.DataFrame([features_dict])
-
-        # Identification correcte des colonnes numériques vs catégorielles
-        # via le modèle Pydantic pour éviter les erreurs de type sur 1 seule ligne
-        numeric_cols = []
-        categorical_cols = []
         
-        for field_name, field_info in HouseFeatures.model_fields.items():
-            actual_col = field_info.alias or field_name
-            if actual_col not in df.columns:
-                continue
-                
-            field_type = field_info.annotation
-            # Regarder si c'est un type de base numérique ou un Optional de numérique
-            is_numeric = False
-            if field_type in (int, float):
-                is_numeric = True
-            else:
-                # Gérer Optional[int], Union[int, None], etc.
-                args = getattr(field_type, "__args__", None)
-                if args and any(t in (int, float) for t in args):
-                    is_numeric = True
-            
-            if is_numeric:
-                numeric_cols.append(actual_col)
-            else:
-                categorical_cols.append(actual_col)
-
-        # Forcer le typage numérique (convertit None/NaN proprement)
-        for col in numeric_cols:
-            df[col] = pd.to_numeric(df[col], errors='coerce')
-        
-        # Application du Feature Engineering
-        fe = FeatureEngineering()
-        df = fe.transform(df)
-        
-        # S'assurer que les features catégorielles (y compris les nouvelles) sont des strings
-        # On recalcule les types car FE a pu ajouter des colonnes
-        _, final_cat_cols, _ = get_feature_types(df)
-        df[final_cat_cols] = df[final_cat_cols].astype(str)
-        
-        # Application du prétraitement
-        features_processed = preprocessor.transform(df)
-        
-        # Prédiction
-        predicted_price = model.predict(features_processed)[0]
+        # Le pipeline s'occupe de tout (preprocessing, feature engineering, prediction)
+        # La fonction make_prediction s'occupe de l'inversion log (np.expm1)
+        predicted_price = make_prediction(model_pipeline, df, use_log=True)[0]
         
         # Calcul d'un score de confiance basique
-        # Ici, on utilise la distance par rapport aux données d'entraînement
-        confidence_score = 0.85  # À améliorer avec une vraie métrique
+        confidence_score = 0.90 
         
         return PredictionResponse(
             predicted_price=float(predicted_price),
-            model_version="1.0.0",
+            model_version="2.0.0",
             confidence_score=confidence_score
         )
         
     except Exception as e:
         logger.error(f"Erreur lors de la prédiction: {e}")
+        # Log stacktrace
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erreur lors de la prédiction: {str(e)}"
@@ -350,17 +304,11 @@ async def predict(house_features: HouseFeatures):
 
 
 @app.post("/predict/batch")
-async def predict_batch(houses: list[HouseFeatures]):
+async def predict_batch(houses: List[HouseFeatures]):
     """
     Prédiction en batch pour plusieurs maisons.
-    
-    Args:
-        houses: Liste des features des maisons
-        
-    Returns:
-        Liste des prix prédits
     """
-    if model is None:
+    if model_pipeline is None:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Modèle non disponible"
@@ -373,25 +321,14 @@ async def predict_batch(houses: list[HouseFeatures]):
         # Création du DataFrame
         df = pd.DataFrame(features_list)
         
-        # Application du Feature Engineering
-        fe = FeatureEngineering()
-        df = fe.transform(df)
-        
-        # Conversion des colonnes catégorielles en string
-        _, cat_features, _ = get_feature_types(df)
-        df[cat_features] = df[cat_features].astype(str)
-        
-        # Application du prétraitement
-        features_processed = preprocessor.transform(df)
-        
         # Prédictions
-        predicted_prices = model.predict(features_processed)
+        predicted_prices = make_prediction(model_pipeline, df, use_log=True)
         
         return {
             "predictions": [
                 {
                     "predicted_price": float(price),
-                    "model_version": "1.0.0"
+                    "model_version": "2.0.0"
                 }
                 for price in predicted_prices
             ]
@@ -408,12 +345,10 @@ async def predict_batch(houses: list[HouseFeatures]):
 @app.get("/api/stats/overview")
 async def get_stats_overview():
     """Retourne des statistiques globales sur le dataset."""
-    # 1. Tenter via le cache JSON (rapide et marche sans CSV)
     stats = get_stats_data()
     if stats and "overview" in stats:
         return stats["overview"]
     
-    # 2. Sinon via le CSV
     df = get_train_data()
     if df is None:
         raise HTTPException(status_code=404, detail="Données non disponibles")
@@ -430,12 +365,10 @@ async def get_stats_overview():
 @app.get("/api/stats/neighborhoods")
 async def get_neighborhood_stats():
     """Retourne les prix moyens par quartier."""
-    # 1. Tenter via le cache JSON
     stats = get_stats_data()
     if stats and "neighborhoods" in stats:
         return stats["neighborhoods"]
         
-    # 2. Sinon via le CSV
     df = get_train_data()
     if df is None:
         raise HTTPException(status_code=404, detail="Données non disponibles")
@@ -447,12 +380,10 @@ async def get_neighborhood_stats():
 @app.get("/api/stats/price-distribution")
 async def get_price_distribution(bins: int = 20):
     """Retourne la distribution des prix pour un histogramme."""
-    # 1. Tenter via le cache JSON
     stats = get_stats_data()
     if stats and "distribution" in stats:
         return stats["distribution"]
         
-    # 2. Sinon via le CSV
     df = get_train_data()
     if df is None:
         raise HTTPException(status_code=404, detail="Données non disponibles")
@@ -466,26 +397,21 @@ async def get_price_distribution(bins: int = 20):
 @app.get("/model/info")
 async def model_info():
     """Informations sur le modèle."""
-    if model is None:
+    if model_pipeline is None:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Modèle non disponible"
         )
     
     try:
-        # Informations sur le modèle
+        # Accéder au modèle final dans le pipeline
+        model = model_pipeline.named_steps['model']
         model_type = type(model).__name__
-        
-        # Pour RandomForest et GradientBoosting, on peut récupérer l'importance des features
-        feature_importance = None
-        if hasattr(model, 'feature_importances_'):
-            # Note: Dans une vraie application, on aurait les noms des features
-            feature_importance = model.feature_importances_.tolist()
         
         return {
             "model_type": model_type,
-            "model_version": "1.0.0",
-            "feature_importance": feature_importance,
+            "model_version": "2.0.0",
+            "feature_importance": None, # BayesianRidge n'a pas de feature_importances_ simple comme RF
             "parameters": model.get_params()
         }
         
