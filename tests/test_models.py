@@ -133,6 +133,7 @@ class TestModelSaveLoad:
 
 from sklearn.linear_model import HuberRegressor
 
+
 class TestHuberRegressor:
     """Tests spécifiques pour HuberRegressor."""
 
