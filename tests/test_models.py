@@ -5,8 +5,8 @@ Uses real data from data/raw/train.csv.
 """
 
 import sys
-from pathlib import Path
 import tempfile
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -18,9 +18,9 @@ from sklearn.pipeline import Pipeline
 # Ajoute le chemin src au sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from house_prices.models.train_model import train_model, evaluate_model, save_model
-from house_prices.models.predict_model import load_trained_model, predict
 from house_prices.data.load_data import load_data
+from house_prices.models.predict_model import load_trained_model, predict
+from house_prices.models.train_model import evaluate_model, save_model, train_model
 
 
 class TestNewPipelineWithRealData:

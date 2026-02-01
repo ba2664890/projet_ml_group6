@@ -14,9 +14,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from house_prices.data.load_data import display_data_info, get_target_distribution, load_data
 from house_prices.data.preprocessing import (
-    MissingValuesHandler,
     AnomalyCorrector,
     FeatureEngineer,
+    MissingValuesHandler,
     OrdinalEncoderCustom,
     SkewnessCorrector,
     create_full_pipeline,

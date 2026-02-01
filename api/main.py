@@ -4,27 +4,29 @@ Laplace Immo - Projet Data Science
 Updated to use unified pipeline.
 """
 
-from fastapi import FastAPI, HTTPException, status, Request
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
-from typing import Dict, Any, Optional, List
-import joblib
 import json
+import logging
+import os
+import sys
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import joblib
 import numpy as np
 import pandas as pd
-from pathlib import Path
-import logging
-import sys
-import os
-from datetime import datetime
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, Field
 
 # Ajout du chemin src pour importer house_prices
 sys.path.append(str(Path(__file__).parent.parent / "src"))
-from house_prices.models.predict_model import load_trained_model, predict as make_prediction
 from house_prices.data.preprocessing import get_feature_lists
+from house_prices.models.predict_model import load_trained_model
+from house_prices.models.predict_model import predict as make_prediction
 
 # Configuration du logging structuré
 logging.basicConfig(

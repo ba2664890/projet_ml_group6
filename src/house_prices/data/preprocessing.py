@@ -10,11 +10,12 @@ import numpy as np
 import pandas as pd
 from scipy.stats import skew
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.compose import ColumnTransformer, make_column_selector
+from sklearn.compose import ColumnTransformer
+from sklearn.compose import make_column_selector
+from sklearn.compose import make_column_selector as selector
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.compose import make_column_selector as selector
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
