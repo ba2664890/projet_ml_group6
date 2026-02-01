@@ -78,137 +78,137 @@
             </label>
             <input type="number" name="YearBuilt" min="1800" max="2026" value="2005" required
                 class="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 rounded-2xl px-6 py-4 focus:border-brand-500 font-bold text-slate-900 dark:text-white outline-none">
-        </div>
-        <div class="space-y-3">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Surface Totale
-                Terrain (LotArea)</label>
-            <div class="relative flex">
-                <input type="number" name="LotArea" value="8500" required
-                    class="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 rounded-2xl px-6 py-4 focus:border-brand-500 font-bold text-slate-900 dark:text-white outline-none">
-                <span
-                    class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xs uppercase italic">ft²</span>
+            <div class="space-y-3">
+                <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Surface Totale
+                    Terrain (LotArea)</label>
+                <div class="relative flex">
+                    <input type="number" name="LotArea" value="8500" required
+                        class="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 rounded-2xl px-6 py-4 focus:border-brand-500 font-bold text-slate-900 dark:text-white outline-none">
+                    <span
+                        class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xs uppercase italic">ft²</span>
+                </div>
             </div>
         </div>
-</div>
-</div>
 
-<!-- Step 2: Quality & Interior (Hidden) -->
-<div id="form-step-2" class="hidden space-y-12">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div
-            class="space-y-6 bg-slate-50 dark:bg-slate-800/30 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700">
-            <label
-                class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center justify-between">
-                <span>Qualité Globale (Estimation)</span>
-                <span class="text-[8px] bg-brand-100 text-brand-700 px-2 py-0.5 rounded-full">CRITIQUE</span>
-            </label>
-            <span class="text-brand-600 font-black" id="val-OverallQual">7/10</span>
+        <!-- Step 2: Quality & Interior (Hidden) -->
+        <div id="form-step-2" class="hidden space-y-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div
+                    class="space-y-6 bg-slate-50 dark:bg-slate-800/30 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-700">
+                    <label
+                        class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center justify-between">
+                        <span>Qualité Globale (Estimation)</span>
+                        <span class="text-[8px] bg-brand-100 text-brand-700 px-2 py-0.5 rounded-full">CRITIQUE</span>
+                    </label>
+                    <span class="text-brand-600 font-black" id="val-OverallQual">7/10</span>
+                </div>
+                <input type="range" name="OverallQual" min="1" max="10" value="7"
+                    class="w-full h-3 bg-brand-100 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-600">
+                <div class="flex justify-between text-[8px] font-black uppercase tracking-widest text-slate-400">
+                    <span>Standard</span><span>Premium</span><span>Luxe</span>
+                </div>
+            </div>
+            <div class="space-y-8 pt-4">
+                <div class="space-y-3">
+                    <label
+                        class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center justify-between">
+                        <span>Surface Habitable Totale (GrLivArea)</span>
+                        <span class="text-[8px] bg-brand-100 text-brand-700 px-2 py-0.5 rounded-full">CRITIQUE</span>
+                    </label>
+                    <input type="number" name="GrLivArea" value="1800" required
+                        class="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 rounded-2xl px-6 py-4 focus:border-brand-500 font-bold text-slate-900 dark:text-white outline-none">
+                </div>
+                <div class="space-y-3">
+                    <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Finitions
+                        Cuisine</label>
+                    <select name="KitchenQual"
+                        class="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 rounded-2xl px-6 py-4 font-bold text-slate-900 dark:text-white">
+                        <option value="Ex">Excellent (Granit/Électro Luxe)</option>
+                        <option value="Gd" selected>Haut de gamme</option>
+                        <option value="TA">Classique</option>
+                    </select>
+                </div>
+            </div>
         </div>
-        <input type="range" name="OverallQual" min="1" max="10" value="7"
-            class="w-full h-3 bg-brand-100 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-600">
-        <div class="flex justify-between text-[8px] font-black uppercase tracking-widest text-slate-400">
-            <span>Standard</span><span>Premium</span><span>Luxe</span>
-        </div>
-    </div>
-    <div class="space-y-8 pt-4">
-        <div class="space-y-3">
-            <label
-                class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center justify-between">
-                <span>Surface Habitable Totale (GrLivArea)</span>
-                <span class="text-[8px] bg-brand-100 text-brand-700 px-2 py-0.5 rounded-full">CRITIQUE</span>
-            </label>
-            <input type="number" name="GrLivArea" value="1800" required
-                class="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 rounded-2xl px-6 py-4 focus:border-brand-500 font-bold text-slate-900 dark:text-white outline-none">
-        </div>
-        <div class="space-y-3">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Finitions
-                Cuisine</label>
-            <select name="KitchenQual"
-                class="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 rounded-2xl px-6 py-4 font-bold text-slate-900 dark:text-white">
-                <option value="Ex">Excellent (Granit/Électro Luxe)</option>
-                <option value="Gd" selected>Haut de gamme</option>
-                <option value="TA">Classique</option>
-            </select>
-        </div>
-    </div>
-</div>
-</div>
 
-<!-- Step 3: Features (Hidden) -->
-<div id="form-step-3" class="hidden space-y-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div
-            class="flex items-center space-x-6 p-8 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border-2 border-slate-100 dark:border-slate-700">
-            <div class="w-16 h-16 bg-white dark:bg-slate-700 rounded-2xl flex items-center justify-center shadow-md">
-                <svg class="w-8 h-8 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
+        <!-- Step 3: Features (Hidden) -->
+        <div id="form-step-3" class="hidden space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div
+                    class="flex items-center space-x-6 p-8 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border-2 border-slate-100 dark:border-slate-700">
+                    <div
+                        class="w-16 h-16 bg-white dark:bg-slate-700 rounded-2xl flex items-center justify-center shadow-md">
+                        <svg class="w-8 h-8 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1 space-y-2">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Capacité Garage</p>
+                        <input type="number" name="GarageCars" value="2"
+                            class="bg-transparent border-none text-2xl font-black text-slate-900 dark:text-white focus:ring-0 p-0">
+                    </div>
+                </div>
+                <div
+                    class="flex items-center space-x-6 p-8 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border-2 border-slate-100 dark:border-slate-700">
+                    <div
+                        class="w-16 h-16 bg-white dark:bg-slate-700 rounded-2xl flex items-center justify-center shadow-md">
+                        <svg class="w-8 h-8 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="flex-1 space-y-2">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Salles de Bain (Full)
+                        </p>
+                        <input type="number" name="FullBath" value="2"
+                            class="bg-transparent border-none text-2xl font-black text-slate-900 dark:text-white focus:ring-0 p-0">
+                    </div>
+                </div>
             </div>
-            <div class="flex-1 space-y-2">
-                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Capacité Garage</p>
-                <input type="number" name="GarageCars" value="2"
-                    class="bg-transparent border-none text-2xl font-black text-slate-900 dark:text-white focus:ring-0 p-0">
-            </div>
+            <!-- API Invisible Defaults -->
+            <input type="hidden" name="OverallCond" value="5"><input type="hidden" name="TotalBsmtSF"
+                value="1000"><input type="hidden" name="CentralAir" value="Y"><input type="hidden" name="GarageArea"
+                value="500"><input type="hidden" name="TotRmsAbvGrd" value="7"><input type="hidden" name="MSSubClass"
+                value="60"><input type="hidden" name="MSZoning" value="RL"><input type="hidden" name="Street"
+                value="Pave"><input type="hidden" name="LotShape" value="Reg"><input type="hidden" name="LandContour"
+                value="Lvl"><input type="hidden" name="Utilities" value="AllPub"><input type="hidden" name="LotConfig"
+                value="Inside"><input type="hidden" name="LandSlope" value="Gtl"><input type="hidden" name="Condition1"
+                value="Norm"><input type="hidden" name="Condition2" value="Norm"><input type="hidden" name="HouseStyle"
+                value="2Story"><input type="hidden" name="YearRemodAdd" value="2005"><input type="hidden"
+                name="RoofStyle" value="Gable"><input type="hidden" name="RoofMatl" value="CompShg"><input type="hidden"
+                name="Exterior1st" value="VinylSd"><input type="hidden" name="Exterior2nd" value="VinylSd"><input
+                type="hidden" name="ExterQual" value="Gd"><input type="hidden" name="ExterCond" value="TA"><input
+                type="hidden" name="Foundation" value="PConc"><input type="hidden" name="Heating" value="GasA"><input
+                type="hidden" name="HeatingQC" value="Ex"><input type="hidden" name="1stFlrSF" value="1000"><input
+                type="hidden" name="2ndFlrSF" value="800"><input type="hidden" name="LowQualFinSF" value="0"><input
+                type="hidden" name="BedroomAbvGr" value="3"><input type="hidden" name="HalfBath" value="1"><input
+                type="hidden" name="KitchenAbvGr" value="1"><input type="hidden" name="Functional" value="Typ"><input
+                type="hidden" name="Fireplaces" value="1"><input type="hidden" name="PavedDrive" value="Y"><input
+                type="hidden" name="WoodDeckSF" value="100"><input type="hidden" name="OpenPorchSF" value="50"><input
+                type="hidden" name="EnclosedPorch" value="0"><input type="hidden" name="3SsnPorch" value="0"><input
+                type="hidden" name="ScreenPorch" value="0"><input type="hidden" name="PoolArea" value="0"><input
+                type="hidden" name="MiscVal" value="0"><input type="hidden" name="MoSold" value="6"><input type="hidden"
+                name="YrSold" value="2008"><input type="hidden" name="SaleType" value="WD"><input type="hidden"
+                name="SaleCondition" value="Normal">
         </div>
-        <div
-            class="flex items-center space-x-6 p-8 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border-2 border-slate-100 dark:border-slate-700">
-            <div class="w-16 h-16 bg-white dark:bg-slate-700 rounded-2xl flex items-center justify-center shadow-md">
-                <svg class="w-8 h-8 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
-                    </path>
-                </svg>
-            </div>
-            <div class="flex-1 space-y-2">
-                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Salles de Bain (Full)
-                </p>
-                <input type="number" name="FullBath" value="2"
-                    class="bg-transparent border-none text-2xl font-black text-slate-900 dark:text-white focus:ring-0 p-0">
-            </div>
-        </div>
-    </div>
-    <!-- API Invisible Defaults -->
-    <input type="hidden" name="OverallCond" value="5"><input type="hidden" name="TotalBsmtSF" value="1000"><input
-        type="hidden" name="CentralAir" value="Y"><input type="hidden" name="GarageArea" value="500"><input
-        type="hidden" name="TotRmsAbvGrd" value="7"><input type="hidden" name="MSSubClass" value="60"><input
-        type="hidden" name="MSZoning" value="RL"><input type="hidden" name="Street" value="Pave"><input type="hidden"
-        name="LotShape" value="Reg"><input type="hidden" name="LandContour" value="Lvl"><input type="hidden"
-        name="Utilities" value="AllPub"><input type="hidden" name="LotConfig" value="Inside"><input type="hidden"
-        name="LandSlope" value="Gtl"><input type="hidden" name="Condition1" value="Norm"><input type="hidden"
-        name="Condition2" value="Norm"><input type="hidden" name="HouseStyle" value="2Story"><input type="hidden"
-        name="YearRemodAdd" value="2005"><input type="hidden" name="RoofStyle" value="Gable"><input type="hidden"
-        name="RoofMatl" value="CompShg"><input type="hidden" name="Exterior1st" value="VinylSd"><input type="hidden"
-        name="Exterior2nd" value="VinylSd"><input type="hidden" name="ExterQual" value="Gd"><input type="hidden"
-        name="ExterCond" value="TA"><input type="hidden" name="Foundation" value="PConc"><input type="hidden"
-        name="Heating" value="GasA"><input type="hidden" name="HeatingQC" value="Ex"><input type="hidden"
-        name="1stFlrSF" value="1000"><input type="hidden" name="2ndFlrSF" value="800"><input type="hidden"
-        name="LowQualFinSF" value="0"><input type="hidden" name="BedroomAbvGr" value="3"><input type="hidden"
-        name="HalfBath" value="1"><input type="hidden" name="KitchenAbvGr" value="1"><input type="hidden"
-        name="Functional" value="Typ"><input type="hidden" name="Fireplaces" value="1"><input type="hidden"
-        name="PavedDrive" value="Y"><input type="hidden" name="WoodDeckSF" value="100"><input type="hidden"
-        name="OpenPorchSF" value="50"><input type="hidden" name="EnclosedPorch" value="0"><input type="hidden"
-        name="3SsnPorch" value="0"><input type="hidden" name="ScreenPorch" value="0"><input type="hidden"
-        name="PoolArea" value="0"><input type="hidden" name="MiscVal" value="0"><input type="hidden" name="MoSold"
-        value="6"><input type="hidden" name="YrSold" value="2008"><input type="hidden" name="SaleType" value="WD"><input
-        type="hidden" name="SaleCondition" value="Normal">
-</div>
 
-<!-- Navigation -->
-<div class="mt-20 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 pt-10">
-    <button type="button" id="prev-step"
-        class="hidden px-10 py-5 border-2 border-slate-100 dark:border-slate-700 text-slate-900 dark:text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">Retour</button>
-    <button type="button" id="auto-fill-btn"
-        class="px-6 py-2 border border-brand-200 text-brand-600 bg-brand-50/30 rounded-full font-black uppercase tracking-widest text-[9px] hover:bg-brand-50 transition-all ml-4">Remplissage
-        Auto (Moyennes)</button>
-    <div class="flex-1"></div>
-    <button type="button" id="next-step"
-        class="px-12 py-5 bg-black dark:bg-white dark:text-black text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-xl">Continuer</button>
-    <button type="submit" id="submit-prediction"
-        class="hidden px-12 py-5 bg-brand-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-xl shadow-brand-500/40">Générer
-        l'IA Estimation</button>
-</div>
-</form>
+        <!-- Navigation -->
+        <div class="mt-20 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 pt-10">
+            <button type="button" id="prev-step"
+                class="hidden px-10 py-5 border-2 border-slate-100 dark:border-slate-700 text-slate-900 dark:text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">Retour</button>
+            <button type="button" id="auto-fill-btn"
+                class="px-6 py-2 border border-brand-200 text-brand-600 bg-brand-50/30 rounded-full font-black uppercase tracking-widest text-[9px] hover:bg-brand-50 transition-all ml-4">Remplissage
+                Auto (Moyennes)</button>
+            <div class="flex-1"></div>
+            <button type="button" id="next-step"
+                class="px-12 py-5 bg-black dark:bg-white dark:text-black text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-xl">Continuer</button>
+            <button type="submit" id="submit-prediction"
+                class="hidden px-12 py-5 bg-brand-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-xl shadow-brand-500/40">Générer
+                l'IA Estimation</button>
+        </div>
+    </form>
 </div>
 
 <!-- Result Card (Premium Ultra) -->
