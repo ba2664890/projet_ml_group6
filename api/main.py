@@ -251,12 +251,14 @@ def get_train_data():
             logger.warning(f"Fichier de données brutes non trouvé: {DATA_PATH}")
     return _train_data_cache
 
+
 COMPARISON_PATH = Path(__file__).parent.parent / "data" / "processed" / "model_comparison.json"
+
 
 def get_comparison_data():
     """Charge les résultats de comparaison des modèles."""
     if COMPARISON_PATH.exists():
-        with open(COMPARISON_PATH, 'r') as f:
+        with open(COMPARISON_PATH, "r") as f:
             return json.load(f)
     return None
 
@@ -440,15 +442,16 @@ async def get_defaults():
     stats = get_stats_data()
     if stats and "defaults" in stats:
         return stats["defaults"]
-    
+
     # Fallback: calcul à la volée
     df = get_train_data()
     if df is None:
         raise HTTPException(status_code=404, detail="Données non disponibles")
-    
+
     defaults = {}
     for col in df.columns:
-        if col in ["SalePrice", "Id"]: continue
+        if col in ["SalePrice", "Id"]:
+            continue
         if df[col].dtype == "object":
             defaults[col] = df[col].mode()[0]
         else:
@@ -495,13 +498,12 @@ async def model_comparison():
     """Retourne les performances comparées des 4 meilleurs modèles."""
     comparison = get_comparison_data()
     if comparison is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Données de comparaison non disponibles"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Données de comparaison non disponibles")
     return comparison
 
+
 from datetime import datetime
+
 
 @app.get("/model/info")
 async def get_model_info():
@@ -510,12 +512,8 @@ async def get_model_info():
         "model_name": "HuberRegressor",
         "version": "2.1.0",
         "last_trained": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "metrics": {
-            "r2_score": 0.9440,
-            "rmse": 19731.44,
-            "status": "Production Optimized"
-        },
-        "description": "Modèle de régression robuste optimisé pour minimiser l'influence des valeurs aberrantes (Best model)."
+        "metrics": {"r2_score": 0.9440, "rmse": 19731.44, "status": "Production Optimized"},
+        "description": "Modèle de régression robuste optimisé pour minimiser l'influence des valeurs aberrantes (Best model).",
     }
 
 
