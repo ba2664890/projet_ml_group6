@@ -12,6 +12,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from dotenv import load_dotenv
+
+# Charger les variables d'environnement depuis .env s'il existe
+load_dotenv()
+
 import joblib
 import numpy as np
 import pandas as pd
