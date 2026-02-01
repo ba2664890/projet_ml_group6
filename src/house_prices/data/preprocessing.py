@@ -28,7 +28,15 @@ logger = logging.getLogger(__name__)
 class MissingValuesHandler(BaseEstimator, TransformerMixin):
     """Advanced missing values handler with neighborhood-based imputation."""
 
-    def __init__(self, none_features, zero_features, group_impute, mode_features, strategy_lotfrontage="median", neighborhoods_threshold=0.02):
+    def __init__(
+        self,
+        none_features,
+        zero_features,
+        group_impute,
+        mode_features,
+        strategy_lotfrontage="median",
+        neighborhoods_threshold=0.02,
+    ):
         """Cette classe permet de traiter les missing values et elle pourra être inclus dans un Pipeline scikit-learn"""
         self.none_features = none_features
         self.zero_features = zero_features
@@ -45,9 +53,9 @@ class MissingValuesHandler(BaseEstimator, TransformerMixin):
         """Calcul des paramètres pour l'imputation à partir du jeu d'entraînement"""
         print("Missing Values Handler starting in fit...")
         logging.info("Calcul des paramètres pour l'imputation à partir du jeu d'entraînement...")
-        if 'Neighborhood' in X_train.columns:
+        if "Neighborhood" in X_train.columns:
             # Modalités assez représentées (% > self.neighborhoods_threshold)
-            neighborhood_proportions = X_train['Neighborhood'].value_counts(normalize=True)
+            neighborhood_proportions = X_train["Neighborhood"].value_counts(normalize=True)
             correct_neighborhoods = neighborhood_proportions[neighborhood_proportions >= self.neighborhoods_threshold].index
             correct_neighborhoods = list(correct_neighborhoods)
             self.correct_neighborhoods_ = correct_neighborhoods
@@ -61,30 +69,34 @@ class MissingValuesHandler(BaseEstimator, TransformerMixin):
             self.mode_for_mode_features_ = result
 
             # stat global pour lotfrontage
-            if 'LotFrontage' in X_train.columns:
-                if self.strategy_lotfrontage == 'median':
-                    self.global_stat_lotfrontage_ = X_train['LotFrontage'].median()
-                elif self.strategy_lotfrontage == 'mean':
-                    self.global_stat_lotfrontage_ = X_train['LotFrontage'].mean()
+            if "LotFrontage" in X_train.columns:
+                if self.strategy_lotfrontage == "median":
+                    self.global_stat_lotfrontage_ = X_train["LotFrontage"].median()
+                elif self.strategy_lotfrontage == "mean":
+                    self.global_stat_lotfrontage_ = X_train["LotFrontage"].mean()
                 else:
                     logging.error("Mauvaise valeur de strategy_lotfrontage: mettre mean ou median")
 
             # Stat de lotfrontage par neighborhoods
-            if 'Neighborhood' in X_train.columns and 'LotFrontage' in X_train.columns and self.correct_neighborhoods_ is not None:
+            if (
+                "Neighborhood" in X_train.columns
+                and "LotFrontage" in X_train.columns
+                and self.correct_neighborhoods_ is not None
+            ):
                 X_train_temp = X_train.copy()
                 # Conserver uniquement les correct_neighborhoods, les autres sont groupés en 'Autres'
-                all_unique_neighborhoods = set(X_train_temp['Neighborhood'].unique())
+                all_unique_neighborhoods = set(X_train_temp["Neighborhood"].unique())
                 categories_to_replace = list(all_unique_neighborhoods.difference(set(self.correct_neighborhoods_)))
-                X_train_temp['Neighborhood'] = X_train_temp['Neighborhood'].replace(categories_to_replace, 'Autres')
+                X_train_temp["Neighborhood"] = X_train_temp["Neighborhood"].replace(categories_to_replace, "Autres")
 
-                effective_neighborhoods = list(set(self.correct_neighborhoods_ + ['Autres']))
+                effective_neighborhoods = list(set(self.correct_neighborhoods_ + ["Autres"]))
 
                 for neighborhood in effective_neighborhoods:
-                    neighborhood_data = X_train_temp[X_train_temp['Neighborhood'] == neighborhood]
-                    if self.strategy_lotfrontage == 'median':
-                        self.stat_lotfrontage_per_neighborhood_[neighborhood] = neighborhood_data['LotFrontage'].median()
-                    elif self.strategy_lotfrontage == 'mean':
-                        self.stat_lotfrontage_per_neighborhood_[neighborhood] = neighborhood_data['LotFrontage'].mean()
+                    neighborhood_data = X_train_temp[X_train_temp["Neighborhood"] == neighborhood]
+                    if self.strategy_lotfrontage == "median":
+                        self.stat_lotfrontage_per_neighborhood_[neighborhood] = neighborhood_data["LotFrontage"].median()
+                    elif self.strategy_lotfrontage == "mean":
+                        self.stat_lotfrontage_per_neighborhood_[neighborhood] = neighborhood_data["LotFrontage"].mean()
                     else:
                         logging.error("Mauvaise valeur de strategy_lotfrontage: mettre mean ou median")
 
@@ -102,7 +114,7 @@ class MissingValuesHandler(BaseEstimator, TransformerMixin):
         if self.none_features and len(self.none_features) > 0:
             for feature in self.none_features:
                 if feature in X.columns:
-                    X[feature] = X[feature].fillna('None')
+                    X[feature] = X[feature].fillna("None")
                     logging.info(f"  ✓ {feature}: NA → 'None'")
 
         logging.info("2. Imputation - ÉTAPE 2: NA = 0 (Quantité nulle)")
@@ -115,25 +127,29 @@ class MissingValuesHandler(BaseEstimator, TransformerMixin):
         logging.info("3. Imputation - ÉTAPE 3: LotFrontage par groupe (Neighborhood)")
         # remplacer les categories mal représentées par 'Autres'
         # D'abord, identifier les catégories qui ne sont PAS dans `correct_neighborhoods`
-        if self.correct_neighborhoods_ is not None and 'Neighborhood' in X.columns:
-            all_neighborhoods = set(X['Neighborhood'].unique())
+        if self.correct_neighborhoods_ is not None and "Neighborhood" in X.columns:
+            all_neighborhoods = set(X["Neighborhood"].unique())
             categories_to_replace = list(all_neighborhoods.difference(set(self.correct_neighborhoods_)))
-            X['Neighborhood'] = X['Neighborhood'].replace(categories_to_replace, 'Autres')
+            X["Neighborhood"] = X["Neighborhood"].replace(categories_to_replace, "Autres")
 
             # Imputation par médiane / moyenne de groupe
             # On utilisera le dictionnaire self.stat_lotfrontage_per_neighborhood_
-            if 'LotFrontage' in X.columns:
-                mapped_lotfrontage = X['Neighborhood'].map(self.stat_lotfrontage_per_neighborhood_)
-                X['LotFrontage'] = X['LotFrontage'].fillna(mapped_lotfrontage)
+            if "LotFrontage" in X.columns:
+                mapped_lotfrontage = X["Neighborhood"].map(self.stat_lotfrontage_per_neighborhood_)
+                X["LotFrontage"] = X["LotFrontage"].fillna(mapped_lotfrontage)
 
                 # Si encore des NA (Neighborhood avec tous les NA), imputer par médiane globale
-                remaining_na = X['LotFrontage'].isnull().sum()
+                remaining_na = X["LotFrontage"].isnull().sum()
                 if remaining_na > 0:
                     if self.global_stat_lotfrontage_ is not None:
-                        X['LotFrontage'] = X['LotFrontage'].fillna(self.global_stat_lotfrontage_)
-                        logging.info(f"   {remaining_na} valeurs imputées par {self.strategy_lotfrontage} globale ({self.global_stat_lotfrontage_:.1f})")
+                        X["LotFrontage"] = X["LotFrontage"].fillna(self.global_stat_lotfrontage_)
+                        logging.info(
+                            f"   {remaining_na} valeurs imputées par {self.strategy_lotfrontage} globale ({self.global_stat_lotfrontage_:.1f})"
+                        )
         else:
-            logging.info("  !!! LotFrontage: NA → aucune imputation car, pas de Neighborhood ou de correct_neighborhoods spécifié ")
+            logging.info(
+                "  !!! LotFrontage: NA → aucune imputation car, pas de Neighborhood ou de correct_neighborhoods spécifié "
+            )
 
         logging.info("4. IMPUTATION - ÉTAPE 4: Variables catégorielles par mode")
         if self.mode_for_mode_features_:
@@ -142,7 +158,9 @@ class MissingValuesHandler(BaseEstimator, TransformerMixin):
                     mode_value = self.mode_for_mode_features_[feature]
                     X[feature] = X[feature].fillna(mode_value)
         else:
-            logging.info("  !!! Variables catégorielles par mode: NA → aucune imputation car, pas de mode_for_mode_features spécifié ")
+            logging.info(
+                "  !!! Variables catégorielles par mode: NA → aucune imputation car, pas de mode_for_mode_features spécifié "
+            )
 
         na_final = X.isnull().sum().sum()
         logging.info(f"  ✓ Valeurs manquantes après:  {na_final:,}")
@@ -161,9 +179,9 @@ class AnomalyCorrector(BaseEstimator, TransformerMixin):
         print("Anomaly Corrector Handler starting...")
 
         # Fix GarageYrBlt > YearBuilt
-        if 'GarageYrBlt' in X.columns and 'YearBuilt' in X.columns:
-            mask = X['GarageYrBlt'] > X['YearBuilt']
-            X.loc[mask, 'GarageYrBlt'] = X.loc[mask, 'YearBuilt']
+        if "GarageYrBlt" in X.columns and "YearBuilt" in X.columns:
+            mask = X["GarageYrBlt"] > X["YearBuilt"]
+            X.loc[mask, "GarageYrBlt"] = X.loc[mask, "YearBuilt"]
 
         return X
 
@@ -179,68 +197,71 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
         print("Feature Engineering Handler starting...")
 
         # Surfaces
-        if all(col in X.columns for col in ['TotalBsmtSF', '1stFlrSF', '2ndFlrSF']):
-            X['TotalSF'] = X['TotalBsmtSF'] + X['1stFlrSF'] + X['2ndFlrSF']
-            X['TotalSF_AboveGround'] = X['1stFlrSF'] + X['2ndFlrSF']
-            X['Has2ndFloor'] = (X['2ndFlrSF'] > 0).astype(int)
-            X['HasBasement'] = (X['TotalBsmtSF'] > 0).astype(int)
+        if all(col in X.columns for col in ["TotalBsmtSF", "1stFlrSF", "2ndFlrSF"]):
+            X["TotalSF"] = X["TotalBsmtSF"] + X["1stFlrSF"] + X["2ndFlrSF"]
+            X["TotalSF_AboveGround"] = X["1stFlrSF"] + X["2ndFlrSF"]
+            X["Has2ndFloor"] = (X["2ndFlrSF"] > 0).astype(int)
+            X["HasBasement"] = (X["TotalBsmtSF"] > 0).astype(int)
 
         # Porches
-        porch_cols = ['OpenPorchSF', '3SsnPorch', 'EnclosedPorch', 'ScreenPorch', 'WoodDeckSF']
+        porch_cols = ["OpenPorchSF", "3SsnPorch", "EnclosedPorch", "ScreenPorch", "WoodDeckSF"]
         if all(col in X.columns for col in porch_cols):
-            X['TotalPorchSF'] = (
-                X['OpenPorchSF'] + X['3SsnPorch'] +
-                X['EnclosedPorch'] + X['ScreenPorch'] +
-                X['WoodDeckSF']
-            )
-            X['HasPorch'] = (X['TotalPorchSF'] > 0).astype(int)
-            X['HasDeck'] = (X['WoodDeckSF'] > 0).astype(int)
+            X["TotalPorchSF"] = X["OpenPorchSF"] + X["3SsnPorch"] + X["EnclosedPorch"] + X["ScreenPorch"] + X["WoodDeckSF"]
+            X["HasPorch"] = (X["TotalPorchSF"] > 0).astype(int)
+            X["HasDeck"] = (X["WoodDeckSF"] > 0).astype(int)
 
-        if 'PoolArea' in X.columns:
-            X['HasPool'] = (X['PoolArea'] > 0).astype(int)
+        if "PoolArea" in X.columns:
+            X["HasPool"] = (X["PoolArea"] > 0).astype(int)
 
         # Ages
-        if 'YrSold' in X.columns:
-            if 'YearBuilt' in X.columns:
-                 X['HouseAge'] = X['YrSold'] - X['YearBuilt']
-                 X['IsNew'] = (X['YearBuilt'] == X['YrSold']).astype(int)
-            
-            if 'YearRemodAdd' in X.columns:
-                X['RemodAge'] = X['YrSold'] - X['YearRemodAdd']
-                if 'YearBuilt' in X.columns:
-                    X['HasBeenRemod'] = (X['YearRemodAdd'] != X['YearBuilt']).astype(int)
+        if "YrSold" in X.columns:
+            if "YearBuilt" in X.columns:
+                X["HouseAge"] = X["YrSold"] - X["YearBuilt"]
+                X["IsNew"] = (X["YearBuilt"] == X["YrSold"]).astype(int)
+
+            if "YearRemodAdd" in X.columns:
+                X["RemodAge"] = X["YrSold"] - X["YearRemodAdd"]
+                if "YearBuilt" in X.columns:
+                    X["HasBeenRemod"] = (X["YearRemodAdd"] != X["YearBuilt"]).astype(int)
 
         # Temps
-        if all(col in X.columns for col in ['YrSold', 'YearBuilt', 'YearRemodAdd']):
-            X['HouseAge'] = X['YrSold'] - X['YearBuilt']
-            X['RemodAge'] = X['YrSold'] - X['YearRemodAdd']
-            X['IsNew'] = (X['YrSold'] == X['YearBuilt']).astype(int)
-            X['HasBeenRemod'] = (X['YearRemodAdd'] > X['YearBuilt']).astype(int)
-            X['HouseAgeBin'] = pd.cut(
-                X['HouseAge'],
+        if all(col in X.columns for col in ["YrSold", "YearBuilt", "YearRemodAdd"]):
+            X["HouseAge"] = X["YrSold"] - X["YearBuilt"]
+            X["RemodAge"] = X["YrSold"] - X["YearRemodAdd"]
+            X["IsNew"] = (X["YrSold"] == X["YearBuilt"]).astype(int)
+            X["HasBeenRemod"] = (X["YearRemodAdd"] > X["YearBuilt"]).astype(int)
+            X["HouseAgeBin"] = pd.cut(
+                X["HouseAge"],
                 bins=[0, 5, 20, 50, 100, 200],
-                labels=['New', 'Recent', 'Moderate', 'Old', 'VeryOld'],
-                include_lowest=True
+                labels=["New", "Recent", "Moderate", "Old", "VeryOld"],
+                include_lowest=True,
             )
 
         # Garage
-        if 'GarageArea' in X.columns:
-            X['HasGarage'] = (X['GarageArea'] > 0).astype(int)
-        if all(col in X.columns for col in ['YrSold', 'GarageYrBlt']):
-            X['GarageAge'] = (X['YrSold'] - X['GarageYrBlt']).clip(lower=0)
+        if "GarageArea" in X.columns:
+            X["HasGarage"] = (X["GarageArea"] > 0).astype(int)
+        if all(col in X.columns for col in ["YrSold", "GarageYrBlt"]):
+            X["GarageAge"] = (X["YrSold"] - X["GarageYrBlt"]).clip(lower=0)
 
         # Cheminée
-        if all(col in X.columns for col in ['Fireplaces', 'FireplaceQu']):
-            fireplace_map = {'None': 0, 'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5}
-            X['HasFireplace'] = (X['Fireplaces'] > 0).astype(int)
-            X['FireplaceScore'] = X['Fireplaces'] * X['FireplaceQu'].map(fireplace_map).fillna(0)
+        if all(col in X.columns for col in ["Fireplaces", "FireplaceQu"]):
+            fireplace_map = {"None": 0, "Po": 1, "Fa": 2, "TA": 3, "Gd": 4, "Ex": 5}
+            X["HasFireplace"] = (X["Fireplaces"] > 0).astype(int)
+            X["FireplaceScore"] = X["Fireplaces"] * X["FireplaceQu"].map(fireplace_map).fillna(0)
 
         # Suppressions
         drop_cols = [
-            '1stFlrSF', '2ndFlrSF', 'TotalBsmtSF',
-            'OpenPorchSF', '3SsnPorch', 'EnclosedPorch',
-            'YearBuilt', 'YearRemodAdd', 'YrSold',
-            'GarageYrBlt', 'Fireplaces'
+            "1stFlrSF",
+            "2ndFlrSF",
+            "TotalBsmtSF",
+            "OpenPorchSF",
+            "3SsnPorch",
+            "EnclosedPorch",
+            "YearBuilt",
+            "YearRemodAdd",
+            "YrSold",
+            "GarageYrBlt",
+            "Fireplaces",
         ]
         X = X.drop(columns=[c for c in drop_cols if c in X.columns])
 
@@ -257,45 +278,53 @@ class OrdinalEncoderCustom(BaseEstimator, TransformerMixin):
         X = X.copy()
         print("Ordinal Encoder Handler starting...")
 
-        quality_mapping = {'None': 0, 'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5}
-        exposure_mapping = {'None': 0, 'No': 1, 'Mn': 2, 'Av': 3, 'Gd': 4}
-        garage_finish_mapping = {'None': 0, 'Unf': 1, 'RFn': 2, 'Fin': 3}
-        functional_mapping = {'Sal': 0, 'Sev': 1, 'Maj2': 2, 'Maj1': 3,
-                              'Mod': 4, 'Min2': 5, 'Min1': 6, 'Typ': 7}
-        slope_mapping = {'Sev': 0, 'Mod': 1, 'Gtl': 2}
-        shape_mapping = {'IR3': 0, 'IR2': 1, 'IR1': 2, 'Reg': 3}
-        contour_mapping = {'Low': 0, 'HLS': 1, 'Bnk': 2, 'Lvl': 3}
-        house_age_mapping = {'New': 0, 'Recent': 1, 'Moderate': 2, 'Old': 3, 'VeryOld': 4}
-        fence_mapping = {'None': 0, 'MnWw': 1, 'GdWo': 2, 'MnPrv': 3, 'GdPrv': 4}
-        bsmt_fin_type_mapping = {'None': 0, 'Unf': 1, 'LwQ': 2, 'Rec': 3, 'BLQ': 4, 'ALQ': 5, 'GLQ': 6}
+        quality_mapping = {"None": 0, "Po": 1, "Fa": 2, "TA": 3, "Gd": 4, "Ex": 5}
+        exposure_mapping = {"None": 0, "No": 1, "Mn": 2, "Av": 3, "Gd": 4}
+        garage_finish_mapping = {"None": 0, "Unf": 1, "RFn": 2, "Fin": 3}
+        functional_mapping = {"Sal": 0, "Sev": 1, "Maj2": 2, "Maj1": 3, "Mod": 4, "Min2": 5, "Min1": 6, "Typ": 7}
+        slope_mapping = {"Sev": 0, "Mod": 1, "Gtl": 2}
+        shape_mapping = {"IR3": 0, "IR2": 1, "IR1": 2, "Reg": 3}
+        contour_mapping = {"Low": 0, "HLS": 1, "Bnk": 2, "Lvl": 3}
+        house_age_mapping = {"New": 0, "Recent": 1, "Moderate": 2, "Old": 3, "VeryOld": 4}
+        fence_mapping = {"None": 0, "MnWw": 1, "GdWo": 2, "MnPrv": 3, "GdPrv": 4}
+        bsmt_fin_type_mapping = {"None": 0, "Unf": 1, "LwQ": 2, "Rec": 3, "BLQ": 4, "ALQ": 5, "GLQ": 6}
 
         # Quality features
-        for col in ['ExterQual', 'ExterCond', 'BsmtQual', 'BsmtCond',
-                    'HeatingQC', 'KitchenQual', 'FireplaceQu',
-                    'GarageQual', 'GarageCond', 'PoolQC']:
+        for col in [
+            "ExterQual",
+            "ExterCond",
+            "BsmtQual",
+            "BsmtCond",
+            "HeatingQC",
+            "KitchenQual",
+            "FireplaceQu",
+            "GarageQual",
+            "GarageCond",
+            "PoolQC",
+        ]:
             if col in X.columns:
                 X[col] = X[col].map(quality_mapping)
 
         # Other ordinal features
-        if 'BsmtExposure' in X.columns:
-            X['BsmtExposure'] = X['BsmtExposure'].map(exposure_mapping)
-        if 'GarageFinish' in X.columns:
-            X['GarageFinish'] = X['GarageFinish'].map(garage_finish_mapping)
-        if 'Functional' in X.columns:
-            X['Functional'] = X['Functional'].map(functional_mapping)
-        if 'LandSlope' in X.columns:
-            X['LandSlope'] = X['LandSlope'].map(slope_mapping)
-        if 'LotShape' in X.columns:
-            X['LotShape'] = X['LotShape'].map(shape_mapping)
-        if 'LandContour' in X.columns:
-            X['LandContour'] = X['LandContour'].map(contour_mapping)
-        if 'HouseAgeBin' in X.columns:
-            X['HouseAgeBin'] = X['HouseAgeBin'].map(house_age_mapping)
-        if 'Fence' in X.columns:
-            X['Fence'] = X['Fence'].map(fence_mapping)
+        if "BsmtExposure" in X.columns:
+            X["BsmtExposure"] = X["BsmtExposure"].map(exposure_mapping)
+        if "GarageFinish" in X.columns:
+            X["GarageFinish"] = X["GarageFinish"].map(garage_finish_mapping)
+        if "Functional" in X.columns:
+            X["Functional"] = X["Functional"].map(functional_mapping)
+        if "LandSlope" in X.columns:
+            X["LandSlope"] = X["LandSlope"].map(slope_mapping)
+        if "LotShape" in X.columns:
+            X["LotShape"] = X["LotShape"].map(shape_mapping)
+        if "LandContour" in X.columns:
+            X["LandContour"] = X["LandContour"].map(contour_mapping)
+        if "HouseAgeBin" in X.columns:
+            X["HouseAgeBin"] = X["HouseAgeBin"].map(house_age_mapping)
+        if "Fence" in X.columns:
+            X["Fence"] = X["Fence"].map(fence_mapping)
 
         # Basement finish type mapping
-        for col in ['BsmtFinType1', 'BsmtFinType2']:
+        for col in ["BsmtFinType1", "BsmtFinType2"]:
             if col in X.columns:
                 X[col] = X[col].map(bsmt_fin_type_mapping)
 
@@ -316,7 +345,7 @@ class SkewnessCorrector(BaseEstimator, TransformerMixin):
         print("Skewness Corrector Handler starting...")
         # Identifier les variables numériques
         numeric_features = X.select_dtypes(include=[np.number]).columns.tolist()
-        
+
         for col in numeric_features:
             # Vérifier conditions: non-négatif et assez de valeurs uniques (éviter binaires)
             if X[col].min() >= 0 and X[col].nunique() > 10:
@@ -327,7 +356,7 @@ class SkewnessCorrector(BaseEstimator, TransformerMixin):
                         print(f"  Feature détectée asymétrique: {col} (skew={skew_val:.2f})")
                 except Exception:
                     pass
-        
+
         print(f"  Total features asymétriques à corriger: {len(self.skewed_features)}")
         return self
 
@@ -374,22 +403,52 @@ def get_feature_lists():
     These are based on the grp_06_ml.py configuration.
     """
     # NA = Absence d'équipements (None) --- variables catégorielles
-    none_features = ['PoolQC', 'MiscFeature', 'Alley', 'Fence', 'FireplaceQu',
-                     'GarageType', 'GarageFinish', 'GarageQual', 'GarageCond',
-                     'BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1',
-                     'BsmtFinType2', 'MasVnrType']
+    none_features = [
+        "PoolQC",
+        "MiscFeature",
+        "Alley",
+        "Fence",
+        "FireplaceQu",
+        "GarageType",
+        "GarageFinish",
+        "GarageQual",
+        "GarageCond",
+        "BsmtQual",
+        "BsmtCond",
+        "BsmtExposure",
+        "BsmtFinType1",
+        "BsmtFinType2",
+        "MasVnrType",
+    ]
 
     # NA = 0 (pas d'équipements) --- variables numériques
-    zero_features = ['GarageYrBlt', 'GarageArea', 'GarageCars', 'BsmtFinSF1',
-                     'BsmtFinSF2', 'BsmtUnfSF', 'TotalBsmtSF', 'BsmtFullBath',
-                     'BsmtHalfBath', 'MasVnrArea']
+    zero_features = [
+        "GarageYrBlt",
+        "GarageArea",
+        "GarageCars",
+        "BsmtFinSF1",
+        "BsmtFinSF2",
+        "BsmtUnfSF",
+        "TotalBsmtSF",
+        "BsmtFullBath",
+        "BsmtHalfBath",
+        "MasVnrArea",
+    ]
 
     # NA à imputer par médiane/groupe (lien fort entre LotFrontage et Neighborhood)
-    group_impute = {'LotFrontage': 'Neighborhood'}
+    group_impute = {"LotFrontage": "Neighborhood"}
 
     # NA à imputer par mode --- variables catégorielles
-    mode_features = ['MSZoning', 'Functional', 'Utilities', 'SaleType',
-                     'KitchenQual', 'Exterior1st', 'Exterior2nd', 'Electrical']
+    mode_features = [
+        "MSZoning",
+        "Functional",
+        "Utilities",
+        "SaleType",
+        "KitchenQual",
+        "Exterior1st",
+        "Exterior2nd",
+        "Electrical",
+    ]
 
     return none_features, zero_features, group_impute, mode_features
 

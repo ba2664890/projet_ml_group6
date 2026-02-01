@@ -19,10 +19,10 @@ logger = logging.getLogger(__name__)
 def load_trained_model(model_path: str = "models/house_prices_model.pkl") -> Pipeline:
     """
     Charge le pipeline complet.
-    
+
     Args:
         model_path: Chemin vers le fichier du modèle
-        
+
     Returns:
         Pipeline complet (preprocessing + model)
     """
@@ -39,18 +39,18 @@ def load_trained_model(model_path: str = "models/house_prices_model.pkl") -> Pip
 def predict(pipeline: Pipeline, X: pd.DataFrame, use_log: bool = True) -> np.ndarray:
     """
     Effectue des prédictions sur de nouvelles données.
-    
+
     Args:
         pipeline: Pipeline complet
         X: Features pour la prédiction
         use_log: Si True, applique la transformation inverse de log
-        
+
     Returns:
         Prédictions
     """
     # Prédiction
     y_pred_log = pipeline.predict(X)
-    
+
     # Transformation inverse si nécessaire
     if use_log:
         predictions = np.expm1(y_pred_log)
@@ -64,11 +64,10 @@ def predict(pipeline: Pipeline, X: pd.DataFrame, use_log: bool = True) -> np.nda
 if __name__ == "__main__":
     # Test du module
     logger.info("Test du module de prédiction...")
-    
+
     try:
         pipeline = load_trained_model()
         logger.info("Pipeline chargé avec succès")
         logger.info(f"Type de pipeline: {type(pipeline)}")
     except FileNotFoundError:
         logger.warning("Aucun modèle trouvé. Entraînez d'abord un modèle avec train_model.py")
-

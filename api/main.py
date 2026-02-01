@@ -29,17 +29,17 @@ from house_prices.data.preprocessing import get_feature_lists
 # Configuration du logging structuré
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler('logs/api.log') if Path('logs').exists() else logging.NullHandler()
-    ]
+        logging.FileHandler("logs/api.log") if Path("logs").exists() else logging.NullHandler(),
+    ],
 )
 logger = logging.getLogger(__name__)
 
 # Variables d'environnement
-ENV = os.getenv('ENV', 'development')
-ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', '*').split(',')
+ENV = os.getenv("ENV", "development")
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 
 # Initialisation de l'application FastAPI
 app = FastAPI(
@@ -47,7 +47,7 @@ app = FastAPI(
     description="API de prédiction des prix des maisons pour Laplace Immo",
     version="2.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
 )
 
 # Configuration CORS dynamique
@@ -59,6 +59,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # Middleware de logging des requêtes
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
@@ -68,10 +69,12 @@ async def log_requests(request: Request, call_next):
     logger.info(f"{request.method} {request.url.path} - {response.status_code} - {process_time:.3f}s")
     return response
 
+
 # Montage des fichiers statiques du dashboard
 dashboard_path = Path(__file__).parent.parent / "dashboard"
 if dashboard_path.exists():
     app.mount("/dashboard", StaticFiles(directory=str(dashboard_path), html=True), name="dashboard")
+
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
@@ -82,9 +85,11 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content={"detail": exc.errors()},
     )
 
+
 # Modèles Pydantic pour la validation des données
 class HouseFeatures(BaseModel):
     """Modèle pour les features d'une maison."""
+
     model_config = {"populate_by_name": True}
 
     # Champs minimaux requis, les autres peuvent être None et seront gérés par le pipeline
@@ -172,6 +177,7 @@ class HouseFeatures(BaseModel):
 
 class PredictionResponse(BaseModel):
     """Réponse de prédiction."""
+
     predicted_price: float = Field(..., description="Prix prédit")
     model_version: str = Field(..., description="Version du modèle")
     confidence_score: Optional[float] = Field(None, description="Score de confiance")
@@ -179,6 +185,7 @@ class PredictionResponse(BaseModel):
 
 class HealthResponse(BaseModel):
     """Réponse de health check."""
+
     status: str
     model_loaded: bool
     model_version: str
@@ -187,6 +194,7 @@ class HealthResponse(BaseModel):
 # Chargement du modèle au démarrage
 model_pipeline = None
 MODEL_PATH = Path(__file__).parent.parent / "models" / "house_prices_model.pkl"
+
 
 def load_model():
     """Charge le pipeline complet."""
@@ -202,22 +210,25 @@ def load_model():
         logger.error(f"Erreur lors du chargement du modèle: {e}")
         model_pipeline = None
 
+
 # Chemin des données
 DATA_PATH = Path(__file__).parent.parent / "data" / "raw" / "train.csv"
 STATS_PATH = Path(__file__).parent.parent / "data" / "processed" / "stats.json"
 _train_data_cache = None
 _stats_cache = None
 
+
 def get_stats_data():
     """Charge les statistiques pré-calculées."""
     global _stats_cache
     if _stats_cache is None:
         if STATS_PATH.exists():
-            with open(STATS_PATH, 'r') as f:
+            with open(STATS_PATH, "r") as f:
                 _stats_cache = json.load(f)
         else:
             logger.warning(f"Fichier de statistiques non trouvé: {STATS_PATH}")
     return _stats_cache
+
 
 def get_train_data():
     """Charge et cache les données d'entraînement (si disponibles)."""
@@ -228,6 +239,7 @@ def get_train_data():
         else:
             logger.warning(f"Fichier de données brutes non trouvé: {DATA_PATH}")
     return _train_data_cache
+
 
 # Charger le modèle au démarrage
 load_model()
@@ -243,11 +255,7 @@ async def startup_event():
 @app.get("/", response_model=Dict[str, str])
 async def root():
     """Endpoint racine."""
-    return {
-        "message": "Bienvenue sur l'API Laplace Immo - House Prices Prediction",
-        "version": "2.0.0",
-        "docs": "/docs"
-    }
+    return {"message": "Bienvenue sur l'API Laplace Immo - House Prices Prediction", "version": "2.0.0", "docs": "/docs"}
 
 
 @app.get("/health", response_model=HealthResponse)
@@ -256,7 +264,7 @@ async def health_check():
     return HealthResponse(
         status="healthy" if model_pipeline is not None else "unhealthy",
         model_loaded=model_pipeline is not None,
-        model_version="2.0.0"
+        model_version="2.0.0",
     )
 
 
@@ -267,39 +275,34 @@ async def predict(house_features: HouseFeatures):
     """
     logger.info(f"Requête de prédiction reçue")
     if model_pipeline is None:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Modèle non disponible"
-        )
-    
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Modèle non disponible")
+
     try:
         # Conversion en dictionnaire
         features_dict = house_features.dict(by_alias=True)
-        
+
         # Création du DataFrame (1 seule ligne)
         df = pd.DataFrame([features_dict])
-        
+
         # Le pipeline s'occupe de tout (preprocessing, feature engineering, prediction)
         # La fonction make_prediction s'occupe de l'inversion log (np.expm1)
         predicted_price = make_prediction(model_pipeline, df, use_log=True)[0]
-        
+
         # Calcul d'un score de confiance basique
-        confidence_score = 0.90 
-        
+        confidence_score = 0.90
+
         return PredictionResponse(
-            predicted_price=float(predicted_price),
-            model_version="2.0.0",
-            confidence_score=confidence_score
+            predicted_price=float(predicted_price), model_version="2.0.0", confidence_score=confidence_score
         )
-        
+
     except Exception as e:
         logger.error(f"Erreur lors de la prédiction: {e}")
         # Log stacktrace
         import traceback
+
         traceback.print_exc()
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Erreur lors de la prédiction: {str(e)}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Erreur lors de la prédiction: {str(e)}"
         )
 
 
@@ -309,37 +312,23 @@ async def predict_batch(houses: List[HouseFeatures]):
     Prédiction en batch pour plusieurs maisons.
     """
     if model_pipeline is None:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Modèle non disponible"
-        )
-    
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Modèle non disponible")
+
     try:
         # Conversion en liste de dictionnaires
         features_list = [house.dict(by_alias=True) for house in houses]
-        
+
         # Création du DataFrame
         df = pd.DataFrame(features_list)
-        
+
         # Prédictions
         predicted_prices = make_prediction(model_pipeline, df, use_log=True)
-        
-        return {
-            "predictions": [
-                {
-                    "predicted_price": float(price),
-                    "model_version": "2.0.0"
-                }
-                for price in predicted_prices
-            ]
-        }
-        
+
+        return {"predictions": [{"predicted_price": float(price), "model_version": "2.0.0"} for price in predicted_prices]}
+
     except Exception as e:
         logger.error(f"Erreur lors des prédictions batch: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Erreur lors des prédictions: {str(e)}"
-        )
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Erreur lors des prédictions: {str(e)}")
 
 
 @app.get("/api/stats/overview")
@@ -348,19 +337,20 @@ async def get_stats_overview():
     stats = get_stats_data()
     if stats and "overview" in stats:
         return stats["overview"]
-    
+
     df = get_train_data()
     if df is None:
         raise HTTPException(status_code=404, detail="Données non disponibles")
-    
+
     return {
         "total_properties": len(df),
-        "avg_price": float(df['SalePrice'].mean()),
-        "median_price": float(df['SalePrice'].median()),
-        "min_price": float(df['SalePrice'].min()),
-        "max_price": float(df['SalePrice'].max()),
-        "price_std": float(df['SalePrice'].std())
+        "avg_price": float(df["SalePrice"].mean()),
+        "median_price": float(df["SalePrice"].median()),
+        "min_price": float(df["SalePrice"].min()),
+        "max_price": float(df["SalePrice"].max()),
+        "price_std": float(df["SalePrice"].std()),
     }
+
 
 @app.get("/api/stats/neighborhoods")
 async def get_neighborhood_stats():
@@ -368,14 +358,15 @@ async def get_neighborhood_stats():
     stats = get_stats_data()
     if stats and "neighborhoods" in stats:
         return stats["neighborhoods"]
-        
+
     df = get_train_data()
     if df is None:
         raise HTTPException(status_code=404, detail="Données non disponibles")
-    
-    nb_stats = df.groupby('Neighborhood')['SalePrice'].agg(['mean', 'median', 'count', 'min', 'max']).reset_index()
-    nb_stats = nb_stats.rename(columns={'mean': 'avg_price', 'median': 'median_price', 'count': 'property_count'})
-    return nb_stats.to_dict(orient='records')
+
+    nb_stats = df.groupby("Neighborhood")["SalePrice"].agg(["mean", "median", "count", "min", "max"]).reset_index()
+    nb_stats = nb_stats.rename(columns={"mean": "avg_price", "median": "median_price", "count": "property_count"})
+    return nb_stats.to_dict(orient="records")
+
 
 @app.get("/api/stats/price-distribution")
 async def get_price_distribution(bins: int = 20):
@@ -383,52 +374,42 @@ async def get_price_distribution(bins: int = 20):
     stats = get_stats_data()
     if stats and "distribution" in stats:
         return stats["distribution"]
-        
+
     df = get_train_data()
     if df is None:
         raise HTTPException(status_code=404, detail="Données non disponibles")
-    
-    counts, bin_edges = np.histogram(df['SalePrice'], bins=bins)
+
+    counts, bin_edges = np.histogram(df["SalePrice"], bins=bins)
     return {
         "labels": [f"{int(bin_edges[i]/1000)}k-{int(bin_edges[i+1]/1000)}k" for i in range(len(counts))],
-        "values": counts.tolist()
+        "values": counts.tolist(),
     }
+
 
 @app.get("/model/info")
 async def model_info():
     """Informations sur le modèle."""
     if model_pipeline is None:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Modèle non disponible"
-        )
-    
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Modèle non disponible")
+
     try:
         # Accéder au modèle final dans le pipeline
-        model = model_pipeline.named_steps['model']
+        model = model_pipeline.named_steps["model"]
         model_type = type(model).__name__
-        
+
         return {
             "model_type": model_type,
             "model_version": "2.0.0",
-            "feature_importance": None, # BayesianRidge n'a pas de feature_importances_ simple comme RF
-            "parameters": model.get_params()
+            "feature_importance": None,  # BayesianRidge n'a pas de feature_importances_ simple comme RF
+            "parameters": model.get_params(),
         }
-        
+
     except Exception as e:
         logger.error(f"Erreur lors de la récupération des infos: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Erreur: {str(e)}"
-        )
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Erreur: {str(e)}")
 
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
-        log_level="info"
-    )
+
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, log_level="info")

@@ -31,10 +31,10 @@ class TestNewPipelineWithRealData:
         """Charge les données réelles pour les tests."""
         try:
             train_df, _ = load_data("data/raw")
-            if 'Id' in train_df.columns:
-                train_df = train_df.drop(columns=['Id'])
-            X = train_df.drop(columns=['SalePrice']).head(100)  # Utiliser seulement 100 lignes pour les tests
-            y = train_df['SalePrice'].head(100)
+            if "Id" in train_df.columns:
+                train_df = train_df.drop(columns=["Id"])
+            X = train_df.drop(columns=["SalePrice"]).head(100)  # Utiliser seulement 100 lignes pour les tests
+            y = train_df["SalePrice"].head(100)
             return X, y
         except FileNotFoundError:
             pytest.skip("Données réelles non disponibles")
@@ -46,7 +46,7 @@ class TestNewPipelineWithRealData:
         pipeline, y_log = train_model(X, y)
 
         assert isinstance(pipeline, Pipeline)
-        assert hasattr(pipeline, 'predict')
+        assert hasattr(pipeline, "predict")
         assert len(y_log) == len(y)
 
     def test_log_transformation(self, real_data):
@@ -61,7 +61,7 @@ class TestNewPipelineWithRealData:
     def test_pipeline_prediction(self, real_data):
         """Test que le pipeline peut faire des prédictions."""
         X, y = real_data
-        
+
         # Split simple
         split_idx = 80
         X_train, X_test = X[:split_idx], X[split_idx:]
@@ -76,7 +76,7 @@ class TestNewPipelineWithRealData:
     def test_evaluate_model_with_log(self, real_data):
         """Test de l'évaluation avec transformation log."""
         X, y = real_data
-        
+
         # Split simple
         split_idx = 80
         X_train, X_test = X[:split_idx], X[split_idx:]
@@ -85,11 +85,11 @@ class TestNewPipelineWithRealData:
         pipeline, _ = train_model(X_train, y_train)
         metrics = evaluate_model(pipeline, X_test, y_test, use_log=True)
 
-        assert 'rmse' in metrics
-        assert 'mae' in metrics
-        assert 'r2' in metrics
-        assert metrics['rmse'] > 0
-        assert metrics['mae'] > 0
+        assert "rmse" in metrics
+        assert "mae" in metrics
+        assert "r2" in metrics
+        assert metrics["rmse"] > 0
+        assert metrics["mae"] > 0
 
 
 class TestModelSaveLoad:
@@ -100,10 +100,10 @@ class TestModelSaveLoad:
         """Charge les données réelles pour les tests."""
         try:
             train_df, _ = load_data("data/raw")
-            if 'Id' in train_df.columns:
-                train_df = train_df.drop(columns=['Id'])
-            X = train_df.drop(columns=['SalePrice']).head(50)
-            y = train_df['SalePrice'].head(50)
+            if "Id" in train_df.columns:
+                train_df = train_df.drop(columns=["Id"])
+            X = train_df.drop(columns=["SalePrice"]).head(50)
+            y = train_df["SalePrice"].head(50)
             return X, y
         except FileNotFoundError:
             pytest.skip("Données réelles non disponibles")
@@ -123,7 +123,7 @@ class TestModelSaveLoad:
             loaded_pipeline = load_trained_model(str(model_path))
 
             assert isinstance(loaded_pipeline, Pipeline)
-            
+
             # Test de prédiction avec le modèle chargé
             X_test = X.head(5)
             predictions = predict(loaded_pipeline, X_test, use_log=True)
@@ -139,10 +139,10 @@ class TestBayesianRidge:
         """Charge les données réelles pour les tests."""
         try:
             train_df, _ = load_data("data/raw")
-            if 'Id' in train_df.columns:
-                train_df = train_df.drop(columns=['Id'])
-            X = train_df.drop(columns=['SalePrice']).head(50)
-            y = train_df['SalePrice'].head(50)
+            if "Id" in train_df.columns:
+                train_df = train_df.drop(columns=["Id"])
+            X = train_df.drop(columns=["SalePrice"]).head(50)
+            y = train_df["SalePrice"].head(50)
             return X, y
         except FileNotFoundError:
             pytest.skip("Données réelles non disponibles")
@@ -151,17 +151,12 @@ class TestBayesianRidge:
         """Test que BayesianRidge est configuré avec les bons paramètres."""
         X, y = real_data
 
-        params = {
-            'alpha_1': 1e-06,
-            'alpha_2': 1e-06,
-            'lambda_1': 1e-06,
-            'lambda_2': 1e-06
-        }
+        params = {"alpha_1": 1e-06, "alpha_2": 1e-06, "lambda_1": 1e-06, "lambda_2": 1e-06}
 
         pipeline, _ = train_model(X, y, params=params)
-        
+
         # Vérifier que le modèle est bien un BayesianRidge
-        model = pipeline.named_steps['model']
+        model = pipeline.named_steps["model"]
         assert isinstance(model, BayesianRidge)
         assert model.alpha_1 == 1e-06
         assert model.alpha_2 == 1e-06
@@ -175,10 +170,10 @@ class TestModelPerformance:
         """Charge les données réelles pour les tests."""
         try:
             train_df, _ = load_data("data/raw")
-            if 'Id' in train_df.columns:
-                train_df = train_df.drop(columns=['Id'])
-            X = train_df.drop(columns=['SalePrice']).head(200)
-            y = train_df['SalePrice'].head(200)
+            if "Id" in train_df.columns:
+                train_df = train_df.drop(columns=["Id"])
+            X = train_df.drop(columns=["SalePrice"]).head(200)
+            y = train_df["SalePrice"].head(200)
             return X, y
         except FileNotFoundError:
             pytest.skip("Données réelles non disponibles")
@@ -196,8 +191,8 @@ class TestModelPerformance:
         metrics = evaluate_model(pipeline, X_test, y_test, use_log=True)
 
         # Le modèle devrait avoir une performance raisonnable
-        assert metrics['r2'] > 0.3, f"R² trop bas: {metrics['r2']}"
-        assert metrics['rmse'] < 100000, f"RMSE trop élevé: {metrics['rmse']}"
+        assert metrics["r2"] > 0.3, f"R² trop bas: {metrics['r2']}"
+        assert metrics["rmse"] < 100000, f"RMSE trop élevé: {metrics['rmse']}"
 
 
 class TestPredictionBounds:
@@ -208,10 +203,10 @@ class TestPredictionBounds:
         """Charge les données réelles pour les tests."""
         try:
             train_df, _ = load_data("data/raw")
-            if 'Id' in train_df.columns:
-                train_df = train_df.drop(columns=['Id'])
-            X = train_df.drop(columns=['SalePrice']).head(100)
-            y = train_df['SalePrice'].head(100)
+            if "Id" in train_df.columns:
+                train_df = train_df.drop(columns=["Id"])
+            X = train_df.drop(columns=["SalePrice"]).head(100)
+            y = train_df["SalePrice"].head(100)
             return X, y
         except FileNotFoundError:
             pytest.skip("Données réelles non disponibles")
@@ -219,7 +214,7 @@ class TestPredictionBounds:
     def test_positive_predictions(self, real_data):
         """Test que les prédictions de prix sont positives."""
         X, y = real_data
-        
+
         # Split simple
         split_idx = 80
         X_train, X_test = X[:split_idx], X[split_idx:]

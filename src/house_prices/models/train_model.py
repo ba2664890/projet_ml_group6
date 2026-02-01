@@ -24,57 +24,49 @@ logger = logging.getLogger(__name__)
 def train_model(X: pd.DataFrame, y: pd.Series, params: Dict[str, Any] = None) -> Tuple[Pipeline, Any]:
     """
     Entraîne le modèle BayesianRidge avec le pipeline de prétraitement complet.
-    
+
     Args:
         X: Features d'entraînement
         y: Variable cible (SalePrice)
         params: Paramètres optionnels pour BayesianRidge
-        
+
     Returns:
         Tuple (pipeline complet, scaler pour y)
     """
     # Paramètres par défaut optimisés pour BayesianRidge
-    default_params = {
-        'alpha_1': 1e-06,
-        'alpha_2': 1e-06,
-        'lambda_1': 1e-06,
-        'lambda_2': 1e-06
-    }
+    default_params = {"alpha_1": 1e-06, "alpha_2": 1e-06, "lambda_1": 1e-06, "lambda_2": 1e-06}
     if params:
         default_params.update(params)
 
     # Transformation log de la cible
     logger.info("Application de la transformation log sur SalePrice...")
     y_log = np.log1p(y)
-    
+
     # Création du pipeline de prétraitement complet
     logger.info("Création du pipeline de prétraitement...")
     preprocessing_pipeline = create_full_pipeline()
-    
+
     # Création du pipeline complet (preprocessing + model)
     logger.info(f"Entraînement du modèle BayesianRidge avec les paramètres: {default_params}")
-    full_pipeline = Pipeline([
-        ('preprocessing', preprocessing_pipeline),
-        ('model', BayesianRidge(**default_params))
-    ])
-    
+    full_pipeline = Pipeline([("preprocessing", preprocessing_pipeline), ("model", BayesianRidge(**default_params))])
+
     # Entraînement
     full_pipeline.fit(X, y_log)
     logger.info("Entraînement terminé avec succès")
-    
+
     return full_pipeline, y_log
 
 
 def evaluate_model(pipeline: Pipeline, X_test: pd.DataFrame, y_test: pd.Series, use_log: bool = True) -> Dict[str, float]:
     """
     Évalue les performances du modèle.
-    
+
     Args:
         pipeline: Pipeline complet (preprocessing + model)
         X_test: Features de test
         y_test: Variable cible de test
         use_log: Si True, applique la transformation inverse de log
-        
+
     Returns:
         Dictionnaire des métriques
     """
@@ -101,7 +93,7 @@ def evaluate_model(pipeline: Pipeline, X_test: pd.DataFrame, y_test: pd.Series, 
 def save_model(pipeline: Pipeline, output_path: str):
     """
     Sauvegarde le pipeline complet dans un fichier pkl.
-    
+
     Args:
         pipeline: Pipeline complet à sauvegarder
         output_path: Chemin de sortie
@@ -119,14 +111,14 @@ if __name__ == "__main__":
     # Chargement des données
     logger.info("Chargement des données...")
     train_df, _ = load_data("data/raw")
-    
+
     # Suppression de l'ID si présent
-    if 'Id' in train_df.columns:
-        train_df = train_df.drop(columns=['Id'])
-    
+    if "Id" in train_df.columns:
+        train_df = train_df.drop(columns=["Id"])
+
     # Séparation X et y
-    X = train_df.drop(columns=['SalePrice'])
-    y = train_df['SalePrice']
+    X = train_df.drop(columns=["SalePrice"])
+    y = train_df["SalePrice"]
 
     # Split train/test
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -143,4 +135,3 @@ if __name__ == "__main__":
 
     # Sauvegarde
     save_model(pipeline, "models/house_prices_model.pkl")
-

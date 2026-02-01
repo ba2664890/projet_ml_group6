@@ -23,4 +23,3 @@ __all__ = [
     "predict",
     "load_trained_model",
 ]
-
