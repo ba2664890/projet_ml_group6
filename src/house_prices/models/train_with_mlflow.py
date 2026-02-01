@@ -90,16 +90,29 @@ def run_comparison(experiment_name: str = "Compare Models"):
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Définition des modèles à comparer (basé sur le snippet utilisateur)
+    from sklearn.linear_model import HuberRegressor, Ridge
+    
     models_to_test = [
-        ("BayesianRidge", BayesianRidge(alpha_1=1e-6, alpha_2=1e-6, lambda_1=1e-6, lambda_2=1e-6), {"alpha_1": 1e-6}),
-        ("ExtraTrees", ExtraTreesRegressor(n_estimators=100, max_depth=20, random_state=42), {"n_estimators": 100}),
         (
-            "GradientBoosting",
-            GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42),
-            {"learning_rate": 0.1},
+            "HuberRegressor",
+            HuberRegressor(epsilon=1.35, alpha=10.0),
+            {"epsilon": 1.35, "alpha": 10.0}
         ),
-        ("RandomForest", RandomForestRegressor(n_estimators=100, max_depth=10, random_state=42), {"n_estimators": 100}),
+        (
+            "Ridge",
+            Ridge(alpha=138.9495),
+            {"alpha": 138.9495}
+        ),
+        (
+            "BayesianRidge", 
+            BayesianRidge(lambda_2=1e-06, lambda_1=0.01, alpha_2=0.00359, alpha_1=2.1544e-05), 
+            {"lambda_2": 1e-06, "lambda_1": 0.01}
+        ),
+        (
+            "ExtraTrees", 
+            ExtraTreesRegressor(n_estimators=600, max_depth=None, random_state=42), 
+            {"n_estimators": 600}
+        ),
     ]
 
     # Lancement de l'expérience parente

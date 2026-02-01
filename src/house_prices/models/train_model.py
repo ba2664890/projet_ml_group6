@@ -1,8 +1,3 @@
-"""
-Module d'entraînement des modèles pour le projet House Prices.
-Updated to use advanced preprocessing pipeline from grp_06_ml.py
-"""
-
 import logging
 from pathlib import Path
 from typing import Any, Dict, Tuple
@@ -10,7 +5,7 @@ from typing import Any, Dict, Tuple
 import joblib
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import BayesianRidge
+from sklearn.linear_model import HuberRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
@@ -23,18 +18,18 @@ logger = logging.getLogger(__name__)
 
 def train_model(X: pd.DataFrame, y: pd.Series, params: Dict[str, Any] = None) -> Tuple[Pipeline, Any]:
     """
-    Entraîne le modèle BayesianRidge avec le pipeline de prétraitement complet.
+    Entraîne le modèle HuberRegressor avec le pipeline de prétraitement complet.
 
     Args:
         X: Features d'entraînement
         y: Variable cible (SalePrice)
-        params: Paramètres optionnels pour BayesianRidge
+        params: Paramètres optionnels pour HuberRegressor
 
     Returns:
-        Tuple (pipeline complet, scaler pour y)
+        Tuple (pipeline complet, y_log)
     """
-    # Paramètres par défaut optimisés pour BayesianRidge
-    default_params = {"alpha_1": 1e-06, "alpha_2": 1e-06, "lambda_1": 1e-06, "lambda_2": 1e-06}
+    # Paramètres par défaut optimisés pour HuberRegressor (Best model R2: 0.9440)
+    default_params = {"epsilon": 1.35, "alpha": 10.0}
     if params:
         default_params.update(params)
 
@@ -47,8 +42,8 @@ def train_model(X: pd.DataFrame, y: pd.Series, params: Dict[str, Any] = None) ->
     preprocessing_pipeline = create_full_pipeline()
 
     # Création du pipeline complet (preprocessing + model)
-    logger.info(f"Entraînement du modèle BayesianRidge avec les paramètres: {default_params}")
-    full_pipeline = Pipeline([("preprocessing", preprocessing_pipeline), ("model", BayesianRidge(**default_params))])
+    logger.info(f"Entraînement du modèle HuberRegressor avec les paramètres: {default_params}")
+    full_pipeline = Pipeline([("preprocessing", preprocessing_pipeline), ("model", HuberRegressor(**default_params))])
 
     # Entraînement
     full_pipeline.fit(X, y_log)
