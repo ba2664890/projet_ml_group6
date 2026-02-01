@@ -66,16 +66,7 @@ async function loadInitialData() {
 // Initialize Components
 async function initializeComponents() {
     // Load Prediction Form
-    const formContainer = document.getElementById('prediction-form-container');
-    if (formContainer) {
-        try {
-            const response = await fetch('components/prediction-form.html');
-            formContainer.innerHTML = await response.text();
-            setupFormHandlers();
-        } catch (error) {
-            console.error('Error loading prediction form:', error);
-        }
-    }
+    await initPredictionForm();
 
     // Load Analytics Section
     const analyticsContainer = document.getElementById('charts-container');
@@ -103,6 +94,31 @@ async function initializeComponents() {
 
     // Initialize Map
     realEstateMap.init();
+}
+
+// Initialize Prediction Form
+async function initPredictionForm() {
+    const container = document.getElementById('prediction-form-container');
+    if (!container) return;
+
+    try {
+        const response = await fetch('components/prediction-form.html');
+        const html = await response.text();
+        container.innerHTML = html;
+
+        // Load Smart Input Component
+        const smartContainer = document.getElementById('smart-input-container');
+        if (smartContainer) {
+            const smartResponse = await fetch('components/smart-input.html');
+            const smartHtml = await smartResponse.text();
+            smartContainer.innerHTML = smartHtml;
+            initSmartModeEvents();
+        }
+
+        setupFormHandlers();
+    } catch (error) {
+        console.error('Error loading prediction form:', error);
+    }
 }
 
 // Helper to set neighborhood from map
@@ -347,6 +363,90 @@ async function loadModelPerformanceData() {
     } catch (error) {
         console.error('Error loading model performance data:', error);
     }
+}
+
+// --- SMART MODE HANDLERS ---
+
+function initSmartModeEvents() {
+    const toggleBtn = document.getElementById('toggle-smart-mode');
+    const smartContainer = document.getElementById('smart-input-container');
+    const analyzeBtn = document.getElementById('analyze-description-btn');
+    const autoFillBtn = document.getElementById('auto-fill-btn');
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            const isHidden = smartContainer.classList.contains('hidden');
+            smartContainer.classList.toggle('hidden');
+            toggleBtn.innerHTML = isHidden ?
+                '<span class="w-2 h-2 rounded-full bg-slate-400"></span><span class="text-[10px] font-black uppercase tracking-widest">Retour au Formulaire Classique</span>' :
+                '<span class="w-2 h-2 rounded-full bg-brand-600 animate-pulse"></span><span class="text-[10px] font-black uppercase tracking-widest">Passer en Mode Conversationnel (IA)</span>';
+        });
+    }
+
+    if (analyzeBtn) {
+        analyzeBtn.addEventListener('click', handleAnalyzeDescription);
+    }
+
+    if (autoFillBtn) {
+        autoFillBtn.addEventListener('click', handleAutoFill);
+    }
+}
+
+async function handleAnalyzeDescription() {
+    const inputEl = document.getElementById('smart-description-input');
+    const description = inputEl ? inputEl.value : '';
+    if (!description) {
+        alert('Veuillez entrer une description.');
+        return;
+    }
+
+    const status = document.getElementById('smart-status');
+    if (status) status.classList.remove('hidden');
+
+    try {
+        const extracted = await api.parseDescription(description);
+        await fillFormWithData(extracted);
+
+        // Hide smart mode and show form with filled data
+        document.getElementById('smart-input-container').classList.add('hidden');
+        document.getElementById('toggle-smart-mode').innerHTML = '<span class="w-2 h-2 rounded-full bg-brand-600 animate-pulse"></span><span class="text-[10px] font-black uppercase tracking-widest">Passer en Mode Conversationnel (IA)</span>';
+
+        showSuccess('Description analysée et formulaire pré-rempli !');
+    } catch (error) {
+        console.error('Error analyzing description:', error);
+        showError('Erreur d\'analyse. Assurez-vous que l\'API est active.');
+    } finally {
+        if (status) status.classList.add('hidden');
+    }
+}
+
+async function handleAutoFill() {
+    try {
+        const defaults = await api.getDefaults();
+        await fillFormWithData(defaults);
+        showSuccess('Formulaire rempli avec les valeurs moyennes.');
+    } catch (error) {
+        console.error('Error during auto-fill:', error);
+    }
+}
+
+async function fillFormWithData(data) {
+    const form = document.getElementById('house-prediction-form');
+    if (!form) return;
+
+    Object.entries(data).forEach(([key, value]) => {
+        const input = form.querySelector(`[name="${key}"]`);
+        if (input) {
+            input.value = value;
+            // Trigger range display updates
+            if (input.type === 'range') {
+                const display = document.getElementById(`val-${key}`);
+                if (display) display.textContent = `${value}/10`;
+            }
+            // Trigger change event
+            input.dispatchEvent(new Event('change'));
+        }
+    });
 }
 
 // Export for debugging

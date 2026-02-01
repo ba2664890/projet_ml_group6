@@ -1,0 +1,50 @@
+<div class="space-y-8 animate-fadeIn">
+    <div class="text-center space-y-4">
+        <h3 class="text-xs font-black uppercase tracking-[0.4em] text-brand-600">Assistant IA</h3>
+        <p class="text-2xl font-black text-slate-900 dark:text-white">Décrivez votre propriété en <span
+                class="text-brand-600 italic">langage naturel.</span></p>
+        <p class="text-slate-500 text-sm max-w-lg mx-auto">Décrivez les caractéristiques principales (quartier, taille,
+            chambres, etc.) et notre IA s'occupe de remplir les détails techniques.</p>
+    </div>
+
+    <div class="relative group">
+        <div
+            class="absolute -inset-1 bg-gradient-to-r from-brand-600 to-purple-600 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200">
+        </div>
+        <div
+            class="relative bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-800">
+            <textarea id="smart-description-input"
+                class="w-full h-40 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white font-medium text-lg placeholder-slate-300 resize-none"
+                placeholder="Ex: Une magnifique villa contemporaine de 250m² située dans le quartier de Northridge Heights, construite en 2010. Elle dispose de 4 chambres spacieuses, d'une cuisine haut de gamme et d'un grand garage..."></textarea>
+
+            <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex space-x-2">
+                    <span
+                        class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-widest cursor-pointer hover:bg-brand-50 hover:text-brand-600 transition-colors"
+                        onclick="document.getElementById('smart-description-input').value = 'Maison à Ames, quartier NoRidge, 220m2, 4 chambres, garage 3 places, bon état.'">Exemple
+                        #1</span>
+                    <span
+                        class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-widest cursor-pointer hover:bg-brand-50 hover:text-brand-600 transition-colors"
+                        onclick="document.getElementById('smart-description-input').value = 'Maison de ville à OldTown construite en 1950, 120m2, 2 chambres, besoin de rénovations.'">Exemple
+                        #2</span>
+                </div>
+
+                <button id="analyze-description-btn"
+                    class="px-10 py-4 bg-brand-600 hover:bg-brand-700 text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-xl shadow-brand-500/30 flex items-center space-x-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <span>Analyser & Pré-remplir</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="smart-status" class="hidden">
+        <div class="flex items-center justify-center space-x-3 text-brand-600 animate-pulse">
+            <div class="w-1.5 h-1.5 bg-brand-600 rounded-full"></div>
+            <p class="text-[10px] font-black uppercase tracking-widest">Analyse en cours par l'IA...</p>
+        </div>
+    </div>
+</div>

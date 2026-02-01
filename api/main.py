@@ -15,6 +15,7 @@ from typing import Any, Dict, List, Optional
 import joblib
 import numpy as np
 import pandas as pd
+import google.generativeai as genai
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -39,9 +40,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Variables d'environnement
 ENV = os.getenv("ENV", "development")
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
 
 # Initialisation de l'application FastAPI
 app = FastAPI(
@@ -242,6 +246,15 @@ def get_train_data():
             logger.warning(f"Fichier de données brutes non trouvé: {DATA_PATH}")
     return _train_data_cache
 
+COMPARISON_PATH = Path(__file__).parent.parent / "data" / "processed" / "model_comparison.json"
+
+def get_comparison_data():
+    """Charge les résultats de comparaison des modèles."""
+    if COMPARISON_PATH.exists():
+        with open(COMPARISON_PATH, 'r') as f:
+            return json.load(f)
+    return None
+
 
 # Charger le modèle au démarrage
 load_model()
@@ -308,6 +321,68 @@ async def predict(house_features: HouseFeatures):
         )
 
 
+@app.post("/api/model/parse-description")
+async def parse_description(description_data: Dict[str, str]):
+    """Extrait les caractéristiques d'une maison à partir d'une description textuelle."""
+    text = description_data.get("description", "")
+    if not text:
+        raise HTTPException(status_code=400, detail="Description vide")
+
+    if GEMINI_API_KEY:
+        try:
+            model = genai.GenerativeModel("gemini-pro")
+            prompt = f"""
+            Tu es un expert immobilier à Ames, Iowa. Analyse la description suivante d'une maison et extrait les caractéristiques sous forme JSON.
+            Utilise les noms de champs exacts de l'application (ex: Neighborhood, FullBath, GrLivArea, YearBuilt, OverallQual...).
+            
+            Description: "{text}"
+            
+            JSON (ne retourne QUE le JSON, rien d'autre):
+            """
+            response = model.generate_content(prompt)
+            # Nettoyage minimal du markdown si présent
+            content = response.text.strip().replace("```json", "").replace("```", "")
+            return json.loads(content)
+        except Exception as e:
+            logger.error(f"Erreur Gemini: {e}")
+            # Fallback vers le parser simple ci-dessous
+
+    # Parser simple par mots-clés (Fallback)
+    keywords = {
+        "Neighborhood": ["NoRidge", "CollgCr", "OldTown", "Edwards", "Somerst", "Gilbert", "NridgHt"],
+        "FullBath": ["bain", "douche"],
+        "BedroomAbvGr": ["chambre"],
+        "YearBuilt": ["construit", "année", "date"],
+        "GrLivArea": ["m2", "ft2", "surface", "taille"],
+    }
+
+    extracted = {}
+    text_lower = text.lower()
+
+    # Neighborhood match
+    for nb in keywords["Neighborhood"]:
+        if nb.lower() in text_lower:
+            extracted["Neighborhood"] = nb
+            break
+
+    # Surface match
+    import re
+
+    surface_match = re.search(r"(\d+)\s*(m2|ft2|sqft|surface)", text_lower)
+    if surface_match:
+        val = int(surface_match.group(1))
+        if surface_match.group(2) == "m2":
+            val = int(val * 10.76)  # m2 to ft2
+        extracted["GrLivArea"] = val
+
+    # Chambres match
+    bed_match = re.search(r"(\d+)\s*(chambre|bedroom)", text_lower)
+    if bed_match:
+        extracted["BedroomAbvGr"] = int(bed_match.group(1))
+
+    return extracted
+
+
 @app.post("/predict/batch")
 async def predict_batch(houses: List[HouseFeatures]):
     """
@@ -354,6 +429,28 @@ async def get_stats_overview():
     }
 
 
+@app.get("/api/stats/defaults")
+async def get_defaults():
+    """Retourne les valeurs par défaut (moyennes/modes) pour toutes les variables."""
+    stats = get_stats_data()
+    if stats and "defaults" in stats:
+        return stats["defaults"]
+    
+    # Fallback: calcul à la volée
+    df = get_train_data()
+    if df is None:
+        raise HTTPException(status_code=404, detail="Données non disponibles")
+    
+    defaults = {}
+    for col in df.columns:
+        if col in ["SalePrice", "Id"]: continue
+        if df[col].dtype == "object":
+            defaults[col] = df[col].mode()[0]
+        else:
+            defaults[col] = float(df[col].mean())
+    return defaults
+
+
 @app.get("/api/stats/neighborhoods")
 async def get_neighborhood_stats():
     """Retourne les prix moyens par quartier."""
@@ -388,6 +485,17 @@ async def get_price_distribution(bins: int = 20):
     }
 
 
+@app.get("/model/comparison")
+async def model_comparison():
+    """Retourne les performances comparées des 4 meilleurs modèles."""
+    comparison = get_comparison_data()
+    if comparison is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Données de comparaison non disponibles"
+        )
+    return comparison
+
 @app.get("/model/info")
 async def model_info():
     """Informations sur le modèle."""
@@ -399,10 +507,21 @@ async def model_info():
         model = model_pipeline.named_steps["model"]
         model_type = type(model).__name__
 
+        # Récupération de l'importance (Coefficients pour BayesianRidge)
+        importance = None
+        if hasattr(model, "coef_"):
+            try:
+                preprocess = model_pipeline.named_steps["preprocessing"]
+                col_transformer = preprocess.named_steps["preprocess"]
+                feature_names = col_transformer.get_feature_names_out()
+                importance = {name: float(val) for name, val in zip(feature_names, model.coef_)}
+            except Exception as feat_err:
+                logger.warning(f"Impossible de récupérer les noms des features: {feat_err}")
+
         return {
             "model_type": model_type,
             "model_version": "2.0.0",
-            "feature_importance": None,  # BayesianRidge n'a pas de feature_importances_ simple comme RF
+            "feature_importance": importance,
             "parameters": model.get_params(),
         }
 

@@ -149,49 +149,9 @@ jobs:
 
     - name: Run MLflow experiment
       run: |
-        # Lancer un experiment MLflow avec le nouveau pipeline
-        python3 -c "
-        import mlflow
-        import mlflow.sklearn
-        from sklearn.linear_model import BayesianRidge
-        from sklearn.pipeline import Pipeline
-        from sklearn.preprocessing import StandardScaler
-        from sklearn.metrics import mean_squared_error, r2_score
-        import numpy as np
-        import pandas as pd
-        
-        mlflow.set_experiment('House Prices CI Experiment')
-        
-        with mlflow.start_run():
-            # Données de test
-            X = pd.DataFrame(np.random.rand(100, 5), columns=[f'Feature{i}' for i in range(5)])
-            y = 100000 + 50000 * X['Feature0'].values + np.random.randn(100) * 5000
-            y_log = np.log1p(y)
-            
-            # Pipeline avec BayesianRidge
-            pipeline = Pipeline([
-                ('scaler', StandardScaler()),
-                ('model', BayesianRidge(alpha_1=1e-06, alpha_2=1e-06, lambda_1=1e-06, lambda_2=1e-06))
-            ])
-            pipeline.fit(X, y_log)
-            
-            # Métriques
-            y_pred_log = pipeline.predict(X)
-            y_pred = np.expm1(y_pred_log)
-            rmse = np.sqrt(mean_squared_error(y, y_pred))
-            r2 = r2_score(y, y_pred)
-            
-            # Logging MLflow
-            mlflow.log_param('model_type', 'BayesianRidge')
-            mlflow.log_param('alpha_1', 1e-06)
-            mlflow.log_param('alpha_2', 1e-06)
-            mlflow.log_param('use_log_transform', True)
-            mlflow.log_metric('rmse', rmse)
-            mlflow.log_metric('r2_score', r2)
-            mlflow.sklearn.log_model(pipeline, 'model')
-            
-            print(f'MLflow experiment logged - RMSE: {rmse}, R²: {r2}')
-        "
+        # Lancer un experiment MLflow avec le vrai script (utilise les données réelles data/raw/train.csv)
+        # Assurez-vous que data/raw/train.csv est disponible (commité ou téléchargé)
+        python -m house_prices.models.train_with_mlflow
 
     - name: Upload MLflow artifacts
       uses: actions/upload-artifact@v4

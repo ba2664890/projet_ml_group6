@@ -89,6 +89,17 @@ class HousePriceAPI {
     async getModelComparison() {
         return await this.request('/model/comparison');
     }
+
+    async parseDescription(description) {
+        return await this.request('/api/model/parse-description', {
+            method: 'POST',
+            body: JSON.stringify({ description })
+        });
+    }
+
+    async getDefaults() {
+        return await this.request('/api/stats/defaults');
+    }
 }
 
 // Create global API instance
