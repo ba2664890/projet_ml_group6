@@ -149,33 +149,43 @@ function setupFormHandlers() {
     let currentStep = 1;
     const totalSteps = 3;
 
-    const nextBtn = document.getElementById('next-step');
-    const prevBtn = document.getElementById('prev-step');
-    const submitBtn = document.getElementById('submit-prediction');
-    const steps = document.querySelectorAll('.step-item');
+    const progressBar = document.getElementById('form-progress-bar');
+    const progressText = document.getElementById('progress-text');
+    const resetBtn = document.getElementById('form-reset-btn');
+    const stepBtns = document.querySelectorAll('.step-btn');
 
     function updateStep(newStep) {
+        // Update Progress Bar
+        if (progressBar) {
+            const width = (newStep / totalSteps) * 100;
+            progressBar.style.width = `${width}%`;
+        }
+        if (progressText) {
+            progressText.textContent = `Étape ${newStep} sur ${totalSteps}`;
+        }
+
+        // Hide all steps
         for (let i = 1; i <= totalSteps; i++) {
             const stepEl = document.getElementById(`form-step-${i}`);
             if (stepEl) stepEl.classList.add('hidden');
 
-            const stepItem = document.querySelector(`.step-item[data-step="${i}"]`);
-            if (stepItem) {
-                const circle = stepItem.querySelector('div');
-                circle.classList.replace('bg-brand-600', 'bg-slate-100');
-                circle.classList.replace('dark:bg-slate-700', 'bg-slate-100');
-                circle.classList.replace('text-white', 'text-slate-400');
+            const stepBtn = document.querySelector(`.step-btn[data-step="${i}"]`);
+            if (stepBtn) {
+                const circle = stepBtn.querySelector('div');
+                circle.classList.remove('bg-brand-600', 'text-white', 'shadow-xl', 'shadow-brand-500/20');
+                circle.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-400');
             }
         }
 
+        // Show current step
         const currentStepEl = document.getElementById(`form-step-${newStep}`);
         if (currentStepEl) currentStepEl.classList.remove('hidden');
 
-        const currentStepItem = document.querySelector(`.step-item[data-step="${newStep}"]`);
-        if (currentStepItem) {
-            const circle = currentStepItem.querySelector('div');
-            circle.classList.replace('bg-slate-100', 'bg-brand-600');
-            circle.classList.add('text-white');
+        const activeBtn = document.querySelector(`.step-btn[data-step="${newStep}"]`);
+        if (activeBtn) {
+            const circle = activeBtn.querySelector('div');
+            circle.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-400');
+            circle.classList.add('bg-brand-600', 'text-white', 'shadow-xl', 'shadow-brand-500/20');
         }
 
         prevBtn.classList.toggle('hidden', newStep === 1);
@@ -186,11 +196,19 @@ function setupFormHandlers() {
 
         gsap.from(`#form-step-${newStep}`, {
             duration: 0.5,
-            x: 20,
+            y: 20,
             opacity: 0,
             ease: 'power2.out'
         });
     }
+
+    // Step button clicks
+    stepBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const step = parseInt(btn.dataset.step);
+            updateStep(step);
+        });
+    });
 
     nextBtn.addEventListener('click', () => {
         if (currentStep < totalSteps) updateStep(currentStep + 1);
@@ -200,24 +218,38 @@ function setupFormHandlers() {
         if (currentStep > 1) updateStep(currentStep - 1);
     });
 
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            form.reset();
+            updateStep(1);
+            showSuccess('Formulaire réinitialisé.');
+        });
+    }
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
-        const numericFields = [
-            'LotArea', 'YearBuilt', 'OverallQual', 'OverallCond',
-            'GrLivArea', 'TotalBsmtSF', 'TotRmsAbvGrd', 'FullBath', 'HalfBath',
-            'GarageCars', 'GarageArea', 'MSSubClass', 'YearRemodAdd',
-            '1stFlrSF', '2ndFlrSF', 'LowQualFinSF', 'BedroomAbvGr',
-            'KitchenAbvGr', 'Fireplaces', 'WoodDeckSF', 'OpenPorchSF',
-            'EnclosedPorch', '3SsnPorch', 'ScreenPorch', 'PoolArea',
-            'MiscVal', 'MoSold', 'YrSold'
+        const integerFields = [
+            'MSSubClass', 'OverallQual', 'OverallCond', 'YearBuilt', 'YearRemodAdd',
+            '1stFlrSF', '2ndFlrSF', 'LowQualFinSF', 'GrLivArea', 'FullBath',
+            'HalfBath', 'BedroomAbvGr', 'KitchenAbvGr', 'TotRmsAbvGrd', 'Fireplaces',
+            'WoodDeckSF', 'OpenPorchSF', 'EnclosedPorch', '3SsnPorch', 'ScreenPorch',
+            'PoolArea', 'MiscVal', 'MoSold', 'YrSold'
         ];
 
-        numericFields.forEach(field => {
+        const floatFields = ['LotArea', 'TotalBsmtSF', 'GarageArea', 'MasVnrArea', 'LotFrontage', 'BsmtFinSF1', 'BsmtFinSF2', 'BsmtUnfSF', 'GarageCars'];
+
+        integerFields.forEach(field => {
             if (data[field] !== undefined && data[field] !== '') {
-                data[field] = Number(data[field]);
+                data[field] = Math.round(Number(data[field]));
+            }
+        });
+
+        floatFields.forEach(field => {
+            if (data[field] !== undefined && data[field] !== '') {
+                data[field] = parseFloat(data[field]);
             }
         });
 

@@ -1,50 +1,82 @@
-<div class="space-y-8 animate-fadeIn">
-    <div class="text-center space-y-4">
-        <h3 class="text-xs font-black uppercase tracking-[0.4em] text-brand-600">Assistant IA</h3>
-        <p class="text-2xl font-black text-slate-900 dark:text-white">Décrivez votre propriété en <span
-                class="text-brand-600 italic">langage naturel.</span></p>
-        <p class="text-slate-500 text-sm max-w-lg mx-auto">Décrivez les caractéristiques principales (quartier, taille,
-            chambres, etc.) et notre IA s'occupe de remplir les détails techniques.</p>
+<div class="space-y-10 animate-fadeInPlus">
+    <div class="text-center space-y-4 px-6">
+        <div
+            class="inline-flex items-center px-4 py-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-brand-100 dark:border-brand-800">
+            <span class="relative flex h-2 w-2 mr-3">
+                <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-600"></span>
+            </span>
+            Neural Assistant V2
+        </div>
+        <h3 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white leading-tight">Décrivez votre bien en
+            <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600">toute
+                simplicité.</span></h3>
+        <p class="text-slate-500 text-sm max-w-xl mx-auto font-medium">Parlez-nous de l'emplacement, de l'état général
+            et des points forts. Notre IA s'occupe de la traduction technique pour le modèle de prédiction.</p>
     </div>
 
-    <div class="relative group">
+    <div class="relative group max-w-3xl mx-auto">
         <div
-            class="absolute -inset-1 bg-gradient-to-r from-brand-600 to-purple-600 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200">
+            class="absolute -inset-1 bg-gradient-to-r from-brand-600 via-indigo-500 to-purple-600 rounded-[3rem] blur opacity-15 group-hover:opacity-30 transition duration-1000">
         </div>
         <div
-            class="relative bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-800">
-            <textarea id="smart-description-input"
-                class="w-full h-40 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white font-medium text-lg placeholder-slate-300 resize-none"
-                placeholder="Ex: Une magnifique villa contemporaine de 250m² située dans le quartier de Northridge Heights, construite en 2010. Elle dispose de 4 chambres spacieuses, d'une cuisine haut de gamme et d'un grand garage..."></textarea>
+            class="relative bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-100 dark:border-slate-800 shadow-2xl">
+            <div class="flex items-start space-x-6">
+                <div
+                    class="w-12 h-12 rounded-2xl bg-slate-900 dark:bg-white flex items-center justify-center flex-shrink-0 text-white dark:text-slate-900 mt-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
+                        </path>
+                    </svg>
+                </div>
+                <textarea id="smart-description-input"
+                    class="w-full h-44 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white font-bold text-xl md:text-2xl placeholder-slate-200 dark:placeholder-slate-700 resize-none leading-relaxed"
+                    placeholder="Dites-moi tout sur la maison..."></textarea>
+            </div>
 
-            <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
-                <div class="flex space-x-2">
-                    <span
-                        class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-widest cursor-pointer hover:bg-brand-50 hover:text-brand-600 transition-colors"
-                        onclick="document.getElementById('smart-description-input').value = 'Maison à Ames, quartier NoRidge, 220m2, 4 chambres, garage 3 places, bon état.'">Exemple
-                        #1</span>
-                    <span
-                        class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-widest cursor-pointer hover:bg-brand-50 hover:text-brand-600 transition-colors"
-                        onclick="document.getElementById('smart-description-input').value = 'Maison de ville à OldTown construite en 1950, 120m2, 2 chambres, besoin de rénovations.'">Exemple
-                        #2</span>
+            <div
+                class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-6 pt-8 border-t border-slate-50 dark:border-slate-800">
+                <div class="flex items-center space-x-3">
+                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 mr-2">Essayer :</span>
+                    <button type="button"
+                        class="group px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-brand-900/30 rounded-xl transition-all border border-slate-100 dark:border-slate-700"
+                        onclick="document.getElementById('smart-description-input').value = 'Maison spacieuse de 4 chambres à NoRidge Heights, 250m², cuisine en granit, excellent état général.'">
+                        <span class="text-[9px] font-bold text-slate-500 group-hover:text-brand-600 uppercase">Premium
+                            Villa</span>
+                    </button>
+                    <button type="button"
+                        class="group px-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-brand-900/30 rounded-xl transition-all border border-slate-100 dark:border-slate-700"
+                        onclick="document.getElementById('smart-description-input').value = 'Maison ancienne à Old Town, 3 chambres, parquet d\'origine, besoin de quelques travaux de peinture.'">
+                        <span class="text-[9px] font-bold text-slate-500 group-hover:text-brand-600 uppercase">Old
+                            Town</span>
+                    </button>
                 </div>
 
                 <button id="analyze-description-btn"
-                    class="px-10 py-4 bg-brand-600 hover:bg-brand-700 text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-xl shadow-brand-500/30 flex items-center space-x-3">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="w-full sm:w-auto px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-xl hover:scale-105 active:scale-95 flex items-center justify-center space-x-3">
+                    <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86 .517l-.691.34a2 2 0 01-1.701.138l-.362-.121a2 2 0 00-1.123 0l-.362.121a2 2 0 01-1.701-.138l-.691-.34a6 6 0 00-3.86-.517l-2.387.477a2 2 0 00-1.022.547l-.372.372a2 2 0 01-2.828 0l-.372-.372A2 2 0 001 13.572V11a2 2 0 012-2h1.586a1 1 0 00.707-.293l1.414-1.414a1 1 0 01.707-.293h10.586a1 1 0 01.707.293l1.414 1.414a1 1 0 00.707.293H21a2 2 0 012 2v2.572a2 2 0 00.572 1.414l.372.372a2 2 0 010 2.828l-.372.372z">
+                        </path>
                     </svg>
-                    <span>Analyser & Pré-remplir</span>
+                    <span>Lancer l'Analyse</span>
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- Live Preview of Analysis (Hidden by default) -->
     <div id="smart-status" class="hidden">
-        <div class="flex items-center justify-center space-x-3 text-brand-600 animate-pulse">
-            <div class="w-1.5 h-1.5 bg-brand-600 rounded-full"></div>
-            <p class="text-[10px] font-black uppercase tracking-widest">Analyse en cours par l'IA...</p>
+        <div class="flex flex-col items-center justify-center space-y-4">
+            <div class="flex space-x-1">
+                <div class="w-1.5 h-1.5 bg-brand-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                <div class="w-1.5 h-1.5 bg-brand-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                <div class="w-1.5 h-1.5 bg-brand-600 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-brand-600">Traitement Neural en cours...
+            </p>
         </div>
     </div>
 </div>
