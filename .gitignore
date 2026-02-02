@@ -113,6 +113,7 @@ ml_group6/
 data/raw/*
 data/processed/*
 !data/processed/stats.json
+!data/processed/model_comparison.json
 data/external/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
