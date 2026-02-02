@@ -290,7 +290,7 @@ async def health_check():
     )
 
 
-@app.post("/predict", response_model=PredictionResponse)
+@app.post("/api/predict", response_model=PredictionResponse)
 async def predict(house_features: HouseFeatures):
     """
     Endpoint de prédiction du prix d'une maison.
@@ -328,7 +328,7 @@ async def predict(house_features: HouseFeatures):
         )
 
 
-@app.post("/api/model/parse-description")
+@app.post("/api/parse-description")
 async def parse_description(description_data: Dict[str, str]):
     """Extrait les caractéristiques d'une maison à partir d'une description textuelle."""
     text = description_data.get("description", "")
@@ -390,7 +390,7 @@ async def parse_description(description_data: Dict[str, str]):
     return extracted
 
 
-@app.post("/predict/batch")
+@app.post("/api/predict/batch")
 async def predict_batch(houses: List[HouseFeatures]):
     """
     Prédiction en batch pour plusieurs maisons.
@@ -493,7 +493,7 @@ async def get_price_distribution(bins: int = 20):
     }
 
 
-@app.get("/model/comparison")
+@app.get("/api/model/comparison")
 async def model_comparison():
     """Retourne les performances comparées des 4 meilleurs modèles."""
     comparison = get_comparison_data()
@@ -505,7 +505,7 @@ async def model_comparison():
 from datetime import datetime
 
 
-@app.get("/model/info")
+@app.get("/api/model/info")
 async def get_model_info():
     """Retourne les informations sur le modèle utilisé."""
     return {

@@ -49,12 +49,12 @@ class HousePriceAPI {
 
     // Get Model Info
     async getModelInfo() {
-        return await this.request('/model/info');
+        return await this.request('/api/model/info');
     }
 
     // Single Prediction
     async predict(houseData) {
-        return await this.request('/predict', {
+        return await this.request('/api/predict', {
             method: 'POST',
             body: JSON.stringify(houseData)
         });
@@ -62,7 +62,7 @@ class HousePriceAPI {
 
     // Batch Prediction
     async predictBatch(housesData) {
-        return await this.request('/predict/batch', {
+        return await this.request('/api/predict/batch', {
             method: 'POST',
             body: JSON.stringify(housesData)
         });
@@ -87,11 +87,11 @@ class HousePriceAPI {
     }
 
     async getModelComparison() {
-        return await this.request('/model/comparison');
+        return await this.request('/api/model/comparison');
     }
 
     async parseDescription(description) {
-        return await this.request('/api/model/parse-description', {
+        return await this.request('/api/parse-description', {
             method: 'POST',
             body: JSON.stringify({ description })
         });
