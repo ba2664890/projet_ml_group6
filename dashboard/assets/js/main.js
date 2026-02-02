@@ -147,7 +147,7 @@ function setupFormHandlers() {
     }
 
     let currentStep = 1;
-    const totalSteps = 3;
+    const totalSteps = 2;
 
     const nextBtn = document.getElementById('next-step');
     const prevBtn = document.getElementById('prev-step');
