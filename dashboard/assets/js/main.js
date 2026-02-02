@@ -219,8 +219,38 @@ function setupFormHandlers() {
         });
     });
 
+    function validateCurrentStep() {
+        const stepContainer = document.getElementById(`form-step-${currentStep}`);
+        if (!stepContainer) return true;
+
+        const inputs = stepContainer.querySelectorAll('input[required], select[required]');
+        let isValid = true;
+
+        inputs.forEach(input => {
+            const container = input.closest('.relative, .space-y-3, .p-8');
+            if (input.value.trim() === '') {
+                isValid = false;
+                if (container) {
+                    container.classList.add('ring-2', 'ring-red-500/50', 'bg-red-50/50', 'dark:bg-red-900/10');
+                }
+            } else {
+                if (container) {
+                    container.classList.remove('ring-2', 'ring-red-500/50', 'bg-red-50/50', 'dark:bg-red-900/10');
+                }
+            }
+        });
+
+        if (!isValid) {
+            showError('Veuillez remplir tous les champs obligatoires avant de continuer.');
+        }
+
+        return isValid;
+    }
+
     nextBtn.addEventListener('click', () => {
-        if (currentStep < totalSteps) updateStep(currentStep + 1);
+        if (validateCurrentStep()) {
+            if (currentStep < totalSteps) updateStep(currentStep + 1);
+        }
     });
 
     prevBtn.addEventListener('click', () => {
@@ -266,6 +296,20 @@ function setupFormHandlers() {
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        // Final validation for all visible required fields
+        let isFormValid = true;
+        for (let i = 1; i <= totalSteps; i++) {
+            currentStep = i; // Temporarily update to validate each step's logic
+            if (!validateCurrentStep()) {
+                updateStep(i); // Show the step with error
+                isFormValid = false;
+                break;
+            }
+        }
+
+        if (!isFormValid) return;
+
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
