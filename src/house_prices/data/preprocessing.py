@@ -466,6 +466,10 @@ def get_feature_lists():
         "PavedDrive",
         "SaleCondition",
         "MSSubClass",  # Peut être traité comme catégoriel
+        # Ajout des colonnes ordinales de qualité qui doivent être imputées avant encodage
+        "ExterQual",
+        "ExterCond",
+        "HeatingQC",
     ]
 
     return none_features, zero_features, group_impute, mode_features
