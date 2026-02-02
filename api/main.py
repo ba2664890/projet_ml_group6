@@ -343,55 +343,91 @@ async def parse_description(description_data: Dict[str, str]):
 
     if GEMINI_API_KEY:
         try:
-            model = genai.GenerativeModel("gemini-pro")
+            model = genai.GenerativeModel("gemini-2.0-flash")
             prompt = f"""
             Tu es un expert immobilier à Ames, Iowa. Analyse la description suivante d'une maison et extrait les caractéristiques sous forme JSON.
             Utilise les noms de champs exacts de l'application (ex: Neighborhood, FullBath, GrLivArea, YearBuilt, OverallQual...).
             
             Description: "{text}"
             
-            JSON (ne retourne QUE le JSON, rien d'autre):
+            IMPORTANT: Retourne un objet JSON valide. Si une caractéristique n'est pas mentionnée, n'invente pas de valeur, laisse le champ absent du JSON.
+            Les quartiers valides sont: CollgCr, Veenker, Crawfor, NoRidge, Mitchel, Somerst, NWAmes, OldTown, BrkSide, Sawyer, NridgHt, NAmes, SawyerW, IDRROR, MeadowV, Edwards, Gilbert, StoneBr, ClearCr, NPkVill, Blmngtn, BrDale, SWISU, Blueste.
+            
+            JSON (ne retourne QUE le JSON):
             """
             response = model.generate_content(prompt)
-            # Nettoyage minimal du markdown si présent
-            content = response.text.strip().replace("```json", "").replace("```", "")
-            return json.loads(content)
+            # Nettoyage plus robuste du JSON
+            content = response.text.strip()
+            # Nettoyage markdown
+            if "```" in content:
+                content = content.split("```")[1]
+                if content.strip().startswith("json"):
+                    content = content.strip()[4:]
+            
+            # Suppression des caractères invisibles ou retours chariots en début/fin
+            content = content.strip()
+            
+            try:
+                return json.loads(content)
+            except json.JSONDecodeError as je:
+                logger.error(f"Erreur décodage JSON Gemini: {je}. Content: {content}")
+                # Fallback to simple parser if JSON is invalid
         except Exception as e:
             logger.error(f"Erreur Gemini: {e}")
             # Fallback vers le parser simple ci-dessous
 
-    # Parser simple par mots-clés (Fallback)
-    keywords = {
-        "Neighborhood": ["NoRidge", "CollgCr", "OldTown", "Edwards", "Somerst", "Gilbert", "NridgHt"],
-        "FullBath": ["bain", "douche"],
-        "BedroomAbvGr": ["chambre"],
-        "YearBuilt": ["construit", "année", "date"],
-        "GrLivArea": ["m2", "ft2", "surface", "taille"],
+    # Parser simple par mots-clés amélioré (Fallback)
+    neighborhood_map = {
+        "northridge": "NoRidge",
+        "college creek": "CollgCr",
+        "old town": "OldTown",
+        "edwards": "Edwards",
+        "somerset": "Somerst",
+        "gilbert": "Gilbert",
+        "northridge heights": "NridgHt",
+        "north ames": "NAmes",
+        "sawyer west": "SawyerW",
+        "mitchell": "Mitchel",
+        "northwest ames": "NWAmes",
+        "crawford": "Crawfor",
     }
-
+    
     extracted = {}
     text_lower = text.lower()
 
     # Neighborhood match
-    for nb in keywords["Neighborhood"]:
-        if nb.lower() in text_lower:
-            extracted["Neighborhood"] = nb
+    for name, code in neighborhood_map.items():
+        if name in text_lower:
+            extracted["Neighborhood"] = code
             break
 
-    # Surface match
+    # Surface (GrLivArea)
     import re
-
-    surface_match = re.search(r"(\d+)\s*(m2|ft2|sqft|surface)", text_lower)
+    surface_match = re.search(r"(\d+)\s*(m2|ft2|sqft|surface|habitable)", text_lower)
     if surface_match:
         val = int(surface_match.group(1))
         if surface_match.group(2) == "m2":
-            val = int(val * 10.76)  # m2 to ft2
+            val = int(val * 10.76)
         extracted["GrLivArea"] = val
 
-    # Chambres match
+    # YearBuilt
+    year_match = re.search(r"(construite?|année|date|year)\s*(?:en|in)?\s*(\d{4})", text_lower)
+    if year_match:
+        extracted["YearBuilt"] = int(year_match.group(2))
+
+    # Rooms & Baths
     bed_match = re.search(r"(\d+)\s*(chambre|bedroom)", text_lower)
     if bed_match:
         extracted["BedroomAbvGr"] = int(bed_match.group(1))
+
+    bath_match = re.search(r"(\d+)\s*(salle|bain|bath)", text_lower)
+    if bath_match:
+        extracted["FullBath"] = int(bath_match.group(1))
+
+    # Defaults for required fields if not found (to avoid Pydantic errors later)
+    # These will be overwritten by the user in the UI
+    if "OverallQual" not in extracted: extracted["OverallQual"] = 7
+    if "OverallCond" not in extracted: extracted["OverallCond"] = 5
 
     return extracted
 
