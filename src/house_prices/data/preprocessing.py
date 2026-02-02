@@ -449,6 +449,23 @@ def get_feature_lists():
         "Exterior1st",
         "Exterior2nd",
         "Electrical",
+        # Ajout des colonnes catégorielles manquantes (non déjà dans none_features)
+        "Street",
+        "LotShape",
+        "LandContour",
+        "LotConfig",
+        "LandSlope",
+        "Condition1",
+        "Condition2",
+        "BldgType",
+        "RoofStyle",
+        "RoofMatl",
+        "Foundation",
+        "Heating",
+        "CentralAir",
+        "PavedDrive",
+        "SaleCondition",
+        "MSSubClass",  # Peut être traité comme catégoriel
     ]
 
     return none_features, zero_features, group_impute, mode_features

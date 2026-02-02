@@ -50,7 +50,7 @@ warnings.filterwarnings('ignore')
 
 
 # Configuration
-plt.style.use('seaborn-v0_8-whitegrid')
+plt.style.use('default')  # Changed from seaborn-v0_8-whitegrid (deprecated)
 plt.rcParams['figure.figsize'] = (12, 8)
 plt.rcParams['font.size'] = 11
 
