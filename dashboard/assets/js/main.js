@@ -311,9 +311,21 @@ function setupFormHandlers() {
 function showPredictionResult(result) {
     const resultElement = document.getElementById('prediction-result');
     const priceValue = document.getElementById('predicted-price-value');
+
+    if (!resultElement || !priceValue) return;
+
+    // Correct path for the new API version
+    const price = result.predictions && result.predictions[0]
+        ? result.predictions[0].predicted_price
+        : (result.predicted_price || 0);
+
     resultElement.classList.remove('hidden');
-    animateCounter(priceValue, result.predicted_price);
-    setTimeout(() => scrollToElement('prediction-result'), 100);
+    animateCounter(priceValue, price);
+
+    // Smooth scroll to result
+    setTimeout(() => {
+        resultElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
 }
 
 // Load Analytics Data
