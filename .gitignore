@@ -39,7 +39,8 @@ ml_group6/
 # Jupyter Notebook
 .ipynb_checkpoints
 *.ipynb_checkpoints
-
+notebooks/
+notebooks/
 
 .ipynb_checkpoints
 *.ipynb_checkpoints
