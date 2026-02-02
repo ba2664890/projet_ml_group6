@@ -274,10 +274,10 @@ function setupFormHandlers() {
             '1stFlrSF', '2ndFlrSF', 'LowQualFinSF', 'GrLivArea', 'FullBath',
             'HalfBath', 'BedroomAbvGr', 'KitchenAbvGr', 'TotRmsAbvGrd', 'Fireplaces',
             'WoodDeckSF', 'OpenPorchSF', 'EnclosedPorch', '3SsnPorch', 'ScreenPorch',
-            'PoolArea', 'MiscVal', 'MoSold', 'YrSold'
+            'PoolArea', 'MiscVal', 'MoSold', 'YrSold', 'LotArea'
         ];
 
-        const floatFields = ['LotArea', 'TotalBsmtSF', 'GarageArea', 'MasVnrArea', 'LotFrontage', 'BsmtFinSF1', 'BsmtFinSF2', 'BsmtUnfSF', 'GarageCars'];
+        const floatFields = ['TotalBsmtSF', 'GarageArea', 'MasVnrArea', 'LotFrontage', 'BsmtFinSF1', 'BsmtFinSF2', 'BsmtUnfSF', 'GarageCars'];
 
         integerFields.forEach(field => {
             if (data[field] !== undefined && data[field] !== '') {
