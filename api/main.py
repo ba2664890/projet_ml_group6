@@ -20,7 +20,7 @@ load_dotenv()
 import joblib
 import numpy as np
 import pandas as pd
-import google.generativeai as genai
+import google.generativeai as genai  # TODO: Upgrade to google.genai once installed
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -32,7 +32,7 @@ from pydantic import BaseModel, Field
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 from house_prices.data.preprocessing import get_feature_lists
 from house_prices.models.predict_model import load_trained_model
-from house_prices.models.predict_model import predict as make_prediction
+from house_prices.models.predict_model import predict as predict_price
 
 # Configuration du logging structuré
 logging.basicConfig(
@@ -305,10 +305,16 @@ async def predict(house_features: HouseFeatures):
 
         # Création du DataFrame (1 seule ligne)
         df = pd.DataFrame([features_dict])
+        
+        # Robust None to NaN conversion for all column types
+        # First, use where() to replace None with NaN
+        df = df.where(pd.notnull(df), np.nan)
+        # Then infer proper dtypes (converts object columns with numbers to numeric)
+        df = df.infer_objects()
 
         # Le pipeline s'occupe de tout (preprocessing, feature engineering, prediction)
-        # La fonction make_prediction s'occupe de l'inversion log (np.expm1)
-        predicted_price = make_prediction(model_pipeline, df, use_log=True)[0]
+        # La fonction predict s'occupe de l'inversion log (np.expm1)
+        predicted_price = predict_price(model_pipeline, df, use_log=True)[0]
 
         # Calcul d'un score de confiance basique
         confidence_score = 0.90
